@@ -2,6 +2,6 @@
 # environments terraform.tfvars file
 
 variable "region" {
-    description = "The AWS region to create things in."
-    default = "us-west-2"
+  description = "The AWS region to create things in."
+  default     = "us-west-2"
 }
