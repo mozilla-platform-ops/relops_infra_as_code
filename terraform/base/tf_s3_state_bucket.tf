@@ -5,4 +5,11 @@ resource "aws_s3_bucket" "state_bucket" {
   versioning {
     enabled = true
   }
+
+  tags = {
+    Terraform   = "true"
+    Repo_url    = "${var.repo_url}"
+    Environment = "prod"
+    Owner       = "relops@mozilla.com"
+  }
 }

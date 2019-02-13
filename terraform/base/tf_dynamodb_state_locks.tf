@@ -10,7 +10,11 @@ resource "aws_dynamodb_table" "tf_state_lock_base" {
   }
 
   tags {
-    Name = "Base Terraform State Lock Table"
+    Name        = "Base Terraform State Lock Table"
+    Terraform   = "true"
+    Repo_url    = "${var.repo_url}"
+    Environment = "prod"
+    Owner       = "relops@mozilla.com"
   }
 }
 
@@ -25,7 +29,11 @@ resource "aws_dynamodb_table" "tf_state_lock_puppetagain_ca_codecommit" {
     type = "S"
   }
 
-  tags {
-    Name = "puppetagain_ca_codecommit Terraform State Lock Table"
+  tags = {
+    Name        = "puppetagain_ca_codecommit Terraform State Lock Table"
+    Terraform   = "true"
+    Repo_url    = "${var.repo_url}"
+    Environment = "prod"
+    Owner       = "relops@mozilla.com"
   }
 }
