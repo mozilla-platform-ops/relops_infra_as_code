@@ -5,3 +5,8 @@ variable "region" {
   description = "The AWS region to create things in."
   default     = "us-west-2"
 }
+
+variable "repo_url" {
+  description = "A link to this github repo"
+  default     = "https://github.com/mozilla-platform-ops/relops_cloud"
+}
