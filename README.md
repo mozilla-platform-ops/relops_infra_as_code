@@ -1,4 +1,4 @@
-# RelOps Code-As-Infrastructure
+# RelOps Infrastructure-As-Code
 
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
