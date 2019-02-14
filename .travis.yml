@@ -9,4 +9,4 @@ install:
   - shellcheck --version
 
 script:
-  - ./runtests.sh
+  - ./tests/runtests.sh
