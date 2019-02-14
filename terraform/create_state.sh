@@ -27,7 +27,7 @@ fi
 echo "Creating dir: ${STATE_NAME}"
 mkdir -p "${STATE_NAME}"
 echo "Creating variables.tf link"
-ln -s ../variable.tf "${STATE_NAME}/variables.tf"
+ln -s ../variables.tf "${STATE_NAME}/variables.tf"
 echo "Creating providers.tf link"
 ln -s ../providers.tf "${STATE_NAME}/providers.tf"
 
