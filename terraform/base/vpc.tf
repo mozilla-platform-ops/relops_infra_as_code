@@ -11,6 +11,10 @@ module "vpc_moz_internal_us_east_1" {
   azs            = ["us-east-1a", "us-east-1b"]
   public_subnets = ["10.191.6.0/25", "10.191.6.128/25"]
 
+  public_subnet_tags = {
+    Subnet_type = "public"
+  }
+
   enable_dns_hostnames    = true
   enable_dns_support      = true
   map_public_ip_on_launch = false
