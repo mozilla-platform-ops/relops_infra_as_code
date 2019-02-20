@@ -33,10 +33,11 @@ resource "aws_security_group" "ecs_vault_public_sg" {
 }
 
 resource "aws_ecs_service" "vault" {
-  name                = "vault"
-  cluster             = "${aws_ecs_cluster.vault.id}"
-  task_definition     = "${aws_ecs_task_definition.vault.arn}"
-  scheduling_strategy = "DAEMON"
+  name                               = "vault"
+  cluster                            = "${aws_ecs_cluster.vault.id}"
+  task_definition                    = "${aws_ecs_task_definition.vault.arn}"
+  scheduling_strategy                = "DAEMON"
+  deployment_minimum_healthy_percent = 50
 
   network_configuration {
     subnets         = ["${data.aws_subnet_ids.public_subnets.ids}"]
