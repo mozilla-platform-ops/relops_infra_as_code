@@ -1,0 +1,30 @@
+[
+  {
+    "name": "vault",
+    "containerName": "vault",
+    "image": "vault:1.0.3",
+    "memory": 6144,
+    "linuxParameters": {
+      "capabilities": {
+        "add": ["IPC_LOCK"]
+      }
+    },
+    "command": ["server"],
+    "environment" : [
+      { "name" : "VAULT_LOCAL_CONFIG", "value" : "{\"storage\": {\"dynamodb\": {\"table\": \"vault\"}}, \"default_lease_ttl\": \"168h\", \"max_lease_ttl\": \"720h\", \"listener\":{\"tcp\":{\"address\":\"0.0.0.0:8200\", \"x_forwarded_for_authorized_addrs\": \"10.191.7.0/24\", \"x_forwarded_for_reject_not_present\": \"false\", \"tls_disable\":1}}, \"seal\": { \"awskms\" : { \"region\" : \"us-west-2\", \"kms_key_id\": \"580cd560-4edb-43ea-b8e9-c43b70862d7f\"}}}" },
+      { "name" : "VAULT_UI", "value": "true" },
+      { "name" : "VAULT_REDIRECT_INTERFACE", "value" : "eth0" },
+      { "name" : "VAULT_CLUSTER_INTERFACE", "value" : "eth0" },
+      { "name" : "DYNAMODB_HA_ENABLED", "value" : "true" },
+      { "name" : "AWS_DEFAULT_REGION", "value" : "us-west-2" }
+    ],
+    "portMappings": [
+      {
+        "containerPort": 8200
+      },
+      {
+        "containerPort": 8201
+      }
+    ]
+  }
+]

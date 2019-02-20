@@ -1,0 +1,59 @@
+resource "aws_dynamodb_table" "dynamodb-table" {
+  name           = "vault"
+  read_capacity  = 1
+  write_capacity = 1
+  hash_key       = "Path"
+  range_key      = "Key"
+
+  attribute {
+    name = "Path"
+    type = "S"
+  }
+
+  attribute {
+    name = "Key"
+    type = "S"
+  }
+
+  tags {
+    Name        = "vault-dynamodb-table"
+    Environment = "prod"
+  }
+}
+
+data "aws_iam_policy_document" "vault_dynamodb_access" {
+  statement {
+    effect    = "Allow"
+    resources = ["${aws_dynamodb_table.dynamodb-table.arn}"]
+
+    actions = [
+      "dynamodb:DescribeLimits",
+      "dynamodb:DescribeTimeToLive",
+      "dynamodb:ListTagsOfResource",
+      "dynamodb:DescribeReservedCapacityOfferings",
+      "dynamodb:DescribeReservedCapacity",
+      "dynamodb:ListTables",
+      "dynamodb:BatchGetItem",
+      "dynamodb:BatchWriteItem",
+      "dynamodb:CreateTable",
+      "dynamodb:DeleteItem",
+      "dynamodb:GetItem",
+      "dynamodb:GetRecords",
+      "dynamodb:PutItem",
+      "dynamodb:Query",
+      "dynamodb:UpdateItem",
+      "dynamodb:Scan",
+      "dynamodb:DescribeTable",
+    ]
+  }
+}
+
+resource "aws_iam_policy" "vault_dynamodb_policy" {
+  name   = "Vault-DynamoDB-Policy"
+  policy = "${data.aws_iam_policy_document.vault_dynamodb_access.json}"
+}
+
+resource "aws_iam_role_policy_attachment" "ecs-instance-dynamodb-role-attachment" {
+  role       = "${aws_iam_role.ecs-task-role.name}"
+  policy_arn = "${aws_iam_policy.vault_dynamodb_policy.arn}"
+}
