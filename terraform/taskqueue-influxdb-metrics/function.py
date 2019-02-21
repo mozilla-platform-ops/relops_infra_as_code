@@ -41,7 +41,6 @@ URLS = [
 if __name__ == "__main__":
     host = "localhost"
     database = "bitbar_test"
-    # client = InfluxDBClient('localhost', 8086, 'root', 'root', 'example')
     client = InfluxDBClient(
         host=host, port=8086, username="root", password="root", database=database
     )
@@ -52,6 +51,6 @@ if __name__ == "__main__":
         insert_commands.append(gen_influx_log_line(json_result))
         command = gen_influx_log_line(json_result)
 
-    client.write(insert_commands, {"db": "bitbar_test"}, protocol="line")
+    client.write(insert_commands, {"db": database}, protocol="line")
 
     print("wrote %s data points to %s/%s" % (len(insert_commands), host, database))
