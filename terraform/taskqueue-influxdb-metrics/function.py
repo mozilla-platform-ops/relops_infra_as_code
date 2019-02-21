@@ -2,6 +2,8 @@
 
 import json
 from influxdb import InfluxDBClient
+import boto3
+
 
 try:
     # For Python 3.0 and later
@@ -24,7 +26,7 @@ def display_json_blob(blob):
 def gen_influx_log_line(blob):
     wt = blob["workerType"]
     val = blob["pendingTasks"]
-    cmd = "current,queue=%s value=%s" % (wt, val)
+    cmd = "bitbar_queue_size,queue=%s value=%s" % (wt, val)
     return cmd
 
 
@@ -39,10 +41,28 @@ URLS = [
 ]
 
 if __name__ == "__main__":
-    host = "localhost"
-    database = "bitbar_test"
+    TESTING = False
+    if TESTING:
+        host = "localhost"
+        database = "bitbar_test"
+        username = "root"
+        password = "root"
+        port = 8086
+    else:
+        # load user and password from AWS Secrets Manager
+        secrets = boto3.client("secretsmanager")
+        key_name = "relops_wo"
+
+        username = key_name
+        host = json.dumps(secrets.get_secret_value(SecretId="influxdb_credentials")["host"])
+        password = json.dumps(secrets.get_secret_value(SecretId="influxdb_credentials")[key_name])
+        database = "relops.autogen"
+        port = 8086
+
+
+
     client = InfluxDBClient(
-        host=host, port=8086, username="root", password="root", database=database
+        host=host, port=port, username=username, password=password, database=database
     )
 
     insert_commands = []
