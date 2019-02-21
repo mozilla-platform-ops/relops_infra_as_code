@@ -54,12 +54,14 @@ if __name__ == "__main__":
         key_name = "relops_wo"
 
         username = key_name
-        host = json.dumps(secrets.get_secret_value(SecretId="influxdb_credentials")["host"])
-        password = json.dumps(secrets.get_secret_value(SecretId="influxdb_credentials")[key_name])
+        host = json.dumps(
+            secrets.get_secret_value(SecretId="influxdb_credentials")["host"]
+        )
+        password = json.dumps(
+            secrets.get_secret_value(SecretId="influxdb_credentials")[key_name]
+        )
         database = "relops.autogen"
         port = 8086
-
-
 
     client = InfluxDBClient(
         host=host, port=port, username=username, password=password, database=database
