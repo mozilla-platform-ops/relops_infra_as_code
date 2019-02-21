@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# https://github.com/influxdata/influxdb-python
-
 import json
 from influxdb import InfluxDBClient
 
@@ -22,23 +20,12 @@ def get_url(url):
 def display_json_blob(blob):
     print("%s: %s" % (blob["workerType"], blob["pendingTasks"]))
 
+
 def gen_influx_log_line(blob):
     wt = blob["workerType"]
     val = blob["pendingTasks"]
-    cmd = "current,queue=%s value=%s" % (
-        wt,
-        val,
-    )
+    cmd = "current,queue=%s value=%s" % (wt, val)
     return cmd
-
-# def log_json_blob(blob):
-#     wt = blob["workerType"]
-#     val = blob["pendingTasks"]
-#     cmd = "influx -database bitbar -execute 'INSERT current,queue=%s value=%s' " % (
-#         wt,
-#         val,
-#     )
-#     subprocess.call(cmd, shell=True)
 
 
 URLS = [
@@ -52,18 +39,19 @@ URLS = [
 ]
 
 if __name__ == "__main__":
-  host = 'localhost'
-  database = 'bitbar_test'
-  # client = InfluxDBClient('localhost', 8086, 'root', 'root', 'example')
-  client = InfluxDBClient(host=host, port=8086, username='root', password='root', database=database)
-  # print(client.get_list_database())
+    host = "localhost"
+    database = "bitbar_test"
+    # client = InfluxDBClient('localhost', 8086, 'root', 'root', 'example')
+    client = InfluxDBClient(
+        host=host, port=8086, username="root", password="root", database=database
+    )
 
-  insert_commands = []
-  for url in URLS:
-    json_result = get_url(url)
-    insert_commands.append(gen_influx_log_line(json_result))
-    command = gen_influx_log_line(json_result)
+    insert_commands = []
+    for url in URLS:
+        json_result = get_url(url)
+        insert_commands.append(gen_influx_log_line(json_result))
+        command = gen_influx_log_line(json_result)
 
-  client.write(insert_commands, {'db':'bitbar_test'}, protocol='line')
+    client.write(insert_commands, {"db": "bitbar_test"}, protocol="line")
 
-  print("wrote %s data points to %s/%s" % (len(insert_commands), host, database))
+    print("wrote %s data points to %s/%s" % (len(insert_commands), host, database))
