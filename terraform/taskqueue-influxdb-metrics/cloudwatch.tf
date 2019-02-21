@@ -1,14 +1,12 @@
 # Nightly event to trigger lambda
-resource "aws_cloudwatch_event_rule" "every minute" {
-  name        = "schedule_timeline_repo_mirror_sync"
-  description = "Triggers the Timeline Repo lambda nightly"
-  # cron nightly around 2am PST/9am UTC (aka mozilla time)
-	schedule_expression = "cron(0 9 * * ? *)"
+resource "aws_cloudwatch_event_rule" "1m" {
+  name        = "trigger_bitbar_influx_logging"
+	schedule_expression = "cron(* * * * * *)"
   is_enabled = true
 }
 
-resource "aws_cloudwatch_event_target" "lambda" {
-  rule      = "${aws_cloudwatch_event_rule.nightly.name}"
-  target_id = "TriggerLambda"
-  arn       = "${aws_lambda_function.timeline_repo_mirror_sync.arn}"
+resource "aws_cloudwatch_event_target" "lambda_trigger" {
+  rule      = "${aws_cloudwatch_event_rule.1m.name}"
+  target_id = "Lambda Trigger"
+  arn       = "${aws_lambda_function.log_bitbar_data_to_influx.arn}"
 }
