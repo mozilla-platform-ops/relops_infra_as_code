@@ -77,6 +77,8 @@ def main():
 
     print("wrote %s data points to %s/%s" % (len(insert_commands), host, database))
 
+def lambda_handler(_event, _context):
+    main()
 
 if __name__ == "__main__":
     main()
