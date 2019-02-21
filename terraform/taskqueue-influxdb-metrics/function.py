@@ -13,6 +13,17 @@ except ImportError:
     from urllib2 import urlopen
 
 
+URLS = [
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-unit-p2",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-perf-p2",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-batt-p2",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-unit-g5",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-perf-g5",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-batt-g5",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-test-g5",
+]
+
+
 def get_url(url):
     data = urlopen(url).read()
     output = json.loads(data)
@@ -30,17 +41,7 @@ def gen_influx_log_line(blob):
     return cmd
 
 
-URLS = [
-    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-unit-p2",
-    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-perf-p2",
-    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-batt-p2",
-    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-unit-g5",
-    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-perf-g5",
-    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-batt-g5",
-    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-test-g5",
-]
-
-if __name__ == "__main__":
+def main():
     TESTING = False
     if TESTING:
         host = "localhost"
@@ -71,8 +72,11 @@ if __name__ == "__main__":
     for url in URLS:
         json_result = get_url(url)
         insert_commands.append(gen_influx_log_line(json_result))
-        command = gen_influx_log_line(json_result)
 
     client.write(insert_commands, {"db": database}, protocol="line")
 
     print("wrote %s data points to %s/%s" % (len(insert_commands), host, database))
+
+
+if __name__ == "__main__":
+    main()
