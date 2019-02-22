@@ -97,25 +97,3 @@ resource "aws_route53_zone" "usw2_arpa" {
     vpc_region = "us-west-2"
   }
 }
-
-resource "aws_route53_record" "populate_usw2_dns" {
-  zone_id = "${aws_route53_zone.usw2.zone_id}"
-
-  count = 254
-
-  name    = "${format("ip-10-191-7-%d", count.index + 1)}"
-  type    = "A"
-  ttl     = "300"
-  records = ["${format("10.191.7.%d", count.index + 1)}"]
-}
-
-resource "aws_route53_record" "populate_usw2_rdns" {
-  zone_id = "${aws_route53_zone.usw2_arpa.zone_id}"
-
-  count = 254
-
-  name    = "${format("%d.7.191.10.in-addr.arpa.", count.index + 1)}"
-  type    = "PTR"
-  ttl     = "300"
-  records = ["${format("ip-10-191-7-%d.usw2.relops", count.index + 1)}"]
-}
