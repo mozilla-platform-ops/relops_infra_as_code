@@ -68,7 +68,6 @@ def main():
         ssl = True
         ssl_verify = True
 
-    print(host)
     client = InfluxDBClient(
         host=host,
         port=port,
