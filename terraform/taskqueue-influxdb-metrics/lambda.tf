@@ -48,3 +48,12 @@ resource "aws_lambda_function" "log_bitbar_data_to_influx" {
   runtime          = "python3.6"
   timeout          = 20
 }
+
+# Allow cloudwatch to trigger the lambda function
+resource "aws_lambda_permission" "allow_cloudwatch" {
+  statement_id   = "AllowExecutionFromCloudWatch"
+  action         = "lambda:InvokeFunction"
+  function_name  = "${aws_lambda_function.log_bitbar_data_to_influx.function_name}"
+  principal      = "events.amazonaws.com"
+  source_arn     = "${aws_cloudwatch_event_rule.1m.arn}"
+}
