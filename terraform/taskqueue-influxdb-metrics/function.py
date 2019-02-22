@@ -59,9 +59,6 @@ def main():
             "SecretString"
         ]
         secret_dict = json.loads(secrets_str)
-        # print(secret_dict)
-        # print(secret_dict['host'])
-        # exit(1)
 
         username = key_name
         host = secret_dict["host"]
