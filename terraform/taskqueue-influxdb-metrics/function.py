@@ -66,11 +66,12 @@ def main():
         username = key_name
         host = secret_dict["host"]
         password = secret_dict[key_name]
-        database = "relops.autogen"
+        database = "relops"
         port = 8086
         ssl = True
         ssl_verify = True
 
+    print(host)
     client = InfluxDBClient(
         host=host,
         port=port,
@@ -78,7 +79,7 @@ def main():
         password=password,
         database=database,
         ssl=ssl,
-        ssl_verify=ssl_verify,
+        verify_ssl=ssl_verify,
     )
 
     insert_commands = []
