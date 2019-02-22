@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_event_rule" "1m" {
   name        = "trigger_bitbar_influx_logging"
-	schedule_expression = "cron(* * * * * *)"
+	schedule_expression = "rate(1 minute)"
   is_enabled = true
 }
 
