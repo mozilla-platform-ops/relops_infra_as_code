@@ -46,7 +46,7 @@ resource "aws_lambda_function" "log_bitbar_data_to_influx" {
   handler          = "function.lambda_handler"
   source_code_hash = "${base64sha256(file("function.zip"))}"
   runtime          = "python3.6"
-  timeout          = 20
+  timeout          = 60
 }
 
 # Allow cloudwatch to trigger the lambda function
