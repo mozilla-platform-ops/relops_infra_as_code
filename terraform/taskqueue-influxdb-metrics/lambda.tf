@@ -39,7 +39,7 @@ resource "aws_iam_role" "iam_for_lambda" {
 EOF
 }
 
-resource "aws_lambda_function" "log_bitbar_data_to_influx" {
+resource "aws_lambda_function" "bitbar_influx_logger" {
   filename         = "function.zip"
   function_name    = "bitbar_influx_logger"
   role             = "${aws_iam_role.iam_for_lambda.arn}"
@@ -53,7 +53,7 @@ resource "aws_lambda_function" "log_bitbar_data_to_influx" {
 resource "aws_lambda_permission" "allow_cloudwatch" {
   statement_id   = "AllowExecutionFromCloudWatch"
   action         = "lambda:InvokeFunction"
-  function_name  = "${aws_lambda_function.log_bitbar_data_to_influx.function_name}"
+  function_name  = "${aws_lambda_function.bitbar_influx_logger.function_name}"
   principal      = "events.amazonaws.com"
   source_arn     = "${aws_cloudwatch_event_rule.1m.arn}"
 }
