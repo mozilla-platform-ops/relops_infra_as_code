@@ -14,6 +14,13 @@ resource "aws_security_group" "ec2_vault_instance_sg" {
   description = "Allow ssh inbound traffic into vault ec2 instances"
   vpc_id      = "${data.aws_vpcs.moz_internal_us_west_2.ids[0]}"
 
+  ingress {
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   # TODO: remove ssh access to cluster ec2 instances
   ingress {
     from_port   = 22
