@@ -1,3 +1,24 @@
+resource "aws_iam_policy" "secretsmanager-influx" {
+  name        = "secretsmanager-influx"
+  description = "Allows access to influxdb secretsmanager secret."
+  policy      = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": {
+        "Effect": "Allow",
+        "Action": "secretsmanager:GetSecretValue",
+        "Resource": "arn:aws:secretsmanager:us-west-2:961225894672:secret:influxdb_credentials-hGl99p"
+    }
+}
+EOF
+}
+
+resource "aws_iam_policy_attachment" "secretsmanager_to_influx" {
+  name       = "secretsmanager_to_influx"
+  roles      = ["${aws_iam_role.iam_for_lambda.name}"]
+  policy_arn = "${aws_iam_policy.secretsmanager-influx.arn}"
+}
+
 resource "aws_iam_role" "iam_for_lambda" {
   name = "iam_for_lambda"
 
@@ -25,4 +46,5 @@ resource "aws_lambda_function" "log_bitbar_data_to_influx" {
   handler          = "function.lambda_handler"
   source_code_hash = "${base64sha256(file("function.zip"))}"
   runtime          = "python3.6"
+  timeout          = 20
 }

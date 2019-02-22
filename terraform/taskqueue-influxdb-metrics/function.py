@@ -49,23 +49,36 @@ def main():
         username = "root"
         password = "root"
         port = 8086
+        ssl = False
+        ssl_verify = False
     else:
         # load user and password from AWS Secrets Manager
         secrets = boto3.client("secretsmanager")
         key_name = "relops_wo"
+        secrets_str = secrets.get_secret_value(SecretId="influxdb_credentials")[
+            "SecretString"
+        ]
+        secret_dict = json.loads(secrets_str)
+        # print(secret_dict)
+        # print(secret_dict['host'])
+        # exit(1)
 
         username = key_name
-        host = json.dumps(
-            secrets.get_secret_value(SecretId="influxdb_credentials")["host"]
-        )
-        password = json.dumps(
-            secrets.get_secret_value(SecretId="influxdb_credentials")[key_name]
-        )
+        host = secret_dict["host"]
+        password = secret_dict[key_name]
         database = "relops.autogen"
         port = 8086
+        ssl = True
+        ssl_verify = True
 
     client = InfluxDBClient(
-        host=host, port=port, username=username, password=password, database=database
+        host=host,
+        port=port,
+        username=username,
+        password=password,
+        database=database,
+        ssl=ssl,
+        ssl_verify=ssl_verify,
     )
 
     insert_commands = []
@@ -77,8 +90,10 @@ def main():
 
     print("wrote %s data points to %s/%s" % (len(insert_commands), host, database))
 
+
 def lambda_handler(_event, _context):
     main()
+
 
 if __name__ == "__main__":
     main()
