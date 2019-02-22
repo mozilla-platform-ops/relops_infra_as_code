@@ -1,3 +1,5 @@
+### iam policies, attachments, and role
+
 resource "aws_iam_policy" "secretsmanager-influx" {
   name        = "secretsmanager-influx"
   description = "Allows access to influxdb secretsmanager secret."
@@ -38,6 +40,8 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 EOF
 }
+
+### lambda function and permissions
 
 resource "aws_lambda_function" "bitbar_influx_logger" {
   filename         = "function.zip"
