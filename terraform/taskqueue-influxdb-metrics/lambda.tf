@@ -3,7 +3,8 @@
 resource "aws_iam_policy" "secretsmanager-influx" {
   name        = "secretsmanager-influx"
   description = "Allows access to influxdb secretsmanager secret."
-  policy      = <<EOF
+
+  policy = <<EOF
 {
     "Version": "2012-10-17",
     "Statement": {
@@ -55,9 +56,9 @@ resource "aws_lambda_function" "bitbar_influx_logger" {
 
 # Allow cloudwatch to trigger the lambda function
 resource "aws_lambda_permission" "allow_cloudwatch" {
-  statement_id   = "AllowExecutionFromCloudWatch"
-  action         = "lambda:InvokeFunction"
-  function_name  = "${aws_lambda_function.bitbar_influx_logger.function_name}"
-  principal      = "events.amazonaws.com"
-  source_arn     = "${aws_cloudwatch_event_rule.1m.arn}"
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.bitbar_influx_logger.function_name}"
+  principal     = "events.amazonaws.com"
+  source_arn    = "${aws_cloudwatch_event_rule.1m.arn}"
 }
