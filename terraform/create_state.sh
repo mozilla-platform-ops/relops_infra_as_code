@@ -30,6 +30,8 @@ echo "Creating variables.tf link"
 ln -s ../variables.tf "${STATE_NAME}/variables.tf"
 echo "Creating providers.tf link"
 ln -s ../providers.tf "${STATE_NAME}/providers.tf"
+echo "Creating resources.tf link"
+ln -s ../resources.tf "${STATE_NAME}/resources.tf"
 
 echo "Generating ${STATE_NAME}/backend.tf"
 cat <<EOF >"${STATE_NAME}/backend.tf"
