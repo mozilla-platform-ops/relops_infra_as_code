@@ -60,10 +60,7 @@ resource "aws_launch_configuration" "ecs-launch-configuration" {
   # TODO: remove single key and load mutiple keys via userdata
   key_name = "dividehex"
 
-  user_data = <<EOF
-#!/bin/bash
-echo ECS_CLUSTER=puppetdb >> /etc/ecs/ecs.config
-EOF
+  user_data = "${file("userdata/ecs-userdata.sh")}"
 }
 
 resource "aws_autoscaling_group" "ecs-autoscaling-group" {

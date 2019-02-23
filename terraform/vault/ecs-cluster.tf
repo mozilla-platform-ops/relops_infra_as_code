@@ -1,12 +1,12 @@
 resource "aws_ecs_cluster" "vault" {
   name = "vault"
 
-  tags = {
-    Terraform   = "true"
-    Repo_url    = "${var.repo_url}"
-    Environment = "Prod"
-    Owner       = "relops@mozilla.com"
-  }
+  tags = "${merge(
+    local.common_tags,
+    map(
+      "Name", "vault"
+    )
+  )}"
 }
 
 resource "aws_security_group" "ec2_vault_instance_sg" {
@@ -60,10 +60,7 @@ resource "aws_launch_configuration" "ecs-launch-configuration" {
   # TODO: remove single key and load mutiple keys via userdata
   key_name = "dividehex"
 
-  user_data = <<EOF
-#!/bin/bash
-echo ECS_CLUSTER=vault >> /etc/ecs/ecs.config
-EOF
+  user_data = "${file("userdata/ecs-userdata.sh")}"
 }
 
 resource "aws_autoscaling_group" "ecs-autoscaling-group" {
