@@ -5,7 +5,7 @@ set -x
 
 rm -rf package
 mkdir package
-cd package
+cd package || exit 1
 
 # hack for osx's homebrew python
 touch setup.cfg
