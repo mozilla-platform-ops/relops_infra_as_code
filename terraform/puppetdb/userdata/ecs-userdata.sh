@@ -1,2 +1,2 @@
 #!/bin/bash
-echo ECS_CLUSTER=vault >> /etc/ecs/ecs.config
+echo ECS_CLUSTER=puppetdb >> /etc/ecs/ecs.config
