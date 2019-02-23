@@ -15,10 +15,12 @@ resource "aws_dynamodb_table" "dynamodb-table" {
     type = "S"
   }
 
-  tags {
-    Name        = "vault-dynamodb-table"
-    Environment = "prod"
-  }
+  tags = "${merge(
+    local.common_tags,
+    map(
+      "Name", "vault-dynamodb-table"
+    )
+  )}"
 }
 
 data "aws_iam_policy_document" "vault_dynamodb_access" {
