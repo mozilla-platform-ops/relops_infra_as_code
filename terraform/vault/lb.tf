@@ -73,3 +73,19 @@ resource "aws_lb_listener" "vault_firont_end" {
     target_group_arn = "${aws_lb_target_group.vault_lb_target_group.arn}"
   }
 }
+
+data "aws_route53_zone" "relops_mozops_net" {
+  name = "relops.mozops.net."
+}
+
+resource "aws_route53_record" "vault" {
+  zone_id = "${data.aws_route53_zone.relops_mozops_net.zone_id}"
+  name    = "vault.relops.mozops.net"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_lb.vault.dns_name}"
+    zone_id                = "${aws_lb.vault.zone_id}"
+    evaluate_target_health = true
+  }
+}
