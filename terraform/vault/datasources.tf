@@ -15,3 +15,7 @@ data "aws_subnet_ids" "public_subnets" {
     Subnet_type = "public"
   }
 }
+
+data "aws_route53_zone" "relops_mozops_net" {
+  name = "relops.mozops.net."
+}

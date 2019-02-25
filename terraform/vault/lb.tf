@@ -62,20 +62,14 @@ resource "aws_lb_target_group" "vault_lb_target_group" {
 resource "aws_lb_listener" "vault_firont_end" {
   load_balancer_arn = "${aws_lb.vault.arn}"
   port              = "8200"
-  protocol          = "HTTP"
-
-  # TODO: Change listener to HTTPS
-  #  ssl_policy        = "ELBSecurityPolicy-2016-08"
-  #  certificate_arn   = "arn:aws:iam::187416307283:server-certificate/test_cert_rab3wuqwgja25ct3n4jdj2tzu4"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = "${aws_acm_certificate_validation.cert.certificate_arn}"
 
   default_action {
     type             = "forward"
     target_group_arn = "${aws_lb_target_group.vault_lb_target_group.arn}"
   }
-}
-
-data "aws_route53_zone" "relops_mozops_net" {
-  name = "relops.mozops.net."
 }
 
 resource "aws_route53_record" "vault" {
