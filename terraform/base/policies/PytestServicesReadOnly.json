@@ -1,0 +1,52 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PytestServicesReadOnly",
+      "Action": [
+        "autoscaling:DescribeLaunchConfigurations",
+        "cloudtrail:DescribeTrails",
+        "ec2:DescribeFlowLogs",
+        "ec2:DescribeInstances",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeVolumes",
+        "ec2:DescribeVpcs",
+        "elasticache:DescribeCacheClusters",
+        "elasticloadbalancing:DescribeLoadBalancers",
+        "es:DescribeElasticsearchDomains",
+        "es:ListDomainNames",
+        "iam:GenerateCredentialReport",
+        "iam:GetCredentialReport",
+        "iam:GetLoginProfile",
+        "iam:ListAccessKeys",
+        "iam:ListAttachedGroupPolicies",
+        "iam:ListAttachedRolePolicies",
+        "iam:ListAttachedUserPolicies",
+        "iam:ListGroupPolicies",
+        "iam:ListGroupsForUser",
+        "iam:ListMFADevices",
+        "iam:ListRolePolicies",
+        "iam:ListRoles",
+        "iam:ListUserPolicies",
+        "iam:ListUsers",
+        "rds:DescribeDbInstances",
+        "rds:DescribeDbSecurityGroups",
+        "rds:DescribeDbSnapshotAttributes",
+        "rds:DescribeDbSnapshots",
+        "rds:ListTagsForResource",
+        "redshift:DescribeClusterSecurityGroups",
+        "redshift:DescribeClusters",
+        "s3:GetBucketAcl",
+        "s3:GetBucketCORS",
+        "s3:GetBucketLogging",
+        "s3:GetBucketPolicy",
+        "s3:GetBucketVersioning",
+        "s3:GetBucketWebsite",
+        "s3:ListAllMyBuckets",
+        "s3:ListBucket"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
