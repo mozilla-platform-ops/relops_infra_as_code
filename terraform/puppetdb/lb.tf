@@ -59,17 +59,27 @@ resource "aws_lb_target_group" "lb_target_group" {
   }
 }
 
-resource "aws_lb_listener" "firont_end" {
+resource "aws_lb_listener" "front_end" {
   load_balancer_arn = "${aws_lb.lb.arn}"
   port              = "8080"
-  protocol          = "HTTP"
-
-  # TODO: Change listener to HTTPS
-  #  ssl_policy        = "ELBSecurityPolicy-2016-08"
-  #  certificate_arn   = "arn:aws:iam::187416307283:server-certificate/test_cert_rab3wuqwgja25ct3n4jdj2tzu4"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = "${aws_acm_certificate_validation.cert.certificate_arn}"
 
   default_action {
     type             = "forward"
     target_group_arn = "${aws_lb_target_group.lb_target_group.arn}"
+  }
+}
+
+resource "aws_route53_record" "puppetdb" {
+  zone_id = "${data.aws_route53_zone.relops_mozops_net.zone_id}"
+  name    = "puppetdb.relops.mozops.net"
+  type    = "A"
+
+  alias {
+    name                   = "${aws_lb.lb.dns_name}"
+    zone_id                = "${aws_lb.lb.zone_id}"
+    evaluate_target_health = true
   }
 }
