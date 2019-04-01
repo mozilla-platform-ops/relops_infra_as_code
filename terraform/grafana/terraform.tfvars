@@ -2,7 +2,7 @@ tag_project_name = "grafana"
 
 app_count = 1
 
-app_image = "grafana/grafana:6.0.0"
+app_image = "grafana/grafana:6.0.2"
 
 fargate_cpu = 512
 
