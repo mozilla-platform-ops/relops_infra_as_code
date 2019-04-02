@@ -21,13 +21,13 @@ URLS = [
     "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-perf-g5",
     "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-batt-g5",
     "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-ap-test-g5",
-    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-batt-p2"
-    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-perf-p2"
-    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-unit-p2"
-    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-batt-g5"
-    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-perf-g5"
-    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-unit-g5"
-    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-test-g5"
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-batt-p2",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-perf-p2",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-unit-p2",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-batt-g5",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-perf-g5",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-unit-g5",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-test-g5",
 ]
 
 
