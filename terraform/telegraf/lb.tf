@@ -44,18 +44,18 @@ resource "aws_security_group" "lb_sg" {
 
 resource "aws_lb_target_group" "lb_target_group" {
   name        = "telegraf-lb-tg"
-  port        = 8086
+  port        = "${var.app_port}"
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = "${data.aws_vpcs.moz_internal_us_west_2.ids[0]}"
 
   health_check {
-    path                = "/api/health"
-    port                = 8086
+    path                = "/ping"
+    port                = "${var.app_port}"
     healthy_threshold   = 3
     unhealthy_threshold = 3
-    interval            = 30
-    matcher             = "200"
+    interval            = 60
+    matcher             = "200-399"
   }
 }
 
