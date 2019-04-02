@@ -59,8 +59,12 @@ resource "aws_ecs_task_definition" "app" {
     "memory": ${var.fargate_memory},
     "name": "telegraf",
     "environment" : [
-      { "name" : "INFLUXDB_HOST", "value" : "host" },
-      { "name" : "INFLUXDB_USER", "value" : "relops" }
+      { "name" : "INFLUXDB_URL", "value" : "${var.influxdb_url}" },
+      { "name" : "INFLUXDB_USER", "value" : "${var.influxdb_user}" },
+      { "name" : "INFLUXDB_DB", "value" : "${var.influxdb_db}" },
+      { "name" : "INTERVAL", "value" : "${var.interval}" },
+      { "name" : "MEDIUM_INTERVAL", "value" : "${var.medium_interval}" },
+      { "name" : "LONG_INTERVAL", "value" : "${var.long_interval}" }
     ],
     "secrets": [
         {
@@ -74,7 +78,15 @@ resource "aws_ecs_task_definition" "app" {
         "containerPort": ${var.app_port},
         "hostPort": ${var.app_port}
       }
-    ]
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${aws_cloudwatch_log_group.telegraf.name}",
+        "awslogs-region": "us-west-2",
+        "awslogs-stream-prefix": "telegraf"
+      }
+    }
   }
 ]
 DEFINITION
