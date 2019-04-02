@@ -41,3 +41,32 @@ resource "aws_iam_role_policy_attachment" "attach_secrets_policy" {
   role       = "${aws_iam_role.ecs-task-exec-role.name}"
   policy_arn = "${aws_iam_policy.secrets_read_policy.arn}"
 }
+
+resource "aws_iam_policy" "ecr_policy" {
+  name        = "telegraf-ECRAllow"
+  description = "Allow telegraf to read from ecr"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecr:*",
+        "logs:*"
+      ],
+      "Resource": [
+        "arn:aws:ecr:us-west-2:961225894672:repository/*",
+        "arn:aws:logs:::*"
+      ]
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "attach_ecr_policy" {
+  role       = "${aws_iam_role.ecs-task-exec-role.name}"
+  policy_arn = "${aws_iam_policy.ecr_policy.arn}"
+}
