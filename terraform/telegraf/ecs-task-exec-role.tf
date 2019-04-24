@@ -57,8 +57,9 @@ resource "aws_iam_policy" "ecr_policy" {
         "logs:*"
       ],
       "Resource": [
-        "arn:aws:ecr:us-west-2:961225894672:repository/*",
-        "arn:aws:logs:::*"
+        "arn:aws:ecr:us-west-2:961225894672:*",
+        "*",
+        "arn:aws:logs:us-west-2::*"
       ]
     }
   ]

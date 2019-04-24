@@ -50,6 +50,7 @@ resource "aws_ecs_task_definition" "app" {
   execution_role_arn       = "${aws_iam_role.ecs-task-exec-role.arn}"
   cpu                      = "${var.fargate_cpu}"
   memory                   = "${var.fargate_memory}"
+  depends_on               = ["aws_iam_role.ecs-task-exec-role"]      # force recreate on change sha in definition
 
   container_definitions = <<DEFINITION
 [
@@ -59,6 +60,7 @@ resource "aws_ecs_task_definition" "app" {
     "memory": ${var.fargate_memory},
     "name": "telegraf",
     "environment" : [
+      { "name" : "policy_sha1", "value" : "${sha1(file("ecs-task-exec-role.tf"))}" },
       { "name" : "INFLUXDB_URL", "value" : "${var.influxdb_url}" },
       { "name" : "INFLUXDB_USER", "value" : "${var.influxdb_user}" },
       { "name" : "INFLUXDB_DB", "value" : "${var.influxdb_db}" },
