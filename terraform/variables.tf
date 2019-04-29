@@ -31,11 +31,3 @@ variable "repo_url" {
   description = "A link to this github repo"
   default     = "https://github.com/mozilla-platform-ops/relops_cloud"
 }
-
-variable "ssh_user" {
-  description = "Initial user to add to instance."
-}
-
-variable "ssh_key" {
-  description = "Initial ssh key to add for new instances."
-}
