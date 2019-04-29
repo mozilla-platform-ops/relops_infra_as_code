@@ -17,3 +17,9 @@ provider "aws" {
   alias               = "us-west-2"
   region              = "us-west-2"
 }
+
+provider "google" {
+  project = "bitbar-devicepool"
+  region  = "us-west1"
+  zone    = "us-west1-b"
+}
