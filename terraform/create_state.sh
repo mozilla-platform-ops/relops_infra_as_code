@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# TODO: provide warning when `tf apply`ing in base, that user should exit if it's going to delete anything
+set -e
+#set -x
+
 # TODO: provide user with a `tf apply -target` command that will avoid the risk of deletions
+# TODO: create terraform.tfvars with the module name set?
 
 function usage ()
 {
@@ -71,7 +74,19 @@ resource "aws_dynamodb_table" "tf_state_lock_${STATE_NAME}" {
 }
 EOF
 
-echo "Please run 'terraform apply' in base to create state lock dynamodb"
-echo "Then run 'terraform init' and 'terraform apply' in ${STATE_NAME} to initialize the environment"
+echo "\
+-------------------------------------------------------------------------------
+Success! Please run the following:
+
+## to create the state lock dyanmodb
+cd base
+# for the apply below, if there are any deletions, exit and mention in #specops
+terraform apply
+
+## initialize the environment for your new module
+cd ../${STATE_NAME}
+terraform init
+terraform apply
+-------------------------------------------------------------------------------"
 
 exit 0
