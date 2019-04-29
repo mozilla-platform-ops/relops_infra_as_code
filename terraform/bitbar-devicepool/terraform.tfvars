@@ -8,3 +8,4 @@ ssh_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCVIzgS4A6o6HZ5QoQvYbRz2Ztwdu1sa
 // ssh_user1 = ""
 // ssh_key1 = ""
 
+host_count = "3"

@@ -1,5 +1,5 @@
 resource "google_compute_instance" "vm_instance" {
-  count = 1
+  count = "${var.host_count}"
 
   name         = "bitbar-devicepool-${count.index}"
   machine_type = "f1-micro"
