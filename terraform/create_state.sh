@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# TODO: provide warning when `tf apply`ing in base, that user should exit if it's going to delete anything
+# TODO: provide user with a `tf apply -target` command that will avoid the risk of deletions
+
 function usage ()
 {
     echo Usage:
