@@ -49,3 +49,13 @@ resource "google_compute_address" "ip_address" {
   count = "${var.host_count}"
   name  = "devicepool-ip-${count.index}"
 }
+
+resource "aws_route53_record" "devicepool" {
+  count = "${var.host_count}"
+
+  zone_id = "${data.aws_route53_zone.relops_mozops_net.zone_id}"
+  name    = "devicepool-${count.index}.relops.mozops.net"
+  type    = "A"
+  ttl     = "3600"
+  records = ["${element(google_compute_address.ip_address.*.address, count.index)}"]
+}
