@@ -17,8 +17,11 @@ resource "google_compute_instance" "vm_instance" {
 
   network_interface {
     # A default network is created for all GCP projects
-    network       = "${google_compute_network.bitbar-net.name}"
-    access_config = {}
+    network = "${google_compute_network.bitbar-net.name}"
+
+    access_config {
+      nat_ip = "${element(google_compute_address.ip_address.*.address, count.index)}"
+    }
   }
 }
 
@@ -40,4 +43,9 @@ resource "google_compute_firewall" "devicepool-firewall" {
 
 resource "google_compute_network" "bitbar-net" {
   name = "bitbar-net"
+}
+
+resource "google_compute_address" "ip_address" {
+  count = "${var.host_count}"
+  name  = "devicepool-ip-${count.index}"
 }
