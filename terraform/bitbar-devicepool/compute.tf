@@ -38,7 +38,8 @@ resource "google_compute_firewall" "devicepool-firewall" {
     ports    = ["22"]
   }
 
-  source_ranges = ["0.0.0.0/0"]
+  // restricted to vpn
+  source_ranges = ["${data.terraform_remote_state.base.mozilla_vpn_netblocks}"]
 }
 
 resource "google_compute_network" "bitbar-net" {

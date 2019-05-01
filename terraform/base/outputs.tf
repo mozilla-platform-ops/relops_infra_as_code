@@ -18,3 +18,13 @@ output "us_west_2_public_subnets" {
   description = "List of IDs of us-west-2 public subnets"
   value       = ["${module.vpc_moz_internal_us_west_2.public_subnets}"]
 }
+
+output "mozilla_vpn_netblocks" {
+  description = "List of Mozilla corporate VPN netblocks"
+
+  value = ["63.245.208.132/32",
+    "63.245.208.133/32",
+    "63.245.210.132/32",
+    "63.245.210.133/32",
+  ]
+}
