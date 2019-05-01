@@ -19,6 +19,7 @@ output "us_west_2_public_subnets" {
   value       = ["${module.vpc_moz_internal_us_west_2.public_subnets}"]
 }
 
+// see https://mana.mozilla.org/wiki/display/IT/Mozilla+VPN#MozillaVPN-RelevantIPs
 output "mozilla_vpn_netblocks" {
   description = "List of Mozilla corporate VPN netblocks"
 
@@ -26,5 +27,6 @@ output "mozilla_vpn_netblocks" {
     "63.245.208.133/32",
     "63.245.210.132/32",
     "63.245.210.133/32",
+    "185.155.182.210/32",
   ]
 }
