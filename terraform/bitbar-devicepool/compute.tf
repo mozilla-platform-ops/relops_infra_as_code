@@ -2,7 +2,7 @@ resource "google_compute_instance" "vm_instance" {
   count = "${var.host_count}"
 
   name         = "bitbar-devicepool-${count.index}"
-  machine_type = "f1-micro"
+  machine_type = "n1-standard-2"
 
   metadata {
     // can take multiple, just separate with "\n"
