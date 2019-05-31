@@ -12,7 +12,7 @@ resource "google_compute_instance" "vm_instance" {
   boot_disk {
     initialize_params {
       image = "ubuntu-1804-lts"
-      sie   = "25"
+      size  = "25"
     }
   }
 
