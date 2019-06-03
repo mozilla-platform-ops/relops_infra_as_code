@@ -1,8 +1,15 @@
+resource "google_compute_disk" "vm_disk" {
+  name  = "bitbar-devicepool-disk-${count.index}"
+  count = "${var.host_count}"
+  size  = "25"
+  image = "ubuntu-1804-lts"
+}
+
 resource "google_compute_instance" "vm_instance" {
   count = "${var.host_count}"
 
   name         = "bitbar-devicepool-${count.index}"
-  machine_type = "f1-micro"
+  machine_type = "n1-standard-2"
 
   metadata {
     // can take multiple, just separate with "\n"
@@ -10,9 +17,8 @@ resource "google_compute_instance" "vm_instance" {
   }
 
   boot_disk {
-    initialize_params {
-      image = "ubuntu-1804-lts"
-    }
+    auto_delete = false
+    source      = "${element(google_compute_disk.vm_disk.*.self_link, count.index)}"
   }
 
   network_interface {
