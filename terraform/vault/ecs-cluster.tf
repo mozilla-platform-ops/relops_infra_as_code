@@ -45,7 +45,7 @@ resource "aws_security_group" "ec2_vault_instance_sg" {
 }
 
 resource "aws_launch_configuration" "ecs-launch-configuration" {
-  name                 = "ecs-vault-launch-configuration"
+  name_prefix          = "ecs-vault-launch-configuration-"
   image_id             = "${var.ecs_ami}"
   instance_type        = "${var.instance_type}"
   iam_instance_profile = "${aws_iam_instance_profile.ecs-instance-profile.id}"
@@ -71,4 +71,5 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
   vpc_zone_identifier  = ["${data.aws_subnet_ids.public_subnets.ids}"]
   launch_configuration = "${aws_launch_configuration.ecs-launch-configuration.name}"
   health_check_type    = "EC2"
+  termination_policies = ["OldestInstance"]
 }
