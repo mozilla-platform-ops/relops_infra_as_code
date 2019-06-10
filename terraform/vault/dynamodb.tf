@@ -1,9 +1,8 @@
 resource "aws_dynamodb_table" "dynamodb-table" {
-  name           = "vault"
-  read_capacity  = 1
-  write_capacity = 1
-  hash_key       = "Path"
-  range_key      = "Key"
+  name         = "vault"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "Path"
+  range_key    = "Key"
 
   attribute {
     name = "Path"
