@@ -1,8 +1,10 @@
 tag_project_name = "grafana"
 
+fqdn = "grafana.relops.mozops.net"
+
 app_count = 1
 
-app_image = "grafana/grafana:6.1.6"
+app_image = "grafana/grafana:6.2.5"
 
 fargate_cpu = 512
 
