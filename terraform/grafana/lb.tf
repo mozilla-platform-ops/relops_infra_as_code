@@ -74,7 +74,7 @@ resource "aws_lb_listener" "front_end" {
 
 resource "aws_route53_record" "grafana" {
   zone_id = "${data.aws_route53_zone.relops_mozops_net.zone_id}"
-  name    = "grafana.relops.mozops.net"
+  name    = "${var.fqdn}"
   type    = "A"
 
   alias {

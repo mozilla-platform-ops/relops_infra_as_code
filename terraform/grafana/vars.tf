@@ -1,3 +1,7 @@
+variable "fqdn" {
+  description = "Full domain name for dns, load balancer, and https://grafana.com/docs/installation/configuration/#domain"
+}
+
 variable "app_count" {
   description = "Number of application instances"
 }
