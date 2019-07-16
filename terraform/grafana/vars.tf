@@ -2,6 +2,10 @@ variable "fqdn" {
   description = "Full domain name for dns, load balancer, and https://grafana.com/docs/installation/configuration/#domain"
 }
 
+variable "root_url" {
+  description = "Path to reach Grafana at, see https://grafana.com/docs/installation/configuration/#root-url"
+}
+
 variable "app_count" {
   description = "Number of application instances"
 }
