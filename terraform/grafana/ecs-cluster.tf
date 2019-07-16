@@ -63,7 +63,7 @@ resource "aws_ecs_task_definition" "app" {
       { "name" : "GF_DATABASE_HOST", "value" : "${aws_db_instance.mysql.endpoint}" },
       { "name" : "GF_DATABASE_USER", "value" : "${var.db_username}" },
       { "name" : "GF_SERVER_DOMAIN", "value" : "${var.fqdn}" },
-      { "name" : "GF_SERVER_ROOT_URL", "value" : "${var.root_url}"
+      { "name" : "GF_SERVER_ROOT_URL", "value" : "${var.root_url}" }
     ],
     "secrets": [
         {
