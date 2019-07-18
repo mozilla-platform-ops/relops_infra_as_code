@@ -2,6 +2,8 @@ tag_project_name = "grafana"
 
 fqdn = "grafana.relops.mozops.net"
 
+root_url = "https://grafana.relops.mozops.net"
+
 app_count = 1
 
 app_image = "grafana/grafana:6.2.5"
