@@ -22,12 +22,12 @@ main() {
 
   echo -e '\n-----> Running terraform validate'
   export TF_IN_AUTOMATION=true
-  for d in $(git ls-files '*.tf' | xargs -n1 dirname | LC_ALL=C sort | grep -E -v '^\.$|^terraform$' | uniq); do
+  for d in $(git ls-files '*.tf' | xargs -n1 dirname | LC_ALL=C sort | grep -E -v '^\.$|^terraform$|^terraform/bitbar-devicepool$' | uniq); do
     echo -en "${d} "
     cd "${d}" || exit 1
     terraform init -backend=false -input=false
     terraform validate
-    cd -
+    cd - > /dev/null || exit 1
     echo "✓"
   done
 
