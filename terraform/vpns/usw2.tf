@@ -1,7 +1,7 @@
 resource "aws_vpn_gateway" "vpn_gw_usw2" {
   provider = "aws.us-west-2"
 
-  tags {
+  tags = {
     Name        = "USW1 VPN Gateway"
     Terraform   = "true"
     Repo_url    = "${var.repo_url}"
@@ -16,7 +16,7 @@ resource "aws_customer_gateway" "cgw_usw2_mdc1" {
   ip_address = "63.245.208.251"
   type       = "ipsec.1"
 
-  tags {
+  tags = {
     Name        = "MDC1 Customer Gateway"
     Terraform   = "true"
     Repo_url    = "${var.repo_url}"
@@ -31,7 +31,7 @@ resource "aws_customer_gateway" "cgw_usw2_mdc2" {
   ip_address = "63.245.210.251"
   type       = "ipsec.1"
 
-  tags {
+  tags = {
     Name        = "MDC2 Customer Gateway"
     Terraform   = "true"
     Repo_url    = "${var.repo_url}"
@@ -46,7 +46,7 @@ resource "aws_vpn_connection" "vpn_connection_usw2_mdc1" {
   customer_gateway_id = "${aws_customer_gateway.cgw_usw2_mdc1.id}"
   type                = "ipsec.1"
 
-  tags {
+  tags = {
     Name        = "USW2-MDC1"
     Terraform   = "true"
     Repo_url    = "${var.repo_url}"
@@ -61,7 +61,7 @@ resource "aws_vpn_connection" "vpn_connection_usw2_mdc2" {
   customer_gateway_id = "${aws_customer_gateway.cgw_usw2_mdc2.id}"
   type                = "ipsec.1"
 
-  tags {
+  tags = {
     Name        = "USW2-MDC2"
     Terraform   = "true"
     Repo_url    = "${var.repo_url}"
@@ -80,7 +80,7 @@ data "aws_vpcs" "moz_internal_us_west_2" {
 
 resource "aws_vpn_gateway_attachment" "vpn_attachment_usw2" {
   provider       = "aws.us-west-2"
-  vpc_id         = "${data.aws_vpcs.moz_internal_us_west_2.ids[0]}"
+  vpc_id         = join(", ", data.aws_vpcs.moz_internal_us_west_2.ids)
   vpn_gateway_id = "${aws_vpn_gateway.vpn_gw_usw2.id}"
 }
 
@@ -94,6 +94,6 @@ data "aws_route_tables" "moz_internal_us_west_2_public" {
 
 resource "aws_vpn_gateway_route_propagation" "public_usw2" {
   provider       = "aws.us-west-2"
-  route_table_id = "${data.aws_route_tables.moz_internal_us_west_2_public.ids[0]}"
+  route_table_id = join(", ", data.aws_route_tables.moz_internal_us_west_2_public.ids)
   vpn_gateway_id = "${aws_vpn_gateway.vpn_gw_usw2.id}"
 }
