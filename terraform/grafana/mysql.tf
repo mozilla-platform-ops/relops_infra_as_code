@@ -1,7 +1,7 @@
 resource "aws_security_group" "mysql_sg" {
   name        = "grafana-mysql-sg"
   description = "Allow inbound traffic into grafana mysql"
-  vpc_id      = "${data.aws_vpcs.moz_internal_us_west_2.ids[0]}"
+  vpc_id      = join(", ", data.aws_vpcs.moz_internal_us_west_2.ids)
 
   ingress {
     from_port       = 3306
@@ -27,7 +27,7 @@ resource "aws_security_group" "mysql_sg" {
 
 resource "aws_db_subnet_group" "mysql" {
   name       = "grafana"
-  subnet_ids = ["${data.aws_subnet_ids.public_subnets.ids}"]
+  subnet_ids = data.aws_subnet_ids.public_subnets.ids
 
   tags = {
     Name        = "grafana rds subnet group"

@@ -3,7 +3,7 @@ resource "aws_lb" "lb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = ["${aws_security_group.lb_sg.id}"]
-  subnets            = ["${data.aws_subnet_ids.public_subnets.ids}"]
+  subnets            = data.aws_subnet_ids.public_subnets.ids
 
   enable_deletion_protection = false
 }
@@ -11,7 +11,7 @@ resource "aws_lb" "lb" {
 resource "aws_security_group" "lb_sg" {
   name        = "grafana-lb-sg"
   description = "Allow grafana traffic into load balancer"
-  vpc_id      = "${data.aws_vpcs.moz_internal_us_west_2.ids[0]}"
+  vpc_id      = join(", ", data.aws_vpcs.moz_internal_us_west_2.ids)
 
   ingress {
     from_port   = -1
@@ -47,7 +47,7 @@ resource "aws_lb_target_group" "lb_target_group" {
   port        = 3000
   protocol    = "HTTP"
   target_type = "ip"
-  vpc_id      = "${data.aws_vpcs.moz_internal_us_west_2.ids[0]}"
+  vpc_id      = join(", ", data.aws_vpcs.moz_internal_us_west_2.ids)
 
   health_check {
     path                = "/api/health"
