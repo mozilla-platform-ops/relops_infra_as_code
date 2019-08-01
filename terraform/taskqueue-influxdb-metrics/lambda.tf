@@ -49,7 +49,7 @@ resource "aws_lambda_function" "bitbar_influx_logger" {
   function_name    = "bitbar_influx_logger"
   role             = "${aws_iam_role.iam_for_lambda.arn}"
   handler          = "function.lambda_handler"
-  source_code_hash = "${base64sha256(file("function.zip"))}"
+  source_code_hash = filebase64sha256("function.zip")
   runtime          = "python3.6"
   timeout          = 60
 }
@@ -60,5 +60,5 @@ resource "aws_lambda_permission" "allow_cloudwatch" {
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.bitbar_influx_logger.function_name}"
   principal     = "events.amazonaws.com"
-  source_arn    = "${aws_cloudwatch_event_rule.1m.arn}"
+  source_arn    = "${aws_cloudwatch_event_rule.tick_1m.arn}"
 }
