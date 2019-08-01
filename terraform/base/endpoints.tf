@@ -7,7 +7,7 @@ resource "aws_vpc_endpoint" "kms" {
     "${aws_security_group.kms_sg.id}",
   ]
 
-  subnet_ids = ["${module.vpc_moz_internal_us_west_2.public_subnets}"]
+  subnet_ids = module.vpc_moz_internal_us_west_2.public_subnets
 
   private_dns_enabled = true
 }

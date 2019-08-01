@@ -5,7 +5,7 @@ data "aws_route53_zone" "relops_mozops_net" {
 data "terraform_remote_state" "base" {
   backend = "s3"
 
-  config {
+  config = {
     bucket         = "relops-tf-states"
     key            = "base.tfstate"
     dynamodb_table = "tf_state_lock_base"

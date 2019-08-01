@@ -11,7 +11,7 @@ resource "google_compute_instance" "vm_instance" {
   name         = "bitbar-devicepool-${count.index}"
   machine_type = "n1-standard-2"
 
-  metadata {
+  metadata = {
     // can take multiple, just separate with "\n"
     sshKeys = "${var.ssh_user}:${var.ssh_key}"
   }
@@ -45,7 +45,7 @@ resource "google_compute_firewall" "devicepool-firewall" {
   }
 
   // restricted to vpn
-  source_ranges = ["${data.terraform_remote_state.base.mozilla_vpn_netblocks}"]
+  source_ranges = data.terraform_remote_state.base.outputs.mozilla_vpn_netblocks
 }
 
 resource "google_compute_network" "bitbar-net" {

@@ -1,7 +1,7 @@
 resource "aws_security_group" "ecs_vault_public_sg" {
   name        = "ecs_vault"
   description = "Allow vault ecs inbound traffic"
-  vpc_id      = "${data.aws_vpcs.moz_internal_us_west_2.ids[0]}"
+  vpc_id      = join(", ", data.aws_vpcs.moz_internal_us_west_2.ids)
 
   ingress {
     from_port   = -1
@@ -47,7 +47,7 @@ resource "aws_ecs_service" "vault" {
   deployment_minimum_healthy_percent = 50
 
   network_configuration {
-    subnets         = ["${data.aws_subnet_ids.public_subnets.ids}"]
+    subnets         = data.aws_subnet_ids.public_subnets.ids
     security_groups = ["${aws_security_group.ecs_vault_public_sg.id}"]
   }
 

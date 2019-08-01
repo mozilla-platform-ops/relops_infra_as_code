@@ -37,6 +37,6 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "attach_secrets_policy" {
-  role       = "${aws_iam_role.ecs-task-exec-role.name}"
+  role = "${aws_iam_role.ecs-task-exec-role.name}"
   policy_arn = "${aws_iam_policy.secrets_read_policy.arn}"
 }

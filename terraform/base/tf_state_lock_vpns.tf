@@ -9,7 +9,7 @@ resource "aws_dynamodb_table" "tf_state_lock_vpns" {
     type = "S"
   }
 
-  tags {
+  tags = {
     Name        = "vpns Terraform State Lock Table"
     Terraform   = "true"
     Repo_url    = "${var.repo_url}"
