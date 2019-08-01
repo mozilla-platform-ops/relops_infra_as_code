@@ -12,7 +12,7 @@ resource "aws_ecs_cluster" "main" {
 resource "aws_security_group" "ecs_public_sg" {
   name        = "ecs_telegraf"
   description = "Allow telegraf ecs inbound traffic"
-  vpc_id      = "${data.aws_vpcs.moz_internal_us_west_2.ids[0]}"
+  vpc_id      = join(", ", data.aws_vpcs.moz_internal_us_west_2.ids)
 
   ingress {
     from_port   = -1
@@ -50,7 +50,7 @@ resource "aws_ecs_task_definition" "app" {
   execution_role_arn       = "${aws_iam_role.ecs-task-exec-role.arn}"
   cpu                      = "${var.fargate_cpu}"
   memory                   = "${var.fargate_memory}"
-  depends_on               = ["aws_iam_role.ecs-task-exec-role"]      # force recreate on change sha in definition
+  depends_on               = ["aws_iam_role.ecs-task-exec-role"] # force recreate on change sha in definition
 
   container_definitions = <<DEFINITION
 [
@@ -95,22 +95,22 @@ DEFINITION
 }
 
 resource "aws_ecs_service" "main" {
-  name            = "telegraf"
-  cluster         = "${aws_ecs_cluster.main.id}"
+  name = "telegraf"
+  cluster = "${aws_ecs_cluster.main.id}"
   task_definition = "${aws_ecs_task_definition.app.arn}"
-  desired_count   = "${var.app_count}"
-  launch_type     = "FARGATE"
+  desired_count = "${var.app_count}"
+  launch_type = "FARGATE"
 
   network_configuration {
-    subnets          = ["${data.aws_subnet_ids.public_subnets.ids}"]
-    security_groups  = ["${aws_security_group.ecs_public_sg.id}"]
+    subnets = data.aws_subnet_ids.public_subnets.ids
+    security_groups = ["${aws_security_group.ecs_public_sg.id}"]
     assign_public_ip = true
   }
 
   load_balancer {
     target_group_arn = "${aws_lb_target_group.lb_target_group.arn}"
-    container_name   = "telegraf"
-    container_port   = 8086
+    container_name = "telegraf"
+    container_port = 8086
   }
 
   depends_on = ["aws_lb_listener.front_end", "aws_ecs_task_definition.app"]
