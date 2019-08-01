@@ -7,7 +7,7 @@ resource "aws_cloudtrail" "cloudtrail" {
   include_global_service_events = true
   is_multi_region_trail         = true
 
-  tags {
+  tags = {
     Name = "cloudtrail-to-foxsec"
     bug  = "1531162"
   }

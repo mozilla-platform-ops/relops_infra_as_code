@@ -9,7 +9,7 @@ resource "aws_dynamodb_table" "tf_state_lock_telegraf" {
     type = "S"
   }
 
-  tags {
+  tags = {
     Name        = "telegraf Terraform State Lock Table"
     Terraform   = "true"
     Repo_url    = "${var.repo_url}"

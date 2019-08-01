@@ -9,7 +9,7 @@ resource "aws_dynamodb_table" "tf_state_lock_bitbar-devicepool" {
     type = "S"
   }
 
-  tags {
+  tags = {
     Name        = "bitbar-devicepool Terraform State Lock Table"
     Terraform   = "true"
     Repo_url    = "${var.repo_url}"
