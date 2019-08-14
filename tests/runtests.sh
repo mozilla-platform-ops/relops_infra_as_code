@@ -23,6 +23,7 @@ main() {
 
   echo -e '\n-----> Running terraform validate'
   # setup
+  pwd
   ../terraform/taskqueue-influxdb-metrics/create_zip.sh
   export TF_IN_AUTOMATION=true
   # test
