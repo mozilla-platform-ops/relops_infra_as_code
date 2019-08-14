@@ -27,6 +27,13 @@ resource "aws_security_group" "lb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port   = "80"
+    to_port     = "80"
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -59,6 +66,14 @@ resource "aws_lb_target_group" "lb_target_group" {
   }
 }
 
+resource "aws_lb_target_group" "lb_target_group2" {
+  name        = "telegraf-lb-tg2"
+  port        = "${var.webhook_port}"
+  protocol    = "HTTPS"
+  target_type = "ip"
+  vpc_id      = join(", ", data.aws_vpcs.moz_internal_us_west_2.ids)
+}
+
 resource "aws_lb_listener" "front_end" {
   load_balancer_arn = "${aws_lb.lb.arn}"
   port              = "443"
@@ -69,6 +84,19 @@ resource "aws_lb_listener" "front_end" {
   default_action {
     type             = "forward"
     target_group_arn = "${aws_lb_target_group.lb_target_group.arn}"
+  }
+}
+
+resource "aws_lb_listener" "front_end2" {
+  load_balancer_arn = "${aws_lb.lb.arn}"
+  port              = "80"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = "${aws_acm_certificate_validation.cert.certificate_arn}"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.lb_target_group2.arn}"
   }
 }
 

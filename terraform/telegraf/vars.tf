@@ -18,6 +18,10 @@ variable "app_port" {
   description = "Port number of application"
 }
 
+variable "webhook_port" {
+  description = "Port number of application webhook handler"
+}
+
 variable "influxdb_url" {
   description = "InfluxDB host url"
   default     = "http://influxdb:8086"
