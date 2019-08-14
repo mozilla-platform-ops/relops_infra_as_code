@@ -28,8 +28,8 @@ resource "aws_security_group" "lb_sg" {
   }
 
   ingress {
-    from_port   = "80"
-    to_port     = "80"
+    from_port   = "${var.webhook_port}"
+    to_port     = "${var.webhook_port}"
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -89,7 +89,7 @@ resource "aws_lb_listener" "front_end" {
 
 resource "aws_lb_listener" "front_end2" {
   load_balancer_arn = "${aws_lb.lb.arn}"
-  port              = "80"
+  port              = "${var.webhook_port}"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
   certificate_arn   = "${aws_acm_certificate_validation.cert.certificate_arn}"
