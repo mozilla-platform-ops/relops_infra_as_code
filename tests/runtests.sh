@@ -22,7 +22,7 @@ main() {
 
   echo -e '\n-----> Running terraform validate'
   # setup
-  ./terraform/taskqueue-influxdb-metrics/create_zip.sh
+  ./terraform/taskqueue-influxdb-metrics/create_zip.sh >/dev/null 2>&1
   export TF_IN_AUTOMATION=true
   # test
   for d in $(git ls-files '*.tf' | xargs -n1 dirname | LC_ALL=C sort | grep -E -v '^\.$|^terraform$|^terraform/bitbar-devicepool$' | uniq); do
