@@ -2,10 +2,13 @@
 
 author: aerickson
 
-## converging
+Logs Bitbar/Android-HW queue counts to influx.
 
-- create lambda zip file
-  - not checked in to save space
-  - `./create_zip.sh`
-- terraform apply
-  - `terraform apply`
+## applying
+
+```bash
+# function.zip is not checked in to save space.
+./create_zip.sh
+export GOOGLE_CLOUD_KEYFILE_JSON=~/.gcp_credentials/BLAH
+terraform apply
+```
