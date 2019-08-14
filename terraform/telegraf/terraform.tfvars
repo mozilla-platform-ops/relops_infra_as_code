@@ -12,7 +12,7 @@ app_port = 8086
 
 webhook_port = 1619
 
-influxdb_url = "http://34.216.9.122:8086"
+influxdb_url = "http://34.214.39.141:8086"
 
 influxdb_db = "relops"
 
