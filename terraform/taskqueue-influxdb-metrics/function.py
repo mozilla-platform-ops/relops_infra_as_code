@@ -28,6 +28,9 @@ URLS = [
     "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-perf-g5",
     "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-unit-g5",
     "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-test-g5",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-test-1",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-test-2",
+    "https://queue.taskcluster.net/v1/pending/proj-autophone/gecko-t-bitbar-gw-test-3",
 ]
 
 
