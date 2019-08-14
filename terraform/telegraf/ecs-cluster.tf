@@ -28,6 +28,13 @@ resource "aws_security_group" "ecs_public_sg" {
     security_groups = ["${aws_security_group.lb_sg.id}"]
   }
 
+  ingress {
+    from_port       = "${var.webhook_port}"
+    to_port         = "${var.webhook_port}"
+    protocol        = "tcp"
+    security_groups = ["${aws_security_group.lb_sg.id}"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -79,6 +86,10 @@ resource "aws_ecs_task_definition" "app" {
       {
         "containerPort": ${var.app_port},
         "hostPort": ${var.app_port}
+      },
+      {
+        "containerPort": ${var.webhook_port},
+        "hostPort": ${var.webhook_port}
       }
     ],
     "logConfiguration": {
