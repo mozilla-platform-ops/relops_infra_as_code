@@ -3,6 +3,9 @@
 set -e
 set -x
 
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
+cd "$SCRIPTPATH"
+
 rm -rf package
 mkdir package
 cd package || exit 1
