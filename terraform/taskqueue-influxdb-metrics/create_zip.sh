@@ -4,7 +4,7 @@ set -e
 set -x
 
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
-cd "$SCRIPTPATH"
+cd "$SCRIPTPATH" || exit 1
 
 rm -rf package
 mkdir package
