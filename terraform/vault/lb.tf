@@ -17,7 +17,7 @@ resource "aws_security_group" "vault_lb_sg" {
     from_port   = 8200
     to_port     = 8200
     protocol    = "tcp"
-    cidr_blocks = ["10.49.0.0/16", "10.51.0.0/16"]
+    cidr_blocks = ["10.49.0.0/16", "10.51.0.0/16", "10.10.10.0/24"]
   }
 
   tags = {
