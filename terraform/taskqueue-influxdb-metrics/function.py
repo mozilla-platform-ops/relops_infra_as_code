@@ -80,6 +80,15 @@ def main():
         ssl = True
         ssl_verify = True
 
+    insert_commands = []
+    for url in URLS:
+        if TESTING:
+            print("fetching url '%s'..." % url)
+        json_result = get_url(url)
+        insert_commands.append(gen_influx_log_line(json_result))
+    if TESTING:
+        print(insert_commands)
+
     client = InfluxDBClient(
         host=host,
         port=port,
@@ -89,11 +98,6 @@ def main():
         ssl=ssl,
         verify_ssl=ssl_verify,
     )
-
-    insert_commands = []
-    for url in URLS:
-        json_result = get_url(url)
-        insert_commands.append(gen_influx_log_line(json_result))
 
     client.write(insert_commands, {"db": database}, protocol="line")
 
