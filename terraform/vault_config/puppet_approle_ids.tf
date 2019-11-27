@@ -23,6 +23,8 @@ resource "vault_approle_auth_backend_role" "approle_puppet_roles" {
   role_name             = each.value
   secret_id_bound_cidrs = ["10.49.0.0/16", "10.51.0.0/16"]
   token_bound_cidrs     = ["10.49.56.0/22", "10.51.56.0/22"]
+  token_ttl             = 3600  # 6 hours
+  token_max_ttl         = 86400 # 24 hours
   token_policies        = ["puppet_role_${each.value}"]
 }
 
