@@ -1,7 +1,7 @@
 provider "aws" {
   version             = "~> 2.0"
   allowed_account_ids = ["961225894672"]
-  region              = "${var.region}"
+  region              = var.region
 }
 
 provider "aws" {
