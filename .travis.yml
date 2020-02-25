@@ -1,23 +1,20 @@
 sudo: false
 dist: xenial
 lang: bash
-
 install:
-  - curl -sSfL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/0.12.6/terraform_0.12.6_linux_amd64.zip"
-  - unzip /tmp/terraform.zip -d "$HOME/bin"
-  - terraform --version
-  - shellcheck --version
-
+- curl -sSfL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/0.12.6/terraform_0.12.6_linux_amd64.zip"
+- unzip /tmp/terraform.zip -d "$HOME/bin"
+- terraform --version
+- shellcheck --version
 script:
-  - ./tests/runtests.sh
-
+- "./tests/runtests.sh"
 notifications:
-  irc:
-    channels:
-      - secure: "pxpHOdiskXqu/nhFZaW5lm75su/jtxWsuMDlZSSy5xDf3FYCTnu9WwMVX5eAsJSjKtFYXHw0EhrHIJ1kUD5yb56fUd+j2Pae5pVRnTpf3Hw3d+hhjZXvpnCec0eUQ61EU8R/5cbJsJqEcnP4RPczoMUVPK67ZHTX2Bi2slb3hmzwkpn9TAcGvnxi0W4m9oQ7EJGBG4nt23jAu5axMFmcxgrNpscUBJ9iajmIHu4Nq+FXNxPQ18VvIYlPWPIY5Xcvu9j9GD/eXihG06D4bfnS6SYX8tdfQg08rIfahONe5VfShfORW1tNjAPPbI6FjROdpcNpi+l/usdSneu6TXdTvUhf7WtcB3l23UzTn44xKojPQxu3xqWQamksv4ftMZ5OrdazbJ1c6BOZ1L/pxgY10N2fQlNoOQH/JZ0HuMeEMnPJdv61Q/wQisjWZHdRNc4AGpF1M1WiHmNDsXJW5p+FEpbJq9JELCsPScE/nv9Wsdmox+V05VKJ/VxOnW8MoSwTGh1PwDaQ/l4sh6QstBdqYoCd8fP0J7YN6h6+tCg9xRc3xf32fGZvdCBhlyEbgN1EPtbvXO4jgIkRiWISmWBlzHrAhd4iFvo6ayCmAQ89pO2UOUpYCC8fV9Ra9oj4uuzHj4UAL8MVHfJ7v9hXG8JY5nZ0Aj5Q2Shie81aKMsc+us="
+  slack:
+    secure: jSoja2YYoVU9Us2LvKGFNGmmYYMPi48uKZvQjhR/gJ2eQaz5tfccQwERhWe0B7NCmGwST1RrQBD1GpSKlDTYGpMC1wmFCkBvR0qJipcAG5h0tjh70p+p2NKWBnOZZHr1ARSkmeEX79/TDYB0UMiNTo5OIJ//SF2sKXkth7A+CuYj7ZGEg2IqBKiTzzd8TYqFSqkeRx3JI+jgPz+WgVN1I86EfaAn0nQWeQjeAuQwbMIgyuRfQtVpCIxgY3vljl8fXMeFFwmxU5Yz9+Uf5oN1eX5ZEyqMKtDhBDaP2V93PuaIghp19XDgxGKRU+KLSYNmDv0cMDLC1uWG8YqLa0VlzbKE28WfUNbWo6NkMTjCMDEZBRTn124LU3T2X6+2m/Hcd8NmVJ1ga/M2qVNVe9c2f0/lTvikhy21HMCFJSNjdQomtdWq9dMA3/9uLXbnWKsw+kJeengWtmmVP1qpaNzy4EJi1dCoEuW1VtavNGKmikxo6EE/N6fT2bsGBIfUH+i86I17+VuJo1HcHjh2rgZNvEF2ibp0NZLvBAV9mAXvODIWtBd0ltRspWmnA2SHvzpJwRv9AofbVQmVdr1bHjFj4+EItEroRu192NFq4sWiSX1trzPTB0ZwAh5CHQ6Q/8a3TmWIaQo7Nr5yDAfXs3pK++zrk2wxZsVf1NvIuI1zFVw=
     on_success: always
     on_failure: always
     template:
-    - "\x02%{repository_slug}\x0314 #%{build_number}\x03\x02 (%{branch} - %{commit}: %{author}): \x02\x0312%{message}"
+    - "\x02%{repository_slug}\x0314 #%{build_number}\x03\x02 (%{branch} - %{commit}:
+      %{author}): \x02\x0312%{message}"
     - "\x02\x03Change view   : \x0314%{compare_url}"
     - "\x02\x03Build details : \x0314%{build_url}"
