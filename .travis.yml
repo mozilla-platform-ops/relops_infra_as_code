@@ -1,19 +1,26 @@
+---
 sudo: false
 dist: xenial
 lang: bash
+
+# safelist - we only build on this list
+branches:
+  only:
+    - master
+
 install:
-- curl -sSfL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/0.12.6/terraform_0.12.6_linux_amd64.zip"
-- unzip /tmp/terraform.zip -d "$HOME/bin"
-- terraform --version
-- shellcheck --version
+  - curl -sSfL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/0.12.6/terraform_0.12.6_linux_amd64.zip"
+  - unzip /tmp/terraform.zip -d "$HOME/bin"
+  - terraform --version
+  - shellcheck --version
 script:
-- "./tests/runtests.sh"
+  - "./tests/runtests.sh"
 notifications:
   slack:
     secure: jSoja2YYoVU9Us2LvKGFNGmmYYMPi48uKZvQjhR/gJ2eQaz5tfccQwERhWe0B7NCmGwST1RrQBD1GpSKlDTYGpMC1wmFCkBvR0qJipcAG5h0tjh70p+p2NKWBnOZZHr1ARSkmeEX79/TDYB0UMiNTo5OIJ//SF2sKXkth7A+CuYj7ZGEg2IqBKiTzzd8TYqFSqkeRx3JI+jgPz+WgVN1I86EfaAn0nQWeQjeAuQwbMIgyuRfQtVpCIxgY3vljl8fXMeFFwmxU5Yz9+Uf5oN1eX5ZEyqMKtDhBDaP2V93PuaIghp19XDgxGKRU+KLSYNmDv0cMDLC1uWG8YqLa0VlzbKE28WfUNbWo6NkMTjCMDEZBRTn124LU3T2X6+2m/Hcd8NmVJ1ga/M2qVNVe9c2f0/lTvikhy21HMCFJSNjdQomtdWq9dMA3/9uLXbnWKsw+kJeengWtmmVP1qpaNzy4EJi1dCoEuW1VtavNGKmikxo6EE/N6fT2bsGBIfUH+i86I17+VuJo1HcHjh2rgZNvEF2ibp0NZLvBAV9mAXvODIWtBd0ltRspWmnA2SHvzpJwRv9AofbVQmVdr1bHjFj4+EItEroRu192NFq4sWiSX1trzPTB0ZwAh5CHQ6Q/8a3TmWIaQo7Nr5yDAfXs3pK++zrk2wxZsVf1NvIuI1zFVw=
     on_success: always
     on_failure: always
     template:
-    - "%{repository_slug} #%{build_number} (%{branch} - %{commit} - %{author}): %{message}"
-    - "Change view   : %{compare_url}"
-    - "Build details : %{build_url}"
+      - "%{repository_slug} #%{build_number} (%{branch} - %{commit} - %{author}): %{message}"
+      - "Change view   : %{compare_url}"
+      - "Build details : %{build_url}"
