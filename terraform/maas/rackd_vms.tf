@@ -22,9 +22,10 @@ resource "vsphere_virtual_machine" "mdc1_wintest_rackd_1" {
   }
 
   disk {
-    label          = "disk0"
-    size           = 200
-    keep_on_remove = false
+    label            = "disk0"
+    size             = 200
+    keep_on_remove   = false
+    thin_provisioned = true
   }
 
   clone {
@@ -64,9 +65,10 @@ resource "vsphere_virtual_machine" "mdc2_wintest_rackd_1" {
   }
 
   disk {
-    label          = "disk0"
-    size           = 200
-    keep_on_remove = false
+    label            = "disk0"
+    size             = 200
+    keep_on_remove   = false
+    thin_provisioned = true
   }
 
   clone {
