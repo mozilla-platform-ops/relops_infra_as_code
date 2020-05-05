@@ -43,14 +43,14 @@ resource "aws_security_group" "maas_lb_sg" {
 
 resource "aws_lb_target_group" "maas_lb_target_group" {
   name        = "maas-lb-tg"
-  port        = 5240
+  port        = var.maas_ports["regional_api"]["begin"]
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = join(", ", data.aws_vpcs.moz_internal_us_west_2.ids)
 
   health_check {
     path                = "/MAAS/"
-    port                = 5240
+    port                = var.maas_ports["regional_api"]["begin"]
     healthy_threshold   = 2
     unhealthy_threshold = 10
     interval            = 60

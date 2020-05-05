@@ -43,9 +43,9 @@ resource "aws_security_group" "maas_ec2_sg" {
   }
 
   ingress {
-    from_port       = 5240
-    to_port         = 5240
-    protocol        = "tcp"
+    from_port       = var.maas_ports["regional_api"]["begin"]
+    to_port         = var.maas_ports["regional_api"]["end"]
+    protocol        = var.maas_ports["regional_api"]["proto"]
     security_groups = [aws_security_group.maas_lb_sg.id]
   }
 
