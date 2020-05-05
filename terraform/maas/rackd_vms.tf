@@ -18,7 +18,9 @@ resource "vsphere_virtual_machine" "mdc1_wintest_rackd_1" {
 
   # wintest.relng.mdc1 vlan
   network_interface {
-    network_id = data.vsphere_network.mdc1_releng_network_vlan_240.id
+    network_id     = data.vsphere_network.mdc1_releng_network_vlan_240.id
+    use_static_mac = true
+    mac_address    = "00:50:56:a1:10:6c"
   }
 
   disk {
@@ -52,7 +54,7 @@ resource "vsphere_virtual_machine" "mdc2_wintest_rackd_1" {
   annotation = "Managed by Terraform"
   num_cpus   = 2
   memory     = 4096
-  guest_id   = data.vsphere_virtual_machine.mdc1_template.guest_id
+  guest_id   = data.vsphere_virtual_machine.mdc2_template.guest_id
 
   folder         = "Relops-Terraform"
   enable_logging = true
@@ -61,7 +63,9 @@ resource "vsphere_virtual_machine" "mdc2_wintest_rackd_1" {
 
   # wintest.relng.mdc2 vlan
   network_interface {
-    network_id = data.vsphere_network.mdc2_releng_network_vlan_240.id
+    network_id     = data.vsphere_network.mdc2_releng_network_vlan_240.id
+    use_static_mac = true
+    mac_address    = "00:50:56:a2:a8:9f"
   }
 
   disk {
