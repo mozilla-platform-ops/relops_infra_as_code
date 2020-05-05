@@ -20,7 +20,7 @@ resource "vsphere_virtual_machine" "mdc1_wintest_rackd_1" {
   network_interface {
     network_id     = data.vsphere_network.mdc1_releng_network_vlan_240.id
     use_static_mac = true
-    mac_address    = "00:50:56:a1:10:6c"
+    mac_address    = var.maas_mdc1_rackd_mac_address
   }
 
   disk {
@@ -69,7 +69,7 @@ resource "vsphere_virtual_machine" "mdc2_wintest_rackd_1" {
   network_interface {
     network_id     = data.vsphere_network.mdc2_releng_network_vlan_240.id
     use_static_mac = true
-    mac_address    = "00:50:56:a2:a8:9f"
+    mac_address    = var.maas_mdc2_rackd_mac_address
   }
 
   disk {
