@@ -1,12 +1,12 @@
 provider "vsphere" {
-  version              = "~> 1.16"
+  version              = "= 1.18"
   alias                = "mdc1"
   vsphere_server       = "vc1.ops.mdc1.mozilla.com"
   allow_unverified_ssl = true
 }
 
 provider "vsphere" {
-  version              = "~> 1.16"
+  version              = "= 1.18"
   alias                = "mdc2"
   vsphere_server       = "vc1.ops.mdc2.mozilla.com"
   allow_unverified_ssl = true
@@ -189,7 +189,7 @@ data "vsphere_network" "mdc2_releng_network_vlan_256" {
   datacenter_id = "${data.vsphere_datacenter.mdc2.id}"
 }
 output "mdc2_releng_network_vlan_256" {
-  value = data.vsphere_network.mdc1_releng_network_vlan_256.id
+  value = data.vsphere_network.mdc2_releng_network_vlan_256.id
 }
 
 # tier3.releng.mdc2 vlan260
