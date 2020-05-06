@@ -85,17 +85,38 @@ data "vsphere_network" "mdc1_releng_network_vlan_240" {
 
 output "vsphere_mdc1" {
   value = {
-    "datacenter_id"                   = data.vsphere_datacenter.mdc1.id
-    "datacenter_datastore_cluster_id" = data.vsphere_datastore_cluster.mdc1_releng_datastore_cluster.id
-    "resource_pool_id"                = data.vsphere_resource_pool.mdc1_relops_terraform_resource_pool.id
+    "datacenter_id"        = data.vsphere_datacenter.mdc1.id
+    "datastore_cluster_id" = data.vsphere_datastore_cluster.mdc1_releng_datastore_cluster.id
+    "resource_pool_id"     = data.vsphere_resource_pool.mdc1_relops_terraform_resource_pool.id
     "networks" = {
-      "vlan_275_id"  = data.vsphere_network.mdc1_releng_network_vlan_275.id
-      "vlan_3001_id" = data.vsphere_network.mdc1_releng_network_vlan_3001.id
-      "vlan_278_id"  = data.vsphere_network.mdc1_releng_network_vlan_278.id
-      "vlan_248_id"  = data.vsphere_network.mdc1_releng_network_vlan_248.id
-      "vlan_256_id"  = data.vsphere_network.mdc1_releng_network_vlan_256.id
-      "vlan_260_id"  = data.vsphere_network.mdc1_releng_network_vlan_260.id
-      "vlan_240_id"  = data.vsphere_network.mdc1_releng_network_vlan_240.id
+      "vlan_275" = {
+        "id"   = data.vsphere_network.mdc1_releng_network_vlan_275.id
+        "name" = data.vsphere_network.mdc1_releng_network_vlan_275.name
+      }
+      "vlan_3001" = {
+        "id"   = data.vsphere_network.mdc1_releng_network_vlan_3001.id
+        "name" = data.vsphere_network.mdc1_releng_network_vlan_3001.name
+      }
+      "vlan_278" = {
+        "id"   = data.vsphere_network.mdc1_releng_network_vlan_278.id
+        "name" = data.vsphere_network.mdc1_releng_network_vlan_278.name
+      }
+      "vlan_246" = {
+        "id"   = data.vsphere_network.mdc1_releng_network_vlan_248.id
+        "name" = data.vsphere_network.mdc1_releng_network_vlan_248.name
+      }
+      "vlan_256" = {
+        "id"   = data.vsphere_network.mdc1_releng_network_vlan_256.id
+        "name" = data.vsphere_network.mdc1_releng_network_vlan_256.name
+      }
+      "vlan_260" = {
+        "id"   = data.vsphere_network.mdc1_releng_network_vlan_260.id
+        "name" = data.vsphere_network.mdc1_releng_network_vlan_260.name
+      }
+      "vlan_240" = {
+        "id"   = data.vsphere_network.mdc1_releng_network_vlan_240.id
+        "name" = data.vsphere_network.mdc1_releng_network_vlan_240.name
+      }
     }
   }
 }
@@ -172,18 +193,38 @@ data "vsphere_network" "mdc2_releng_network_vlan_240" {
 
 output "vsphere_mdc2" {
   value = {
-    "datacenter_id"                   = data.vsphere_datacenter.mdc2.id
-    "datacenter_datastore_cluster_id" = data.vsphere_datastore_cluster.mdc2_releng_datastore_cluster.id
-    "resource_pool_id"                = data.vsphere_resource_pool.mdc2_relops_terraform_resource_pool.id
+    "datacenter_id"        = data.vsphere_datacenter.mdc2.id
+    "datastore_cluster_id" = data.vsphere_datastore_cluster.mdc2_releng_datastore_cluster.id
+    "resource_pool_id"     = data.vsphere_resource_pool.mdc2_relops_terraform_resource_pool.id
     "networks" = {
-      "vlan_275_id"  = data.vsphere_network.mdc2_releng_network_vlan_275.id
-      "vlan_3001_id" = data.vsphere_network.mdc2_releng_network_vlan_3001.id
-      "vlan_278_id"  = data.vsphere_network.mdc2_releng_network_vlan_278.id
-      "vlan_248_id"  = data.vsphere_network.mdc2_releng_network_vlan_248.id
-      "vlan_256_id"  = data.vsphere_network.mdc2_releng_network_vlan_256.id
-      "vlan_260_id"  = data.vsphere_network.mdc2_releng_network_vlan_260.id
-      "vlan_240_id"  = data.vsphere_network.mdc2_releng_network_vlan_240.id
+      "vlan_275" = {
+        "id"   = data.vsphere_network.mdc2_releng_network_vlan_275.id
+        "name" = data.vsphere_network.mdc2_releng_network_vlan_275.name
+      }
+      "vlan_3001" = {
+        "id"   = data.vsphere_network.mdc2_releng_network_vlan_3001.id
+        "name" = data.vsphere_network.mdc2_releng_network_vlan_3001.name
+      }
+      "vlan_278" = {
+        "id"   = data.vsphere_network.mdc2_releng_network_vlan_278.id
+        "name" = data.vsphere_network.mdc2_releng_network_vlan_278.name
+      }
+      "vlan_246" = {
+        "id"   = data.vsphere_network.mdc2_releng_network_vlan_248.id
+        "name" = data.vsphere_network.mdc2_releng_network_vlan_248.name
+      }
+      "vlan_256" = {
+        "id"   = data.vsphere_network.mdc2_releng_network_vlan_256.id
+        "name" = data.vsphere_network.mdc2_releng_network_vlan_256.name
+      }
+      "vlan_260" = {
+        "id"   = data.vsphere_network.mdc2_releng_network_vlan_260.id
+        "name" = data.vsphere_network.mdc2_releng_network_vlan_260.name
+      }
+      "vlan_240" = {
+        "id"   = data.vsphere_network.mdc2_releng_network_vlan_240.id
+        "name" = data.vsphere_network.mdc2_releng_network_vlan_240.name
+      }
     }
   }
 }
-
