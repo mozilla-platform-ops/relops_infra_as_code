@@ -43,8 +43,12 @@ resource "vsphere_virtual_machine" "mdc1_wintest_rackd_1" {
   }
 }
 
-output "mdc1_regional_1_mdc1_mac_address" {
-  value = vsphere_virtual_machine.mdc1_wintest_rackd_1.network_interface.0.mac_address
+output "mdc1_rackd_vms" {
+  value = {
+    "name"        = vsphere_virtual_machine.mdc1_wintest_rackd_1.name
+    "mac_address" = vsphere_virtual_machine.mdc1_wintest_rackd_1.network_interface.0.mac_address
+    "ip_address"  = vsphere_virtual_machine.mdc1_wintest_rackd_1.default_ip_address
+  }
 }
 
 # MAAS MDC2 rackd controller vm
@@ -92,6 +96,10 @@ resource "vsphere_virtual_machine" "mdc2_wintest_rackd_1" {
   }
 }
 
-output "mdc2_regional_1_mdc2_mac_address" {
-  value = vsphere_virtual_machine.mdc2_wintest_rackd_1.network_interface.0.mac_address
+output "mdc2_rackd_vms" {
+  value = {
+    "name"        = vsphere_virtual_machine.mdc2_wintest_rackd_1.name
+    "mac_address" = vsphere_virtual_machine.mdc2_wintest_rackd_1.network_interface.0.mac_address
+    "ip_address"  = vsphere_virtual_machine.mdc2_wintest_rackd_1.default_ip_address
+  }
 }
