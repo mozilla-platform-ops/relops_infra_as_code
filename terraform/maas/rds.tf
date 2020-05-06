@@ -64,3 +64,10 @@ resource "aws_db_instance" "maas_postgres" {
   )
 }
 
+output "maas_postgres" {
+  value = {
+    "address"  = aws_db_instance.maas_postgres.address
+    "port"     = aws_db_instance.maas_postgres.port
+    "username" = aws_db_instance.maas_postgres.username
+  }
+}
