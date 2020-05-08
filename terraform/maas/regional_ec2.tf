@@ -18,7 +18,7 @@ resource "aws_instance" "regional_1" {
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t2.large"
   vpc_security_group_ids      = [aws_security_group.maas_ec2_sg.id]
-  key_name                    = "dividehex"
+  key_name                    = "relops_common"
   subnet_id                   = "subnet-0f7d7eedf80f0506b"
   associate_public_ip_address = true
 
