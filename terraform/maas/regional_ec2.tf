@@ -22,12 +22,26 @@ resource "aws_instance" "regional_1" {
   subnet_id                   = "subnet-0f7d7eedf80f0506b"
   associate_public_ip_address = true
 
+  root_block_device {
+    volume_type           = "gp2"
+    volume_size           = 40
+    delete_on_termination = true
+  }
+
   tags = merge(
     local.common_tags,
     map(
-      "Name", "maas-regional-1"
+      "Name", "maas-regional1.relops.mozops.net"
     )
   )
+}
+
+resource "aws_route53_record" "regional_1" {
+  zone_id = data.aws_route53_zone.relops_mozops_net.zone_id
+  name    = "maas-regional1.relops.mozops.net"
+  type    = "A"
+  ttl     = 300
+  records = [aws_instance.regional_1.private_ip]
 }
 
 resource "aws_security_group" "maas_ec2_sg" {
@@ -47,7 +61,16 @@ resource "aws_security_group" "maas_ec2_sg" {
     to_port         = var.maas_ports["regional_api"]["end"]
     protocol        = var.maas_ports["regional_api"]["proto"]
     security_groups = [aws_security_group.maas_lb_sg.id]
+    cidr_blocks     = ["10.49.0.0/16", "10.51.0.0/16"]
   }
+
+  ingress {
+    from_port   = var.maas_ports["regional_rpc"]["begin"]
+    to_port     = var.maas_ports["regional_rpc"]["end"]
+    protocol    = var.maas_ports["regional_rpc"]["proto"]
+    cidr_blocks = ["10.49.0.0/16", "10.51.0.0/16"]
+  }
+
 
   ingress {
     from_port   = 22
