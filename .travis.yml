@@ -8,6 +8,11 @@ branches:
   only:
     - master
 
+jobs:
+  include:
+    - name: Run Tests
+      env: VSPHERE_USER=nobody TF_IN_AUTOMATION=true VAULT_ADDR="https://127.0.0.1:8200"
+
 install:
   - curl -sSfL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/0.12.24/terraform_0.12.24_linux_amd64.zip"
   - unzip /tmp/terraform.zip -d "$HOME/bin"
