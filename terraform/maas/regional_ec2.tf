@@ -36,6 +36,13 @@ resource "aws_instance" "regional_1" {
   )
 }
 
+output "regional_ec2" {
+  value = {
+    "name"       = aws_instance.regional_1.tags.Name
+    "ip_address" = aws_instance.regional_1.private_ip
+  }
+}
+
 resource "aws_route53_record" "regional_1" {
   zone_id = data.aws_route53_zone.relops_mozops_net.zone_id
   name    = "maas-regional1.relops.mozops.net"
