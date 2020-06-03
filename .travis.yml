@@ -1,18 +1,16 @@
 ---
-sudo: false
 dist: xenial
-lang: bash
-
-# safelist - we only build on this list
 branches:
   only:
     - master
-
 jobs:
   include:
     - name: Run Tests
-      env: VSPHERE_USER=nobody TF_IN_AUTOMATION=true VAULT_ADDR="https://127.0.0.1:8200" VSPHERE_PASSWORD=empty
-
+      env: >
+        VSPHERE_USER=nobody
+        TF_IN_AUTOMATION=true
+        VAULT_ADDR="https://127.0.0.1:8200"
+        VSPHERE_PASSWORD=empty
 install:
   - curl -sSfL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/0.12.24/terraform_0.12.24_linux_amd64.zip"
   - unzip /tmp/terraform.zip -d "$HOME/bin"
@@ -22,10 +20,11 @@ script:
   - "./tests/runtests.sh"
 notifications:
   slack:
-    secure: jSoja2YYoVU9Us2LvKGFNGmmYYMPi48uKZvQjhR/gJ2eQaz5tfccQwERhWe0B7NCmGwST1RrQBD1GpSKlDTYGpMC1wmFCkBvR0qJipcAG5h0tjh70p+p2NKWBnOZZHr1ARSkmeEX79/TDYB0UMiNTo5OIJ//SF2sKXkth7A+CuYj7ZGEg2IqBKiTzzd8TYqFSqkeRx3JI+jgPz+WgVN1I86EfaAn0nQWeQjeAuQwbMIgyuRfQtVpCIxgY3vljl8fXMeFFwmxU5Yz9+Uf5oN1eX5ZEyqMKtDhBDaP2V93PuaIghp19XDgxGKRU+KLSYNmDv0cMDLC1uWG8YqLa0VlzbKE28WfUNbWo6NkMTjCMDEZBRTn124LU3T2X6+2m/Hcd8NmVJ1ga/M2qVNVe9c2f0/lTvikhy21HMCFJSNjdQomtdWq9dMA3/9uLXbnWKsw+kJeengWtmmVP1qpaNzy4EJi1dCoEuW1VtavNGKmikxo6EE/N6fT2bsGBIfUH+i86I17+VuJo1HcHjh2rgZNvEF2ibp0NZLvBAV9mAXvODIWtBd0ltRspWmnA2SHvzpJwRv9AofbVQmVdr1bHjFj4+EItEroRu192NFq4sWiSX1trzPTB0ZwAh5CHQ6Q/8a3TmWIaQo7Nr5yDAfXs3pK++zrk2wxZsVf1NvIuI1zFVw=
     on_success: always
     on_failure: always
     template:
-      - "%{repository_slug} #%{build_number} (%{branch} - %{commit} - %{author}): %{message}"
-      - "Change view   : %{compare_url}"
-      - "Build details : %{build_url}"
+      - "%{repository_slug} #%{build_number} (%{branch} - %{commit} - %{author})"
+      - "Status: %{message}"
+      - "Change view: %{compare_url}"
+      - "Build details: %{build_url}"
+    secure: D5grY0eJ9MCmMvQRQEtgLZyXSJZX/Q9atCJfEmZ/S6r9+Yka50Vmkl9RsU0eTlayvMVp+MTqiktXYA1A80FS3oBvFHCLe73YsqBVNIspckh4CeyXirkOFG9Ef0tMWDQkjo7AKvmj2p28t/mSSW2JGAs/fHsF1BqGtU9ZtUFfIPgMmirtK7/nTSYKSv/Hch95crF95J8lMbJeDBsWQKrIgk3yEoIuBWmFATbzYC+aR+g2qtWD76W8MMigqHjFvwHSS1ZRl+NniidfoRigh6XlLEs7ZRyPBK0T2EgzLTB0Qru29tyQvtQD5bqOTbOD3EXjxc1pULMbvNxS8BufJgBex3yoY4FdNE2+qT6AD6eagcpkmdSrc1M30wGBnffLXu8MPkV1jBiz5yg4qFu5sWtNqphUu92tt5/vmoRApw7jlLmASuwKP0hV1mriwC8gGP1uR2cbeNKlKOAGUW7sV+jvBcVF+pCAbzbTCzvnQ1chLMctMkz5Zk4BtX3EJ9z+Q7+Fg0zpfpxKOjnKGn1tWHRIxZbV3GCLruJF7O0q/WH4I4kN4stG4BexKou74Sbvc5a6SdEWbtybrIi1tUvpZYu9mkaKZvCW9/mWi+OkxA7FOg2creadYNiKG2reziYGBwPYq0kbiSP6XZMDuF2HaZ4c9zfY7hV9W/d/B1AzUQSpwos=
