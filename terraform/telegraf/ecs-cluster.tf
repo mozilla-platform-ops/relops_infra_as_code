@@ -1,7 +1,8 @@
 resource "aws_ecs_cluster" "main" {
   name = "telegraf"
 
-  tags = merge(local.common_tags,
+  tags = merge(
+    local.common_tags,
     map(
       "Name", "telegraf"
     )
@@ -21,8 +22,8 @@ resource "aws_security_group" "ecs_public_sg" {
   }
 
   ingress {
-    from_port       = var.app_port
-    to_port         = var.app_port
+    from_port       = var.relay_port
+    to_port         = var.relay_port
     protocol        = "tcp"
     security_groups = [aws_security_group.lb_sg.id]
   }
@@ -54,16 +55,16 @@ resource "aws_ecs_task_definition" "app" {
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = aws_iam_role.ecs-task-exec-role.arn
-  cpu                      = var.fargate_cpu
-  memory                   = var.fargate_memory
+  cpu                      = var.relay_cpu
+  memory                   = var.relay_memory
   depends_on               = [aws_iam_role.ecs-task-exec-role] # force recreate on change sha in definition
 
   container_definitions = <<DEFINITION
 [
   {
-    "cpu": ${var.fargate_cpu},
-    "image": "${var.app_image}",
-    "memory": ${var.fargate_memory},
+    "cpu": ${var.relay_cpu},
+    "image": "${var.relay_image}",
+    "memory": ${var.relay_memory},
     "name": "telegraf",
     "environment" : [
       { "name" : "policy_sha1", "value" : "${sha1(file("ecs-task-exec-role.tf"))}" },
@@ -83,8 +84,8 @@ resource "aws_ecs_task_definition" "app" {
     "networkMode": "awsvpc",
     "portMappings": [
       {
-        "containerPort": ${var.app_port},
-        "hostPort": ${var.app_port}
+        "containerPort": ${var.relay_port},
+        "hostPort": ${var.relay_port}
       },
       {
         "containerPort": ${var.webhook_port},
@@ -105,22 +106,28 @@ DEFINITION
 }
 
 resource "aws_ecs_service" "main" {
-  name            = "telegraf"
-  cluster         = aws_ecs_cluster.main.id
+  name = "telegraf"
+  cluster = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.app.arn
-  desired_count   = var.app_count
-  launch_type     = "FARGATE"
+  desired_count = var.relay_count
+  launch_type = "FARGATE"
 
   network_configuration {
-    subnets          = data.aws_subnet_ids.public_subnets.ids
-    security_groups  = [aws_security_group.ecs_public_sg.id]
+    subnets = data.aws_subnet_ids.public_subnets.ids
+    security_groups = [aws_security_group.ecs_public_sg.id]
     assign_public_ip = true
   }
 
   load_balancer {
     target_group_arn = aws_lb_target_group.lb_target_group.arn
-    container_name   = "telegraf"
-    container_port   = 8086
+    container_name = "telegraf"
+    container_port = 8086
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.lb_target_group2.arn
+    container_name = "telegraf"
+    container_port = 1619
   }
 
   depends_on = [aws_lb_listener.front_end, aws_ecs_task_definition.app]

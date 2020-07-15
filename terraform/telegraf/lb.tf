@@ -51,14 +51,14 @@ resource "aws_security_group" "lb_sg" {
 
 resource "aws_lb_target_group" "lb_target_group" {
   name        = "telegraf-lb-tg"
-  port        = var.app_port
+  port        = var.relay_port
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = join(", ", data.aws_vpcs.moz_internal_us_west_2.ids)
 
   health_check {
     path                = "/ping"
-    port                = var.app_port
+    port                = var.relay_port
     healthy_threshold   = 3
     unhealthy_threshold = 3
     interval            = 60
@@ -69,9 +69,18 @@ resource "aws_lb_target_group" "lb_target_group" {
 resource "aws_lb_target_group" "lb_target_group2" {
   name        = "telegraf-lb-tg2"
   port        = var.webhook_port
-  protocol    = "HTTPS"
+  protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = join(", ", data.aws_vpcs.moz_internal_us_west_2.ids)
+
+  health_check {
+    path                = "/ping"
+    port                = var.webhook_port
+    healthy_threshold   = 10
+    unhealthy_threshold = 10
+    interval            = 300
+    matcher             = "200-499"
+  }
 }
 
 resource "aws_lb_listener" "front_end" {
