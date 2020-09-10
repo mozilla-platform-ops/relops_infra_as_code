@@ -6,11 +6,20 @@ variable "relay_count" {}
 variable "relay_cpu" {}
 variable "relay_memory" {}
 
-variable "collection_image" {}
-variable "collection_count" {}
+variable "workers_image" {}
+variable "workers_count" {}
+variable "workers_cpu" {}
+variable "workers_memory" {}
 
-variable "collection_cpu" {}
-variable "collection_memory" {}
+variable "queue_image" {}
+variable "queue_count" {}
+variable "queue_cpu" {}
+variable "queue_memory" {}
+
+variable "vcs_image" {}
+variable "vcs_count" {}
+variable "vcs_cpu" {}
+variable "vcs_memory" {}
 
 variable "influxdb_url" {
   description = "InfluxDB host url"
