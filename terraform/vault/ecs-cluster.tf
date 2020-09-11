@@ -42,8 +42,7 @@ resource "aws_launch_configuration" "ecs-launch-configuration" {
   security_groups             = ["${aws_security_group.ec2_vault_instance_sg.id}"]
   associate_public_ip_address = "true"
 
-  # TODO: remove single key and load mutiple keys via userdata
-  key_name = "dividehex"
+  key_name = "relops_common"
 
   user_data = "${file("userdata/ecs-userdata.sh")}"
 }
