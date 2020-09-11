@@ -2,7 +2,7 @@ resource "aws_ecs_service" "main_queues" {
   name = "telegraf_queues"
   cluster = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.app_queues.arn
-  desired_count = var.collection_count
+  desired_count = var.queue_count
   launch_type = "FARGATE"
 
   network_configuration {
@@ -19,16 +19,16 @@ resource "aws_ecs_task_definition" "app_queues" {
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = aws_iam_role.ecs-task-exec-role.arn
-  cpu                      = var.collection_cpu
-  memory                   = var.collection_memory
+  cpu                      = var.queue_cpu
+  memory                   = var.queue_memory
   depends_on               = [aws_iam_role.ecs-task-exec-role] # force recreate on change sha in definition
 
   container_definitions = <<DEFINITION
 [
   {
-    "cpu": ${var.collection_cpu},
-    "image": "${var.collection_image}",
-    "memory": ${var.collection_memory},
+    "cpu": ${var.queue_cpu},
+    "image": "${var.queue_image}",
+    "memory": ${var.queue_memory},
     "name": "telegraf",
     "environment" : [
       { "name" : "policy_sha1", "value" : "${sha1(file("ecs-task-exec-role.tf"))}" },
