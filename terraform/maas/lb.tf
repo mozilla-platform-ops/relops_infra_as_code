@@ -23,7 +23,7 @@ resource "aws_security_group" "maas_lb_sg" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["10.49.0.0/16", "10.51.0.0/16"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -49,7 +49,7 @@ resource "aws_lb_target_group" "maas_lb_target_group" {
   vpc_id      = join(", ", data.aws_vpcs.moz_internal_us_west_2.ids)
 
   health_check {
-    path                = "/MAAS/"
+    path                = "/MAAS/r/"
     port                = var.maas_ports["regional_api"]["begin"]
     healthy_threshold   = 2
     unhealthy_threshold = 10

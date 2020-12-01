@@ -4,6 +4,6 @@ tag_production_state = "production"
 
 tag_owner_email = "jwatkins@mozilla.com"
 
-maas_mdc1_rackd_mac_address = "00:50:56:a1:10:6c"
+maas_mdc1_wintest_rackd_mac_address = "00:50:56:21:00:01"
+maas_mdc1_test_rackd_mac_address    = "00:50:56:21:00:02"
 
-maas_mdc2_rackd_mac_address = "00:50:56:a2:a8:9f"
