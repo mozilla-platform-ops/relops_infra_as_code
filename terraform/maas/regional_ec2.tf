@@ -74,7 +74,28 @@ resource "aws_security_group" "maas_ec2_sg" {
   ingress {
     from_port   = var.maas_ports["regional_rpc"]["begin"]
     to_port     = var.maas_ports["regional_rpc"]["end"]
-    protocol    = var.maas_ports["regional_rpc"]["proto"]
+    protocol    = "tcp"
+    cidr_blocks = ["10.49.0.0/16", "10.51.0.0/16"]
+  }
+
+  ingress {
+    from_port   = var.maas_ports["regional_rpc"]["begin"]
+    to_port     = var.maas_ports["regional_rpc"]["end"]
+    protocol    = "udp"
+    cidr_blocks = ["10.49.0.0/16", "10.51.0.0/16"]
+  }
+
+  ingress {
+    from_port   = var.maas_ports["maas_internal"]["begin"]
+    to_port     = var.maas_ports["maas_internal"]["end"]
+    protocol    = "tcp"
+    cidr_blocks = ["10.49.0.0/16", "10.51.0.0/16"]
+  }
+
+  ingress {
+    from_port   = var.maas_ports["maas_internal"]["begin"]
+    to_port     = var.maas_ports["maas_internal"]["end"]
+    protocol    = "udp"
     cidr_blocks = ["10.49.0.0/16", "10.51.0.0/16"]
   }
 

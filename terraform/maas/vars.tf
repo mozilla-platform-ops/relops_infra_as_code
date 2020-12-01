@@ -35,11 +35,11 @@ output "maas_ports" {
   value = var.maas_ports
 }
 
-variable "maas_mdc1_rackd_mac_address" {
+variable "maas_mdc1_wintest_rackd_mac_address" {
   type = string
 }
 
-variable "maas_mdc2_rackd_mac_address" {
+variable "maas_mdc1_test_rackd_mac_address" {
   type = string
 }
 
