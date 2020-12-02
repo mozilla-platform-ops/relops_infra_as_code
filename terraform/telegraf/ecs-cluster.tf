@@ -1,12 +1,11 @@
 resource "aws_ecs_cluster" "main" {
   name = "telegraf"
 
-  tags = "${merge(
-    local.common_tags,
+  tags = merge(local.common_tags,
     map(
       "Name", "telegraf"
     )
-  )}"
+  )
 }
 
 resource "aws_security_group" "ecs_public_sg" {
@@ -22,17 +21,17 @@ resource "aws_security_group" "ecs_public_sg" {
   }
 
   ingress {
-    from_port       = "${var.app_port}"
-    to_port         = "${var.app_port}"
+    from_port       = var.app_port
+    to_port         = var.app_port
     protocol        = "tcp"
-    security_groups = ["${aws_security_group.lb_sg.id}"]
+    security_groups = [aws_security_group.lb_sg.id]
   }
 
   ingress {
-    from_port       = "${var.webhook_port}"
-    to_port         = "${var.webhook_port}"
+    from_port       = var.webhook_port
+    to_port         = var.webhook_port
     protocol        = "tcp"
-    security_groups = ["${aws_security_group.lb_sg.id}"]
+    security_groups = [aws_security_group.lb_sg.id]
   }
 
   egress {
@@ -44,7 +43,7 @@ resource "aws_security_group" "ecs_public_sg" {
 
   tags = {
     Terraform   = "true"
-    Repo_url    = "${var.repo_url}"
+    Repo_url    = var.repo_url
     Environment = "Prod"
     Owner       = "relops@mozilla.com"
   }
@@ -54,10 +53,10 @@ resource "aws_ecs_task_definition" "app" {
   family                   = "telegraf"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  execution_role_arn       = "${aws_iam_role.ecs-task-exec-role.arn}"
-  cpu                      = "${var.fargate_cpu}"
-  memory                   = "${var.fargate_memory}"
-  depends_on               = ["aws_iam_role.ecs-task-exec-role"] # force recreate on change sha in definition
+  execution_role_arn       = aws_iam_role.ecs-task-exec-role.arn
+  cpu                      = var.fargate_cpu
+  memory                   = var.fargate_memory
+  depends_on               = [aws_iam_role.ecs-task-exec-role] # force recreate on change sha in definition
 
   container_definitions = <<DEFINITION
 [
@@ -107,22 +106,23 @@ DEFINITION
 
 resource "aws_ecs_service" "main" {
   name            = "telegraf"
-  cluster         = "${aws_ecs_cluster.main.id}"
-  task_definition = "${aws_ecs_task_definition.app.arn}"
-  desired_count   = "${var.app_count}"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.app.arn
+  desired_count   = var.app_count
   launch_type     = "FARGATE"
 
   network_configuration {
     subnets          = data.aws_subnet_ids.public_subnets.ids
-    security_groups  = ["${aws_security_group.ecs_public_sg.id}"]
+    security_groups  = [aws_security_group.ecs_public_sg.id]
     assign_public_ip = true
   }
 
   load_balancer {
-    target_group_arn = "${aws_lb_target_group.lb_target_group.arn}"
+    target_group_arn = aws_lb_target_group.lb_target_group.arn
     container_name   = "telegraf"
     container_port   = 8086
   }
 
-  depends_on = ["aws_lb_listener.front_end", "aws_ecs_task_definition.app"]
+  depends_on = [aws_lb_listener.front_end, aws_ecs_task_definition.app]
 }
+
