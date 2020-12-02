@@ -8,7 +8,7 @@ relay_count = 2
 relay_cpu = 512
 relay_memory = 1024
 
-workers_image = "961225894672.dkr.ecr.us-west-2.amazonaws.com/telegraf:1.7"
+workers_image = "961225894672.dkr.ecr.us-west-2.amazonaws.com/telegraf:1.8"
 workers_count = 1
 workers_cpu = 4096
 workers_memory = 8192
