@@ -3,3 +3,4 @@
 resource "aws_route53_zone" "relops_mozops_net_public" {
   name = "relops.mozops.net"
 }
+

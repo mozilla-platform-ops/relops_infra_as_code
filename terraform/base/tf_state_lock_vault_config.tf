@@ -12,8 +12,9 @@ resource "aws_dynamodb_table" "tf_state_lock_vault_config" {
   tags = {
     Name        = "vault_config Terraform State Lock Table"
     Terraform   = "true"
-    Repo_url    = "${var.repo_url}"
+    Repo_url    = var.repo_url
     Environment = "prod"
     Owner       = "relops@mozilla.com"
   }
 }
+
