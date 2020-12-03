@@ -1,6 +1,6 @@
 # Look up usw2 vpc
 data "aws_vpcs" "moz_internal_us_west_2" {
-  provider = "aws.us-west-2"
+  provider = aws.us-west-2
 
   tags = {
     Name = "moz-internal-us-west-2"

@@ -8,7 +8,6 @@ variable "region" {
 
 variable "tag_project_name" {
   description = "Name of the project; should match dir name"
-
   # No default; must be set in terraform.tfvars
 }
 
@@ -31,3 +30,4 @@ variable "repo_url" {
   description = "A link to this github repo"
   default     = "https://github.com/mozilla-platform-ops/relops_cloud"
 }
+

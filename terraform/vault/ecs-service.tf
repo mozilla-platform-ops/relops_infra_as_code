@@ -14,7 +14,7 @@ resource "aws_security_group" "ecs_vault_public_sg" {
     from_port       = 8200
     to_port         = 8200
     protocol        = "tcp"
-    security_groups = ["${aws_security_group.vault_lb_sg.id}"]
+    security_groups = [aws_security_group.vault_lb_sg.id]
   }
 
   ingress {
@@ -33,7 +33,7 @@ resource "aws_security_group" "ecs_vault_public_sg" {
 
   tags = {
     Terraform   = "true"
-    Repo_url    = "${var.repo_url}"
+    Repo_url    = var.repo_url
     Environment = "Prod"
     Owner       = "relops@mozilla.com"
   }
@@ -41,18 +41,18 @@ resource "aws_security_group" "ecs_vault_public_sg" {
 
 resource "aws_ecs_service" "vault" {
   name                               = "vault"
-  cluster                            = "${aws_ecs_cluster.vault.id}"
-  task_definition                    = "${aws_ecs_task_definition.vault.arn}"
+  cluster                            = aws_ecs_cluster.vault.id
+  task_definition                    = aws_ecs_task_definition.vault.arn
   scheduling_strategy                = "DAEMON"
   deployment_minimum_healthy_percent = 50
 
   network_configuration {
     subnets         = data.aws_subnet_ids.public_subnets.ids
-    security_groups = ["${aws_security_group.ecs_vault_public_sg.id}"]
+    security_groups = [aws_security_group.ecs_vault_public_sg.id]
   }
 
   load_balancer {
-    target_group_arn = "${aws_lb_target_group.vault_lb_target_group.arn}"
+    target_group_arn = aws_lb_target_group.vault_lb_target_group.arn
     container_name   = "vault"
     container_port   = 8200
   }

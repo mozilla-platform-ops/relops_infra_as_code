@@ -14,18 +14,17 @@ resource "aws_dynamodb_table" "dynamodb-table" {
     type = "S"
   }
 
-  tags = "${merge(
-    local.common_tags,
+  tags = merge(local.common_tags,
     map(
       "Name", "vault-dynamodb-table"
     )
-  )}"
+  )
 }
 
 data "aws_iam_policy_document" "vault_dynamodb_access" {
   statement {
     effect    = "Allow"
-    resources = ["${aws_dynamodb_table.dynamodb-table.arn}"]
+    resources = [aws_dynamodb_table.dynamodb-table.arn]
 
     actions = [
       "dynamodb:DescribeLimits",
@@ -51,10 +50,10 @@ data "aws_iam_policy_document" "vault_dynamodb_access" {
 
 resource "aws_iam_policy" "vault_dynamodb_policy" {
   name   = "Vault-DynamoDB-Policy"
-  policy = "${data.aws_iam_policy_document.vault_dynamodb_access.json}"
+  policy = data.aws_iam_policy_document.vault_dynamodb_access.json
 }
 
 resource "aws_iam_role_policy_attachment" "ecs-instance-dynamodb-role-attachment" {
-  role       = "${aws_iam_role.ecs-task-role.name}"
-  policy_arn = "${aws_iam_policy.vault_dynamodb_policy.arn}"
+  role       = aws_iam_role.ecs-task-role.name
+  policy_arn = aws_iam_policy.vault_dynamodb_policy.arn
 }
