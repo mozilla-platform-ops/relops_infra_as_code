@@ -4,7 +4,7 @@ tag_production_state = "production"
 
 tag_owner_email = "jwatkins@mozilla.com"
 
-ecs_ami = "ami-04bb74f3ffa3aa3e2"
+ecs_ami = "ami-030c9d6616d98227e"
 
 instance_type = "m5.large"
 
