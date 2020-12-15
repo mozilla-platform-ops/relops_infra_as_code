@@ -1,12 +1,10 @@
 provider "vsphere" {
-  version              = "= 1.18"
   alias                = "mdc1"
   vsphere_server       = "vc1.ops.mdc1.mozilla.com"
   allow_unverified_ssl = true
 }
 
 provider "vsphere" {
-  version              = "= 1.18"
   alias                = "mdc2"
   vsphere_server       = "vc1.ops.mdc2.mozilla.com"
   allow_unverified_ssl = true
