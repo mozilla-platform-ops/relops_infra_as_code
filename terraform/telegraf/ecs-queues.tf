@@ -1,13 +1,13 @@
 resource "aws_ecs_service" "main_queues" {
-  name = "telegraf_queues"
-  cluster = aws_ecs_cluster.main.id
+  name            = "telegraf_queues"
+  cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.app_queues.arn
-  desired_count = var.queue_count
-  launch_type = "FARGATE"
+  desired_count   = var.queue_count
+  launch_type     = "FARGATE"
 
   network_configuration {
-    subnets = data.aws_subnet_ids.public_subnets.ids
-    security_groups = [aws_security_group.ecs_public_sg.id]
+    subnets          = data.aws_subnet_ids.public_subnets.ids
+    security_groups  = [aws_security_group.ecs_public_sg.id]
     assign_public_ip = true
   }
 
