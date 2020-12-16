@@ -1,8 +1,7 @@
 resource "aws_ecs_cluster" "main" {
   name = "telegraf"
 
-  tags = merge(
-    local.common_tags,
+  tags = merge(local.common_tags,
     map(
       "Name", "telegraf"
     )
