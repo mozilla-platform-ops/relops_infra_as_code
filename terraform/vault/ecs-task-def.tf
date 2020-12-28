@@ -5,10 +5,9 @@ resource "aws_ecs_task_definition" "vault" {
   network_mode             = "awsvpc"
   task_role_arn            = aws_iam_role.ecs-task-role.arn
 
-  tags = {
-    Terraform   = "true"
-    Repo_url    = var.repo_url
-    Environment = "Prod"
-    Owner       = "relops@mozilla.com"
-  }
+  tags = merge(local.common_tags,
+    map(
+      "Name", "vault"
+    )
+  )
 }
