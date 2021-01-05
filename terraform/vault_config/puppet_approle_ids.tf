@@ -6,6 +6,7 @@ variable "puppet_roles" {
     "mac_v3_signing_dep",
     "gecko_t_osx_1014",
     "gecko_t_osx_1014_staging",
+    "gecko_t_osx_1015_r8_qa",
   ]
 }
 
