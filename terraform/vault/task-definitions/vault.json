@@ -25,6 +25,14 @@
       {
         "containerPort": 8201
       }
-    ]
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "vault",
+        "awslogs-region": "us-west-2",
+        "awslogs-stream-prefix": "container"
+      }
+    }
   }
 ]
