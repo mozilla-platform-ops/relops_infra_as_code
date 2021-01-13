@@ -56,8 +56,9 @@ def gen_influx_log_line(blob):
 
 
 def main():
-    TESTING = False
-    if TESTING:
+    EXTRA_OUTPUT = False
+    LOCAL_TESTING = False
+    if LOCAL_TESTING:
         host = "localhost"
         database = "bitbar_test"
         username = "root"
@@ -84,11 +85,11 @@ def main():
 
     insert_commands = []
     for url in URLS:
-        if TESTING:
+        if EXTRA_OUTPUT:
             print("fetching url '%s'..." % url)
         json_result = get_url(url)
         insert_commands.append(gen_influx_log_line(json_result))
-    if TESTING:
+    if EXTRA_OUTPUT:
         print(insert_commands)
 
     client = InfluxDBClient(
