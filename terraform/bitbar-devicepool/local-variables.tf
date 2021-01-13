@@ -10,3 +10,4 @@ variable "host_count" {
   description = "Number of bitbar-devicepool hosts to create."
   default     = "1"
 }
+

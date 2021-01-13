@@ -1,12 +1,11 @@
 resource "aws_ecs_cluster" "vault" {
   name = "vault"
 
-  tags = "${merge(
-    local.common_tags,
+  tags = merge(local.common_tags,
     map(
       "Name", "vault"
     )
-  )}"
+  )
 }
 
 resource "aws_security_group" "ec2_vault_instance_sg" {
@@ -23,7 +22,7 @@ resource "aws_security_group" "ec2_vault_instance_sg" {
 
   tags = {
     Terraform   = "true"
-    Repo_url    = "${var.repo_url}"
+    Repo_url    = var.repo_url
     Environment = "Prod"
     Owner       = "relops@mozilla.com"
   }
@@ -31,30 +30,29 @@ resource "aws_security_group" "ec2_vault_instance_sg" {
 
 resource "aws_launch_configuration" "ecs-launch-configuration" {
   name_prefix          = "ecs-vault-launch-configuration-"
-  image_id             = "${var.ecs_ami}"
-  instance_type        = "${var.instance_type}"
-  iam_instance_profile = "${aws_iam_instance_profile.ecs-instance-profile.id}"
+  image_id             = var.ecs_ami
+  instance_type        = var.instance_type
+  iam_instance_profile = aws_iam_instance_profile.ecs-instance-profile.id
 
   lifecycle {
     create_before_destroy = true
   }
 
-  security_groups             = ["${aws_security_group.ec2_vault_instance_sg.id}"]
+  security_groups             = [aws_security_group.ec2_vault_instance_sg.id]
   associate_public_ip_address = "true"
 
-  # TODO: remove single key and load mutiple keys via userdata
-  key_name = "dividehex"
+  key_name = "relops_common"
 
-  user_data = "${file("userdata/ecs-userdata.sh")}"
+  user_data = file("userdata/ecs-userdata.sh")
 }
 
 resource "aws_autoscaling_group" "ecs-autoscaling-group" {
   name                 = "ecs-vault-autoscaling-group"
-  max_size             = "${var.max_instance_size}"
-  min_size             = "${var.min_instance_size}"
-  desired_capacity     = "${var.desired_capacity}"
+  max_size             = var.max_instance_size
+  min_size             = var.min_instance_size
+  desired_capacity     = var.desired_capacity
   vpc_zone_identifier  = data.aws_subnet_ids.public_subnets.ids
-  launch_configuration = "${aws_launch_configuration.ecs-launch-configuration.name}"
+  launch_configuration = aws_launch_configuration.ecs-launch-configuration.name
   health_check_type    = "EC2"
   termination_policies = ["OldestInstance"]
 }

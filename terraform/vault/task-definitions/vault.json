@@ -2,7 +2,7 @@
   {
     "name": "vault",
     "containerName": "vault",
-    "image": "vault:1.1.3",
+    "image": "vault:1.6.0",
     "memory": 6144,
     "linuxParameters": {
       "capabilities": {
@@ -25,6 +25,14 @@
       {
         "containerPort": 8201
       }
-    ]
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "vault",
+        "awslogs-region": "us-west-2",
+        "awslogs-stream-prefix": "container"
+      }
+    }
   }
 ]
