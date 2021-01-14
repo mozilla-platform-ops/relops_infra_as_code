@@ -28,6 +28,8 @@ URLS = [
     "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/pending/proj-autophone/gecko-t-bitbar-gw-batt-g5",
     "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/pending/proj-autophone/gecko-t-bitbar-gw-perf-g5",
     "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/pending/proj-autophone/gecko-t-bitbar-gw-unit-g5",
+    "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/pending/proj-autophone/gecko-t-bitbar-gw-perf-s7",
+    "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/pending/proj-autophone/gecko-t-bitbar-gw-unit-s7",
     # g-w test queues
     "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/pending/proj-autophone/gecko-t-bitbar-gw-test-g5",
     "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/pending/proj-autophone/gecko-t-bitbar-gw-test-1",
@@ -54,8 +56,9 @@ def gen_influx_log_line(blob):
 
 
 def main():
-    TESTING = False
-    if TESTING:
+    EXTRA_OUTPUT = False
+    LOCAL_TESTING = False
+    if LOCAL_TESTING:
         host = "localhost"
         database = "bitbar_test"
         username = "root"
@@ -80,6 +83,15 @@ def main():
         ssl = True
         ssl_verify = True
 
+    insert_commands = []
+    for url in URLS:
+        if EXTRA_OUTPUT:
+            print("fetching url '%s'..." % url)
+        json_result = get_url(url)
+        insert_commands.append(gen_influx_log_line(json_result))
+    if EXTRA_OUTPUT:
+        print(insert_commands)
+
     client = InfluxDBClient(
         host=host,
         port=port,
@@ -89,11 +101,6 @@ def main():
         ssl=ssl,
         verify_ssl=ssl_verify,
     )
-
-    insert_commands = []
-    for url in URLS:
-        json_result = get_url(url)
-        insert_commands.append(gen_influx_log_line(json_result))
 
     client.write(insert_commands, {"db": database}, protocol="line")
 
