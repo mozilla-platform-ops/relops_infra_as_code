@@ -1,0 +1,25 @@
+version: 2.1
+
+jobs:
+  run_tests:
+    machine:
+      image: ubuntu-2004:202010-01
+    environment:
+      VSPHERE_USER: nobody
+      TF_IN_AUTOMATION: true
+      VAULT_ADDR: "https://127.0.0.1:8200"
+      VSPHERE_PASSWORD: empty
+    steps:
+      - checkout
+      - run: sudo apt-get update
+      - run: sudo apt-get install shellcheck
+      - run: curl -sSfL -o /tmp/terraform.zip "https://releases.hashicorp.com/terraform/0.14.4/terraform_0.14.4_linux_amd64.zip"
+      - run: unzip /tmp/terraform.zip -d "$HOME/bin"
+      - run: terraform --version
+      - run: shellcheck --version
+      - run: ./tests/runtests.sh
+
+workflows:
+  ci_test:
+    jobs:
+      - run_tests
