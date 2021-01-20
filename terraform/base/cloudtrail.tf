@@ -12,3 +12,4 @@ resource "aws_cloudtrail" "cloudtrail" {
     bug  = "1531162"
   }
 }
+

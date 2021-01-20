@@ -5,7 +5,7 @@ resource "aws_cloudwatch_log_group" "telegraf" {
 
   tags = {
     Terraform   = "true"
-    Repo_url    = "${var.repo_url}"
+    Repo_url    = var.repo_url
     Environment = "Prod"
     Owner       = "relops@mozilla.com"
   }

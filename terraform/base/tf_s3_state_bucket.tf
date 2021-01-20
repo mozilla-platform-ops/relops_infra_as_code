@@ -8,8 +8,9 @@ resource "aws_s3_bucket" "state_bucket" {
 
   tags = {
     Terraform   = "true"
-    Repo_url    = "${var.repo_url}"
+    Repo_url    = var.repo_url
     Environment = "prod"
     Owner       = "relops@mozilla.com"
   }
 }
+

@@ -1,26 +1,25 @@
-variable "app_count" {
-  description = "Number of application instances"
-}
+variable "relay_image" {}
+variable "relay_port" {}
+variable "webhook_port" {}
 
-variable "app_image" {
-  description = "Docker Hub slug"
-}
+variable "relay_count" {}
+variable "relay_cpu" {}
+variable "relay_memory" {}
 
-variable "fargate_cpu" {
-  description = "Maximum number of instances in the cluster"
-}
+variable "workers_image" {}
+variable "workers_count" {}
+variable "workers_cpu" {}
+variable "workers_memory" {}
 
-variable "fargate_memory" {
-  description = "Minimum number of instances in the cluster"
-}
+variable "queue_image" {}
+variable "queue_count" {}
+variable "queue_cpu" {}
+variable "queue_memory" {}
 
-variable "app_port" {
-  description = "Port number of application"
-}
-
-variable "webhook_port" {
-  description = "Port number of application webhook handler"
-}
+variable "vcs_image" {}
+variable "vcs_count" {}
+variable "vcs_cpu" {}
+variable "vcs_memory" {}
 
 variable "influxdb_url" {
   description = "InfluxDB host url"

@@ -14,11 +14,12 @@ data "aws_iam_policy_document" "pytest_assume_role_policy" {
 
 resource "aws_iam_role_policy" "pytest_role_policy" {
   name   = "PytestServices"
-  role   = "${aws_iam_role.pytest_role.id}"
-  policy = "${file("policies/PytestServicesReadOnly.json")}"
+  role   = aws_iam_role.pytest_role.id
+  policy = file("policies/PytestServicesReadOnly.json")
 }
 
 resource "aws_iam_role" "pytest_role" {
   name               = "PytestServices"
-  assume_role_policy = "${data.aws_iam_policy_document.pytest_assume_role_policy.json}"
+  assume_role_policy = data.aws_iam_policy_document.pytest_assume_role_policy.json
 }
+

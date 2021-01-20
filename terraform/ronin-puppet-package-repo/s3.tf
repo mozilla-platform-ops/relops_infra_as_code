@@ -17,12 +17,13 @@ resource "aws_s3_bucket" "package_bucket" {
 }
 POLICY
 
+
   versioning {
     enabled = true
   }
 
   logging {
-    target_bucket = "${aws_s3_bucket.log_bucket.id}"
+    target_bucket = aws_s3_bucket.log_bucket.id
     target_prefix = "log/"
   }
 
@@ -42,8 +43,9 @@ resource "aws_s3_bucket" "log_bucket" {
 }
 
 resource "aws_s3_bucket_object" "index" {
-  bucket = "${aws_s3_bucket.package_bucket.id}"
+  bucket = aws_s3_bucket.package_bucket.id
   key    = "index.html"
   source = "files/index.html"
-  etag   = "${md5(file("files/index.html"))}"
+  etag   = filemd5("files/index.html")
 }
+

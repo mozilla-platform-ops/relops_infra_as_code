@@ -2,7 +2,7 @@ module "vpc_moz_internal_us_east_1" {
   source = "terraform-aws-modules/vpc/aws"
 
   providers = {
-    aws = "aws.us-east-1"
+    aws = aws.us-east-1
   }
 
   name = "moz-internal-us-east-1"
@@ -23,7 +23,7 @@ module "vpc_moz_internal_us_east_1" {
 
   tags = {
     Terraform   = "true"
-    Repo_url    = "${var.repo_url}"
+    Repo_url    = var.repo_url
     Environment = "Prod"
     Owner       = "relops@mozilla.com"
   }
@@ -33,7 +33,7 @@ resource "aws_route53_zone" "use1" {
   name = "use1.relops"
 
   vpc {
-    vpc_id     = "${module.vpc_moz_internal_us_east_1.vpc_id}"
+    vpc_id     = module.vpc_moz_internal_us_east_1.vpc_id
     vpc_region = "us-east-1"
   }
 }
@@ -42,7 +42,7 @@ resource "aws_route53_zone" "use1_arpa" {
   name = "6.191.10.in-addr.arpa."
 
   vpc {
-    vpc_id     = "${module.vpc_moz_internal_us_east_1.vpc_id}"
+    vpc_id     = module.vpc_moz_internal_us_east_1.vpc_id
     vpc_region = "us-east-1"
   }
 }
@@ -51,7 +51,7 @@ module "vpc_moz_internal_us_west_2" {
   source = "terraform-aws-modules/vpc/aws"
 
   providers = {
-    aws = "aws.us-west-2"
+    aws = aws.us-west-2
   }
 
   name = "moz-internal-us-west-2"
@@ -74,7 +74,7 @@ module "vpc_moz_internal_us_west_2" {
 
   tags = {
     Terraform   = "true"
-    Repo_url    = "${var.repo_url}"
+    Repo_url    = var.repo_url
     Environment = "prod"
     Owner       = "relops@mozilla.com"
   }
@@ -84,7 +84,7 @@ resource "aws_route53_zone" "usw2" {
   name = "usw2.relops"
 
   vpc {
-    vpc_id     = "${module.vpc_moz_internal_us_west_2.vpc_id}"
+    vpc_id     = module.vpc_moz_internal_us_west_2.vpc_id
     vpc_region = "us-west-2"
   }
 }
@@ -93,7 +93,8 @@ resource "aws_route53_zone" "usw2_arpa" {
   name = "7.191.10.in-addr.arpa."
 
   vpc {
-    vpc_id     = "${module.vpc_moz_internal_us_west_2.vpc_id}"
+    vpc_id     = module.vpc_moz_internal_us_west_2.vpc_id
     vpc_region = "us-west-2"
   }
 }
+

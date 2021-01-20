@@ -14,7 +14,7 @@ resource "aws_kms_key" "sops_shamir_usw2_key" {
 resource "aws_kms_alias" "sops_shamir_usw2_alias" {
   provider      = aws.us-west-2
   name          = "alias/relops_sops_usw2"
-  target_key_id = "${aws_kms_key.sops_shamir_usw2_key.key_id}"
+  target_key_id = aws_kms_key.sops_shamir_usw2_key.key_id
 
   lifecycle {
     prevent_destroy = true
@@ -37,7 +37,7 @@ resource "aws_kms_key" "sops_shamir_use1_key" {
 resource "aws_kms_alias" "sops_shamir_use1_alias" {
   provider      = aws.us-east-1
   name          = "alias/relops_sops_use1"
-  target_key_id = "${aws_kms_key.sops_shamir_use1_key.key_id}"
+  target_key_id = aws_kms_key.sops_shamir_use1_key.key_id
 
   lifecycle {
     prevent_destroy = true
