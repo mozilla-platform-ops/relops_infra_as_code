@@ -50,7 +50,7 @@ resource "aws_lambda_function" "bitbar_influx_logger" {
   role             = aws_iam_role.iam_for_lambda.arn
   handler          = "function.lambda_handler"
   source_code_hash = filebase64sha256("function.zip")
-  runtime          = "python3.6"
+  runtime          = "python3.8"
   timeout          = 60
 }
 
