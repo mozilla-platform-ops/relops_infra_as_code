@@ -14,10 +14,18 @@ resource "aws_security_group" "vault_lb_sg" {
   vpc_id      = join(", ", data.aws_vpcs.moz_internal_us_west_2.ids)
 
   ingress {
-    from_port   = 8200
-    to_port     = 8200
-    protocol    = "tcp"
-    cidr_blocks = ["10.49.0.0/16", "10.51.0.0/16"]
+    from_port = 8200
+    to_port   = 8200
+    protocol  = "tcp"
+    cidr_blocks = [
+      "10.49.0.0/16",
+      "10.51.0.0/16",
+      "10.48.242.0/23",
+      "10.48.240.0/23",
+      "10.48.236.0/23",
+      "10.48.238.0/23",
+      "10.64.0.0/16"
+    ]
   }
 
   tags = {
