@@ -20,13 +20,13 @@ resource "azurerm_storage_account" "sawestusgeckot" {
     )
   )
 }
-resource "azurerm_network_security_group" "nsg-west-us-gecko-t-default" {
-  name                = "nsg-west-us-gecko-t-default"
+resource "azurerm_network_security_group" "nsg-west-us-gecko-t" {
+  name                = "nsg-west-us-gecko-t"
   location            = "West US"
   resource_group_name = azurerm_resource_group.rg-west-us-gecko-t.name
   tags = merge(local.common_tags,
     map(
-      "Name", "nsg-west-us-gecko-t-default"
+      "Name", "nsg-west-us-gecko-t"
     )
   )
 }
@@ -39,7 +39,7 @@ resource "azurerm_virtual_network" "vn-west-us-gecko-t" {
   subnet {
     name           = "sn-west-us-gecko-t"
     address_prefix = "10.0.0.0/24"
-    security_group = azurerm_network_security_group.nsg-west-us-gecko-t-default.id
+    security_group = azurerm_network_security_group.nsg-west-us-gecko-t.id
   }
   tags = merge(local.common_tags,
     map(
