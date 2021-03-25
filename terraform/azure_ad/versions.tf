@@ -5,5 +5,13 @@ terraform {
     aws = {
       source = "hashicorp/aws"
     }
+    azurerm = {
+      source = "hashicorp/azurerm"
+      version = "=2.46.0"
+    }
   }
+}
+
+provider "azurerm" {
+  features {}
 }
