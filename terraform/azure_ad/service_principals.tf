@@ -42,16 +42,27 @@ resource "azurerm_role_definition" "cloud_image_builder" {
   scope                = data.azurerm_subscription.currentSubscription.id
   permissions {
     actions = [
+
+      # read
       "Microsoft.Compute/*/read",
       "Microsoft.Network/*/read",
       "Microsoft.Storage/*/read",
       "Microsoft.Authorization/*/read",
       "Microsoft.Resources/subscriptions/resourceGroups/read",
       "Microsoft.Resources/subscriptions/resourceGroups/resources/read",
+
+      # write
       "Microsoft.Compute/disks/write",
+      "Microsoft.Network/networkInterfaces/write",
+      "Microsoft.Network/publicIPAddresses/write",
+
+      # do
       "Microsoft.Compute/disks/beginGetAccess/action",
+      "Microsoft.Compute/disks/endGetAccess/action",
       "Microsoft.Compute/virtualMachines/start/action",
       "Microsoft.Compute/virtualMachines/restart/action",
+      "Microsoft.Network/networkSecurityGroups/join/action",
+
     ]
   }
 }
