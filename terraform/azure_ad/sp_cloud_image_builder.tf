@@ -48,12 +48,19 @@ resource "azurerm_role_definition" "cloud_image_builder" {
       "Microsoft.Network/networkInterfaces/write",
       "Microsoft.Network/publicIPAddresses/write",
 
+      # delete
+      "Microsoft.Compute/disks/delete",
+      "Microsoft.Compute/virtualMachines/delete",
+      "Microsoft.Network/networkInterfaces/delete",
+      "Microsoft.Network/publicIPAddresses/delete",
+
       # do
       "Microsoft.Compute/disks/beginGetAccess/action",
       "Microsoft.Compute/disks/endGetAccess/action",
       "Microsoft.Compute/virtualMachines/start/action",
       "Microsoft.Compute/virtualMachines/restart/action",
       "Microsoft.Network/networkSecurityGroups/join/action",
+      "Microsoft.Network/publicIPAddresses/join/action",
       "Microsoft.Network/virtualNetworks/subnets/join/action",
     ]
   }
