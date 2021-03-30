@@ -1,6 +1,3 @@
-# a reference to the current subscription
-data "azurerm_subscription" "currentSubscription" {}
-
 data "azuread_user" "mcornmesser" {
   user_principal_name = "mcornmesser@mozilla.com"
 }
