@@ -5,15 +5,6 @@ locals {
   sp_tags = [for k, v in local.common_tags : join(":", [k, v])]
 }
 
-resource "azuread_application" "CloudImageBuilder" {
-  display_name = "CloudImageBuilder"
-}
-resource "azuread_service_principal" "CloudImageBuilder" {
-  application_id = azuread_application.CloudImageBuilder.application_id
-
-  tags = concat(["name:CloudImageBuilder"], local.sp_tags)
-}
-
 resource "azuread_application" "Packer_Through_CIB" {
   display_name = "Packer_Through_CIB"
 }
