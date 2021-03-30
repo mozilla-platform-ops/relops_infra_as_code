@@ -14,14 +14,14 @@ resource "azuread_service_principal" "CloudImageBuilder" {
   tags = concat(["name:CloudImageBuilder"], local.sp_tags)
 }
 
-resource "azuread_application" "Packer_Through_CIB" {
-  display_name = "Packer_Through_CIB"
-}
-resource "azuread_service_principal" "Packer_Through_CIB" {
-  application_id = azuread_application.Packer_Through_CIB.application_id
-
-  tags = concat(["name:Packer_Through_CIB"], local.sp_tags)
-}
+# #resource "azuread_application" "Packer_Through_CIB" {
+#  display_name = "Packer_Through_CIB"
+#}
+#resource "azuread_service_principal" "Packer_Through_CIB" {
+#  application_id = azuread_application.Packer_Through_CIB.application_id
+#
+#  tags = concat(["name:Packer_Through_CIB"], local.sp_tags)
+#}
 
 resource "azuread_application" "taskcluster-worker-manager-production" {
   display_name = "taskcluster-worker-manager-production"
