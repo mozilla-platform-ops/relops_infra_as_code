@@ -4,6 +4,7 @@
 provider "registry.terraform.io/hashicorp/aws" {
   version = "3.34.0"
   hashes = [
+    "h1:2xGmnG7UF0iScMGVWBazSYk1sRatXeZYgCGjdGm4A+w=",
     "h1:IL5Gksx/gN7oIDoKmh/t4S2qIb7qT8w1qXCRIGXyxUc=",
     "zh:003272229bd19bb63d6e77bc3d684268c417a151dfaee01c40b40e21cdd8bb0f",
     "zh:103cacc1f3d97dfb7e9dd1e1905b075f92d9bd8aed434f811e8111788b648a57",
@@ -42,6 +43,7 @@ provider "registry.terraform.io/hashicorp/azurerm" {
   version     = "2.46.0"
   constraints = "2.46.0"
   hashes = [
+    "h1:5l0opMFF2DRFPnm4pRscRCRVYa8M9fuQv4BA0pOur4I=",
     "h1:lWovJczej2IP+aL24Fs4mz6brz7eoMxuqzxhEa2I/rc=",
     "zh:049938dab6f78a642a7c4147f99f146dc25824c738d0b18d448c665880d105fa",
     "zh:139de4a46bbfc18b5403fa2264878a056fd8593d860942233913e54233c7327d",
