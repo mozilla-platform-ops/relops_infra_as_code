@@ -9,7 +9,7 @@ resource "azuread_application" "cloud_image_builder" {
     # azure management service api
     resource_app_id = "797f4846-ba00-4fd7-ba43-dac1f8f63013"
     resource_access {
-      id   = "41094075-9dad-400e-a0bd-54e686782033"
+      id   = data.azurerm_subscription.currentSubscription.id
       type = "Scope"
     }
   }
@@ -17,7 +17,7 @@ resource "azuread_application" "cloud_image_builder" {
     # azure storage
     resource_app_id = "e406a681-f3d4-42a8-90b6-c2b029497af1"
     resource_access {
-      id   = "03e0da56-190b-40ad-a80c-ea378c433f7f"
+      id   = data.azurerm_subscription.currentSubscription.id
       type = "Scope"
     }
   }
@@ -34,27 +34,38 @@ resource "azurerm_role_definition" "cloud_image_builder" {
   scope                = data.azurerm_subscription.currentSubscription.id
   permissions {
     actions = [
-
       # read
-      "Microsoft.Compute/*/read",
-      "Microsoft.Network/*/read",
-      "Microsoft.Storage/*/read",
       "Microsoft.Authorization/*/read",
+      "Microsoft.Compute/*/read",
+      "Microsoft.Insights/alertRules/*",
+      "Microsoft.Network/*/read",
+      "Microsoft.ResourceHealth/availabilityStatuses/read",
       "Microsoft.Resources/subscriptions/resourceGroups/read",
       "Microsoft.Resources/subscriptions/resourceGroups/resources/read",
+      "Microsoft.Storage/*/read",
+      "Microsoft.Support/*",
 
       # write
+      "Microsoft.Compute/diskAccesses/write",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnectionProxies/write",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnections/write",
       "Microsoft.Compute/disks/write",
+      "Microsoft.Compute/virtualMachines/write",
       "Microsoft.Network/networkInterfaces/write",
       "Microsoft.Network/publicIPAddresses/write",
 
       # delete
+      "Microsoft.Compute/diskAccesses/delete",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnectionProxies/delete",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnections/delete",
       "Microsoft.Compute/disks/delete",
       "Microsoft.Compute/virtualMachines/delete",
       "Microsoft.Network/networkInterfaces/delete",
       "Microsoft.Network/publicIPAddresses/delete",
 
-      # do
+      # action
+      "Microsoft.Compute/diskAccesses/privateEndpointConnectionProxies/validate/action",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnectionsApproval/action",
       "Microsoft.Compute/disks/beginGetAccess/action",
       "Microsoft.Compute/disks/endGetAccess/action",
       "Microsoft.Compute/virtualMachines/start/action",
