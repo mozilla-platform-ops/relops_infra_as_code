@@ -59,27 +59,38 @@ resource "azurerm_role_definition" "taskcluster-worker-manager" {
   scope       = data.azurerm_subscription.currentSubscription.id
   permissions {
     actions = [
-
       # read
-      "Microsoft.Compute/*/read",
-      "Microsoft.Network/*/read",
-      "Microsoft.Storage/*/read",
       "Microsoft.Authorization/*/read",
+      "Microsoft.Compute/*/read",
+      "Microsoft.Insights/alertRules/*",
+      "Microsoft.Network/*/read",
+      "Microsoft.ResourceHealth/availabilityStatuses/read",
       "Microsoft.Resources/subscriptions/resourceGroups/read",
       "Microsoft.Resources/subscriptions/resourceGroups/resources/read",
+      "Microsoft.Storage/*/read",
+      "Microsoft.Support/*",
 
       # write
+      "Microsoft.Compute/diskAccesses/write",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnectionProxies/write",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnections/write",
       "Microsoft.Compute/disks/write",
+      "Microsoft.Compute/virtualMachines/write",
       "Microsoft.Network/networkInterfaces/write",
       "Microsoft.Network/publicIPAddresses/write",
 
       # delete
+      "Microsoft.Compute/diskAccesses/delete",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnectionProxies/delete",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnections/delete",
       "Microsoft.Compute/disks/delete",
       "Microsoft.Compute/virtualMachines/delete",
       "Microsoft.Network/networkInterfaces/delete",
       "Microsoft.Network/publicIPAddresses/delete",
 
-      # do
+      # action
+      "Microsoft.Compute/diskAccesses/privateEndpointConnectionProxies/validate/action",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnectionsApproval/action",
       "Microsoft.Compute/disks/beginGetAccess/action",
       "Microsoft.Compute/disks/endGetAccess/action",
       "Microsoft.Compute/virtualMachines/start/action",
