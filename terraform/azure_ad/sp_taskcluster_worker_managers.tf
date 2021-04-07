@@ -61,15 +61,23 @@ resource "azurerm_role_definition" "taskcluster-worker-manager" {
     actions = [
 
       # read
-      "Microsoft.Compute/*/read",
-      "Microsoft.Network/*/read",
-      "Microsoft.Storage/*/read",
       "Microsoft.Authorization/*/read",
+      "Microsoft.Compute/*/read",
+      "Microsoft.Insights/alertRules/*",
+      "Microsoft.Network/*/read",
+      "Microsoft.ResourceHealth/availabilityStatuses/read",
       "Microsoft.Resources/subscriptions/resourceGroups/read",
       "Microsoft.Resources/subscriptions/resourceGroups/resources/read",
+      "Microsoft.Storage/*/read",
+      "Microsoft.Support/*",
 
       # write
+      "Microsoft.Compute/diskAccesses/write",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnectionProxies/write",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnections/write",
       "Microsoft.Compute/disks/write",
+      "Microsoft.Compute/virtualMachines/write",
+
       "Microsoft.Network/networkInterfaces/write",
       "Microsoft.Network/publicIPAddresses/write",
 
