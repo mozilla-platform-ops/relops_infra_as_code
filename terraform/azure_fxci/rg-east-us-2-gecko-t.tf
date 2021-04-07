@@ -37,7 +37,7 @@ resource "azurerm_virtual_network" "vn-east-us-2-gecko-t" {
   address_space       = ["10.0.0.0/24"]
   dns_servers         = ["1.1.1.1", "1.1.1.0"]
   subnet {
-    name           = "sn-east-us-2-gecko-t-sn"
+    name           = "sn-east-us-2-gecko-t"
     address_prefix = "10.0.0.0/24"
     security_group = azurerm_network_security_group.nsg-east-us-2-gecko-t.id
   }
