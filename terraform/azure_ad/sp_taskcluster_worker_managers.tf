@@ -59,6 +59,7 @@ resource "azurerm_role_definition" "taskcluster-worker-manager" {
   scope       = data.azurerm_subscription.currentSubscription.id
   permissions {
     actions = [
+
       # read
       "Microsoft.Authorization/*/read",
       "Microsoft.Compute/*/read",
@@ -76,21 +77,17 @@ resource "azurerm_role_definition" "taskcluster-worker-manager" {
       "Microsoft.Compute/diskAccesses/privateEndpointConnections/write",
       "Microsoft.Compute/disks/write",
       "Microsoft.Compute/virtualMachines/write",
+
       "Microsoft.Network/networkInterfaces/write",
       "Microsoft.Network/publicIPAddresses/write",
 
       # delete
-      "Microsoft.Compute/diskAccesses/delete",
-      "Microsoft.Compute/diskAccesses/privateEndpointConnectionProxies/delete",
-      "Microsoft.Compute/diskAccesses/privateEndpointConnections/delete",
       "Microsoft.Compute/disks/delete",
       "Microsoft.Compute/virtualMachines/delete",
       "Microsoft.Network/networkInterfaces/delete",
       "Microsoft.Network/publicIPAddresses/delete",
 
-      # action
-      "Microsoft.Compute/diskAccesses/privateEndpointConnectionProxies/validate/action",
-      "Microsoft.Compute/diskAccesses/privateEndpointConnectionsApproval/action",
+      # do
       "Microsoft.Compute/disks/beginGetAccess/action",
       "Microsoft.Compute/disks/endGetAccess/action",
       "Microsoft.Compute/virtualMachines/start/action",
