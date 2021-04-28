@@ -1,1 +1,0 @@
-../vsphere_provider.tf
