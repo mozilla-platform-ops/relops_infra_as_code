@@ -1,5 +1,6 @@
 module "vpc_moz_internal_us_east_1" {
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "2.64.0"
 
   providers = {
     aws = aws.us-east-1
@@ -48,7 +49,8 @@ resource "aws_route53_zone" "use1_arpa" {
 }
 
 module "vpc_moz_internal_us_west_2" {
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "2.64.0"
 
   providers = {
     aws = aws.us-west-2
