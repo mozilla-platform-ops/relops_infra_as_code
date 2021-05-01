@@ -14,6 +14,11 @@ output "us_east_1_public_subnets" {
   value       = [module.vpc_moz_internal_us_east_1.public_subnets]
 }
 
+output "us_east_1_private_subnets" {
+  description = "List of IDs of us-east-1 private subnets"
+  value       = [module.vpc_moz_internal_us_east_1.public_subnets]
+}
+
 output "us_west_2_public_subnets" {
   description = "List of IDs of us-west-2 public subnets"
   value       = [module.vpc_moz_internal_us_west_2.public_subnets]

@@ -16,6 +16,14 @@ data "aws_subnet_ids" "public_subnets" {
   }
 }
 
+data "aws_subnet_ids" "private_subnets" {
+  vpc_id = join(", ", data.aws_vpcs.moz_internal_us_west_2.ids)
+
+  tags = {
+    Subnet_type = "private"
+  }
+}
+
 data "aws_route53_zone" "relops_mozops_net" {
   name = "relops.mozops.net."
 }

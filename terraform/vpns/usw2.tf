@@ -84,16 +84,19 @@ resource "aws_vpn_gateway_attachment" "vpn_attachment_usw2" {
   vpn_gateway_id = aws_vpn_gateway.vpn_gw_usw2.id
 }
 
-data "aws_route_tables" "moz_internal_us_west_2_public" {
+data "aws_route_tables" "moz_internal_us_west_2" {
   provider = aws.us-west-2
 
-  tags = {
-    Name = "moz-internal-us-west-2-public"
+  filter {
+    name   = "tag:Name"
+    values = ["moz-internal-us-west-2-*"]
   }
 }
 
-resource "aws_vpn_gateway_route_propagation" "public_usw2" {
+# Propagate vpn routes for each route table
+resource "aws_vpn_gateway_route_propagation" "usw2" {
   provider       = aws.us-west-2
-  route_table_id = join(", ", data.aws_route_tables.moz_internal_us_west_2_public.ids)
+  for_each       = data.aws_route_tables.moz_internal_us_west_2.ids
+  route_table_id = each.key
   vpn_gateway_id = aws_vpn_gateway.vpn_gw_usw2.id
 }
