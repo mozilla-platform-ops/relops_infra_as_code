@@ -47,7 +47,7 @@ resource "aws_ecs_service" "vault" {
   deployment_minimum_healthy_percent = 50
 
   network_configuration {
-    subnets         = data.aws_subnet_ids.public_subnets.ids
+    subnets         = data.aws_subnet_ids.private_subnets.ids
     security_groups = [aws_security_group.ecs_vault_public_sg.id]
   }
 

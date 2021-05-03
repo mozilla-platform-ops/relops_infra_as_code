@@ -9,11 +9,16 @@ module "vpc_moz_internal_us_east_1" {
   name = "moz-internal-us-east-1"
   cidr = "10.191.6.0/24"
 
-  azs            = ["us-east-1a", "us-east-1b"]
-  public_subnets = ["10.191.6.0/25", "10.191.6.128/25"]
+  azs             = ["us-east-1a", "us-east-1b"]
+  public_subnets  = ["10.191.6.0/26", "10.191.6.64/26"]
+  private_subnets = ["10.191.6.128/26", "10.191.6.192/26"]
 
   public_subnet_tags = {
     Subnet_type = "public"
+  }
+
+  private_subnet_tags = {
+    Subnet_type = "private"
   }
 
   enable_dhcp_options      = true
@@ -21,6 +26,7 @@ module "vpc_moz_internal_us_east_1" {
   enable_dns_hostnames     = true
   enable_dns_support       = true
   map_public_ip_on_launch  = false
+  enable_nat_gateway       = true
 
   tags = {
     Terraform   = "true"
@@ -59,11 +65,16 @@ module "vpc_moz_internal_us_west_2" {
   name = "moz-internal-us-west-2"
   cidr = "10.191.7.0/24"
 
-  azs            = ["us-west-2a", "us-west-2b"]
-  public_subnets = ["10.191.7.0/25", "10.191.7.128/25"]
+  azs             = ["us-west-2a", "us-west-2b"]
+  public_subnets  = ["10.191.7.0/26", "10.191.7.64/26"]
+  private_subnets = ["10.191.7.128/26", "10.191.7.192/26"]
 
   public_subnet_tags = {
     Subnet_type = "public"
+  }
+
+  private_subnet_tags = {
+    Subnet_type = "private"
   }
 
   enable_dhcp_options      = true
@@ -71,6 +82,7 @@ module "vpc_moz_internal_us_west_2" {
   enable_dns_hostnames     = true
   enable_dns_support       = true
   map_public_ip_on_launch  = false
+  enable_nat_gateway       = true
 
   enable_dynamodb_endpoint = true
 

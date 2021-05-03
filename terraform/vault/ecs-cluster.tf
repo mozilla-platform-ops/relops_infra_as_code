@@ -13,6 +13,13 @@ resource "aws_security_group" "ec2_vault_instance_sg" {
   description = "Vault ec2 instances security group"
   vpc_id      = join(", ", data.aws_vpcs.moz_internal_us_west_2.ids)
 
+  ingress {
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -39,7 +46,7 @@ resource "aws_launch_configuration" "ecs-launch-configuration" {
   }
 
   security_groups             = [aws_security_group.ec2_vault_instance_sg.id]
-  associate_public_ip_address = "true"
+  associate_public_ip_address = "false"
 
   key_name = "relops_common"
 
@@ -51,7 +58,7 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
   max_size             = var.max_instance_size
   min_size             = var.min_instance_size
   desired_capacity     = var.desired_capacity
-  vpc_zone_identifier  = data.aws_subnet_ids.public_subnets.ids
+  vpc_zone_identifier  = data.aws_subnet_ids.private_subnets.ids
   launch_configuration = aws_launch_configuration.ecs-launch-configuration.name
   health_check_type    = "EC2"
   termination_policies = ["OldestInstance"]
