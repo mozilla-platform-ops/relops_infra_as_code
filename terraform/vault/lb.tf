@@ -18,15 +18,14 @@ resource "aws_security_group" "vault_lb_sg" {
     to_port   = 8200
     protocol  = "tcp"
     cidr_blocks = [
-      "10.49.0.0/16",
-      "10.51.0.0/16",
-      "10.48.242.0/23",
-      "10.48.240.0/23",
-      "10.48.236.0/23",
-      "10.48.238.0/23",
-      "10.64.0.0/16",
-      "10.155.0.0/16",
-      "10.48.72.100/32"
+      "10.49.0.0/16",   # Releng MDC1
+      "10.48.242.0/23", # MDC1 VPN prod tcp
+      "10.48.240.0/23", # MDC1 VPN prod udp
+      "10.48.236.0/23", # MDC1 VPN stage tcp
+      "10.48.238.0/23", # MDC1 VPN stage udp
+      "10.64.0.0/16",   # Ber3 VPN and future vpn space
+      "10.155.0.0/16",  # MSLV Macstadium Las Vegas
+      "10.48.72.100/32" # MDC1 ssh.mozilla.com jumphost
     ]
   }
 
