@@ -2,9 +2,9 @@ resource "aws_ecs_cluster" "vault" {
   name = "vault"
 
   tags = merge(local.common_tags,
-    map(
-      "Name", "vault"
-    )
+    tomap({
+      "Name" = "vault"
+    })
   )
 }
 

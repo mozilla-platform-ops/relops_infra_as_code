@@ -15,9 +15,9 @@ resource "aws_dynamodb_table" "dynamodb-table" {
   }
 
   tags = merge(local.common_tags,
-    map(
-      "Name", "vault-dynamodb-table"
-    )
+    tomap({
+      "Name" = "vault-dynamodb-table"
+    })
   )
 }
 
