@@ -2,7 +2,7 @@
   {
     "name": "vault",
     "containerName": "vault",
-    "image": "vault:1.7.1",
+    "image": "vault:1.7.2",
     "memory": 6144,
     "linuxParameters": {
       "capabilities": {
