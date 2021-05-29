@@ -2,9 +2,9 @@ resource "azurerm_resource_group" "rg-west-us-2-gecko-t" {
   name     = "rg-west-us-2-gecko-t"
   location = "West US 2"
   tags = merge(local.common_tags,
-    map(
-      "Name", "rg-west-us-2-gecko-t"
-    )
+    tomap({
+      "Name" = "rg-west-us-2-gecko-t"
+    })
   )
 }
 # storage account names can only consist of lowercase letters and numbers
@@ -15,9 +15,9 @@ resource "azurerm_storage_account" "sawestus2geckot" {
   account_tier             = "Standard"
   account_replication_type = "GRS"
   tags = merge(local.common_tags,
-    map(
-      "Name", "sawest2usgeckot"
-    )
+    tomap({
+      "Name" = "sawest2usgeckot"
+    })
   )
 }
 resource "azurerm_network_security_group" "nsg-west-us2-gecko-t" {
@@ -25,9 +25,9 @@ resource "azurerm_network_security_group" "nsg-west-us2-gecko-t" {
   location            = "West US 2"
   resource_group_name = azurerm_resource_group.rg-west-us-2-gecko-t.name
   tags = merge(local.common_tags,
-    map(
-      "Name", "nsg-west-us2-gecko-t"
-    )
+    tomap({
+      "Name" = "nsg-west-us2-gecko-t"
+    })
   )
 }
 resource "azurerm_virtual_network" "vn-west-us2-gecko-t" {
@@ -42,8 +42,8 @@ resource "azurerm_virtual_network" "vn-west-us2-gecko-t" {
     security_group = azurerm_network_security_group.nsg-west-us2-gecko-t.id
   }
   tags = merge(local.common_tags,
-    map(
-      "Name", "vn-west-us-2-gecko-t"
-    )
+    tomap({
+      "Name" = "vn-west-us-2-gecko-t"
+    })
   )
 }
