@@ -25,21 +25,6 @@ resource "aws_customer_gateway" "cgw_usw2_mdc1" {
   }
 }
 
-resource "aws_customer_gateway" "cgw_usw2_mdc2" {
-  provider   = aws.us-west-2
-  bgp_asn    = 65050
-  ip_address = "63.245.210.251"
-  type       = "ipsec.1"
-
-  tags = {
-    Name        = "MDC2 Customer Gateway"
-    Terraform   = "true"
-    Repo_url    = var.repo_url
-    Environment = "prod"
-    Owner       = "relops@mozilla.com"
-  }
-}
-
 resource "aws_vpn_connection" "vpn_connection_usw2_mdc1" {
   provider            = aws.us-west-2
   vpn_gateway_id      = aws_vpn_gateway.vpn_gw_usw2.id
@@ -48,21 +33,6 @@ resource "aws_vpn_connection" "vpn_connection_usw2_mdc1" {
 
   tags = {
     Name        = "USW2-MDC1"
-    Terraform   = "true"
-    Repo_url    = var.repo_url
-    Environment = "prod"
-    Owner       = "relops@mozilla.com"
-  }
-}
-
-resource "aws_vpn_connection" "vpn_connection_usw2_mdc2" {
-  provider            = aws.us-west-2
-  vpn_gateway_id      = aws_vpn_gateway.vpn_gw_usw2.id
-  customer_gateway_id = aws_customer_gateway.cgw_usw2_mdc2.id
-  type                = "ipsec.1"
-
-  tags = {
-    Name        = "USW2-MDC2"
     Terraform   = "true"
     Repo_url    = var.repo_url
     Environment = "prod"
