@@ -12,6 +12,6 @@ min_instance_size = "2"
 
 desired_capacity = "2"
 
-ecs_ami = "ami-0b89310f457a9e90e"
+ecs_ami = "ami-0a51409a409fbc030"
 
 docker_version = "1.7.3"
