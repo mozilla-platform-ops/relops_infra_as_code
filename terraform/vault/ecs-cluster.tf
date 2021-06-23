@@ -27,30 +27,39 @@ resource "aws_security_group" "ec2_vault_instance_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    Terraform   = "true"
-    Repo_url    = var.repo_url
-    Environment = "Prod"
-    Owner       = "relops@mozilla.com"
-  }
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "vault"
+    })
+  )
 }
 
-resource "aws_launch_configuration" "ecs-launch-configuration" {
-  name_prefix          = "ecs-vault-launch-configuration-"
-  image_id             = var.ecs_ami
-  instance_type        = var.instance_type
-  iam_instance_profile = aws_iam_instance_profile.ecs-instance-profile.id
+resource "aws_launch_template" "ecs-launch-template" {
+  name          = "vault-launch-template"
+  image_id      = var.ecs_ami
+  instance_type = var.instance_type
+  key_name      = "relops_common"
+  user_data     = filebase64("userdata/ecs-userdata.sh")
 
   lifecycle {
     create_before_destroy = true
   }
 
-  security_groups             = [aws_security_group.ec2_vault_instance_sg.id]
-  associate_public_ip_address = "false"
+  iam_instance_profile {
+    name = aws_iam_instance_profile.ecs-instance-profile.name
+  }
 
-  key_name = "relops_common"
+  network_interfaces {
+    associate_public_ip_address = false
+    delete_on_termination       = true
+    security_groups             = [aws_security_group.ec2_vault_instance_sg.id]
+  }
 
-  user_data = file("userdata/ecs-userdata.sh")
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "vault-launch-template"
+    })
+  )
 }
 
 resource "aws_autoscaling_group" "ecs-autoscaling-group" {
@@ -59,7 +68,25 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
   min_size             = var.min_instance_size
   desired_capacity     = var.desired_capacity
   vpc_zone_identifier  = data.aws_subnet_ids.private_subnets.ids
-  launch_configuration = aws_launch_configuration.ecs-launch-configuration.name
   health_check_type    = "EC2"
   termination_policies = ["OldestInstance"]
+
+  launch_template {
+    id      = aws_launch_template.ecs-launch-template.id
+    version = "$Latest"
+  }
+
+  tag {
+    key                 = "Name"
+    value               = "Vault-${var.tag_production_state}"
+    propagate_at_launch = true
+  }
+
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      instance_warmup        = 180
+      min_healthy_percentage = 50
+    }
+  }
 }

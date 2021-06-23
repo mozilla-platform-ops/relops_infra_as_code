@@ -17,3 +17,7 @@ variable "min_instance_size" {
 variable "desired_capacity" {
   description = "Desired number of instances in the cluster"
 }
+
+variable "docker_version" {
+  description = "Version of the terraform docker image"
+}
