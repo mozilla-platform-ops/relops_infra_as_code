@@ -9,7 +9,7 @@ resource "azurerm_resource_group" "rg-north-europe-gecko-t" {
 }
 # storage account names can only consist of lowercase letters and numbers
 resource "azurerm_storage_account" "sanortheuropegeckot" {
-  name                     = "sanorthgeckot"
+  name                     = "sanortheuropegeckot"
   resource_group_name      = azurerm_resource_group.rg-north-europe-gecko-t.name
   location                 = "North Europe"
   account_tier             = "Standard"
