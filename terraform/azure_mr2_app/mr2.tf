@@ -41,4 +41,8 @@ resource "azuread_application" "mr2_app" {
       type = "Scope"
     }
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
