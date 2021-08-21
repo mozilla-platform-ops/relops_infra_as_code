@@ -1,0 +1,3 @@
+[submodule "vnc/vncdotool"]
+	path = vnc/vncdotool
+	url = git@github.com:sibson/vncdotool.git
