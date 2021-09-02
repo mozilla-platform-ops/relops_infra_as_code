@@ -39,11 +39,14 @@ except UndefinedValueError as e:
     sys.exit(1)
 
 admin_user = config("admin_user", default="Administrator")
-admin_password = getpass("{} password:".format(admin_user))
+try:
+    admin_password = config('admin_password')
+except UndefinedValueError:
+    admin_password = getpass("{} password:".format(admin_user))
 
 parser = argparse.ArgumentParser(description="List of hosts.")
 hostnames = [
-    "macmini-m1-50.test.releng.mslv.mozilla.com",
+    "macmini-m1-2.test.releng.mslv.mozilla.com",
 ]
 parser.add_argument("hostnames", nargs="*", help="hostnames to apply to")
 args = parser.parse_args()
@@ -55,7 +58,7 @@ print(args.hostnames)
 try:
     with open("vnc_password", "r", encoding="utf-8") as f:
         vnc_password = f.readline()
-except ImportError:
+except FileNotFoundError:
     import string
 
     try:
@@ -71,6 +74,9 @@ except ImportError:
 print("vnc_password:{}".format(vnc_password))
 
 
+class ImageNotFound(RuntimeError):
+    """subimage not matched"""
+
 def locate_image(screen, image):
     """
     Find sub-image in screen.
@@ -84,7 +90,7 @@ def locate_image(screen, image):
     print(min_val, max_val, min_loc)
 
     if top_left is None:
-        raise Exception("No sub-image found.")
+        raise ImageNotFound("No sub-image {} found in {}.".format(image,screen))
     print(top_left, screen, image)
 
     return (top_left[0], top_left[1], max_val)
@@ -239,6 +245,7 @@ for target in hostnames:
         ).ok
 
     def vnc_setup_profile():
+        logging.basicConfig(level=logging.DEBUG)
         client = api.connect(target, password=vnc_password, legacy=True)
 
         # awaken: move mouse.
@@ -251,10 +258,14 @@ for target in hostnames:
         try:
 
             def expectRegion(expected, retries=5, threshold=0.5):
+                max_val = 0
                 while retries > 0:
                     screen_filename = "capture.{}.png".format(
                         time.strftime("%Y-%m-%d_%H:%M:%S", time.gmtime())
                     )
+                    client.mouseMove(1210, 250)
+                    client.mouseMove(1220, 150)
+                    client.pause(1)
                     client.captureScreen(screen_filename)
                     try:
                         (x, y, max_val) = locate_image(screen_filename, expected)
@@ -265,16 +276,27 @@ for target in hostnames:
                         print(e)
                     retries = retries - 1
                     time.sleep(1)
-                    print(
-                        "retry={} No region match for {} (max_val[{}] ! > {}".format(
-                            retries, expected, max_val, threshold
-                        )
-                    )
-                raise Exception(
+                    logging.warning("retry={} No region match for {} (max_val[{}] ! > {}".format(
+                        retries, expected, max_val, threshold))
+                raise ImageNotFound(
                     "No region match for {} (max_val[{}] ! > {}".format(
                         expected, max_val, threshold
                     )
                 )
+
+            try:
+                (x, y) = expectRegion("login_bubbles_not_prompt.png", retries=1, threshold=0.9)
+                logging.warning('wrong login prompt (bubbles)')
+                client.keyPress("enter")
+                (x, y) = expectRegion("login_bubbles_not_prompt.png", retries=1, threshold=0.9)
+                logging.warning('wrong login prompt _still_')
+                client.mouseMove(476, 450)
+                client.mouseClick(1)
+                (x, y) = expectRegion("login_bubbles_not_prompt.png", retries=1)
+                logging.warning('wrong login prompt after click!?')
+                raise Warning('wrong login prompt!?')
+            except ImageNotFound:
+                print("login prompt not bubbles")
 
             (x, y) = expectRegion("login.png")
             # TODO: recover if not found?
@@ -289,7 +311,8 @@ for target in hostnames:
             (x, y) = expectRegion("menubar_apple.png")
             retries = 4
             while x != 1 and y != 2:
-                print("no menubar?")
+                logging.warning("no menubar? "
+                    "move the mouse and kill the screensaver [retry=%s]", retries)
                 client.mouseMove(1210, 250)
                 client.mouseMove(1220, 150)
                 client.mouseClick(1)
@@ -331,20 +354,22 @@ for target in hostnames:
             try:
                 # If the profiles panel is blank,
                 # reset+reopen it.
-                (x, y) = expectRegion("profiles_blank.png")
+                (x, y) = expectRegion("profiles_blank.png", retries=1, threshold=0.8)
                 print("blank profiles window")
                 close_apps()
                 c.sudo('killall "System Preferences"', warn=True)
                 reset_prefs_position()
                 profile_setup = open_profile()
                 print("profile_setup:{}".format(profile_setup))
-            except:
+            except ImageNotFound:
+                print("Confirmed profile panel not blank.")
                 print(x, y)
 
             try:
                 (x, y) = expectRegion("managed.png", retries=1)
+                logging.error("already enrolled in MDM")
                 raise Exception("already enrolled in MDM")
-            except:
+            except ImageNotFound:
                 print("Confirmed not already enrolled in MDM.")
 
             (x, y) = expectRegion("install_button_full.png")
@@ -394,9 +419,12 @@ for target in hostnames:
 
         print("Load MDM profile")
         # Remove the profile if opened but not installed before.
-        c.run(
-            "profiles -R -p ddb4c3b5-8357-4b2c-8b23-4e75dfdf78a1 2>/dev/null", warn=True
-        )
+        try:
+            c.run("profiles -R -p ddb4c3b5-8357-4b2c-8b23-4e75dfdf78a1 2>/dev/null")
+        except:
+            c.sudo(
+                "profiles -R -p ddb4c3b5-8357-4b2c-8b23-4e75dfdf78a1 2>/dev/null", warn=True
+            )
         get_enroll_profile()
 
     if is_enrolled():
