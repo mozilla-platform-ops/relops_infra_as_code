@@ -79,9 +79,7 @@ foreach ($vm in $vms) {
 	}
 }
 
-write-output
 write-output Total Running VMs: $how_many
-write-output
 $avetime = [int]$all_minutes/[int]$how_many
 $hrs = [int]$avetime/60
 write-output  ('Average time up  {0} minutes ...  {1} hours' -f $avetime, $hrs)
