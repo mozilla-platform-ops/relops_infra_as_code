@@ -2,6 +2,9 @@
 # just report not shutdown
 # Commented out code is for future use if we want to expand the scope.
 
+$connection = Get-AutomationConnection -Name AzureRunAsConnection
+$connectionResult = Connect-AzAccount -ServicePrincipal -Tenant $connection.TenantID -ApplicationId $connection.ApplicationID -CertificateThumbprint $connection.CertificateThumbprint
+
 $current = (get-date -format g)
 $vms = (get-azvm)
 $issued_vms = New-Object System.Collections.ArrayList
