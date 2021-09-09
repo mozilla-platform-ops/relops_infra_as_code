@@ -65,9 +65,9 @@ foreach ($vm in $vms) {
 			if (([int]$days -ge 1) -and ($vm.ResourceGroupName -like "RG-TASKCLUSTER-WORKER-MANAGER-PRODUCTION")) {
 				# Longer than a day assuming it is off the rails
 				write-output ('{0} up days {1}. up hours {2}. Worker pool: {3} ' -f $vm.name, $up_time.days, $up_time.hours, $worker_pool )
-				# write-output ('shutting down {0} . It has been up for {1} days.' -f $vm.Name, $days)
+				write-output ('shutting down {0} . It has been up for {1} days.' -f $vm.Name, $days)
 				write-output $null
-				# Stop-AzVM -ResourceGroupName $vm.ResourceGroupName -Name $vm.Name -force
+				Stop-AzVM -ResourceGroupName $vm.ResourceGroupName -Name $vm.Name -force
 				$shutdown.Add($vm.name)| Out-Null
 			}  #else {
 				#write-output ('{0} up days {1} up hours {2} and the agent is {3} ' -f $vm.name, $up_time.days, $up_time.hours, $agent_status)
