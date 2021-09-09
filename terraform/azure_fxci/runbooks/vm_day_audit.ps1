@@ -37,7 +37,11 @@ foreach ($vm in $vms) {
 	} elseif ( $display_status -like "VM running") {
 		$how_many = $how_many + 1
 		$provisioned_time = $status.Disks[0].Statuses[0].Time
-		$agent_status = $status.VMAgent.Statuses[0].DisplayStatus
+		if ($status.VMAgent.Statuses.count -gt 0) {
+			$agent_status = $status.VMAgent.Statuses[0].DisplayStatus
+		} else {
+			$agent_status = $null
+		}
 		$up_time = (New-TimeSpan -Start $provisioned_time -end $current -ErrorAction:SilentlyContinue)
 		$hrs = $up_time.hours
 		$dys = $up_time.days
@@ -47,8 +51,10 @@ foreach ($vm in $vms) {
 		$tags = (Get-AzResource -ResourceGroupName $vm.ResourceGroupName -Name $vm.name).Tags
 		$worker_pool = $tags['worker-pool-id']
 
-		# If the agent is not running most likely the VM has issues.
-		if (!( $agent_status -like "Ready")) {
+		if ($agent_status -eq $null) {
+			# most likely new vm/ do nothing
+		} elseif (!( $agent_status -like "Ready")) {
+			# If the agent is not running most likely the VM has issues.
 			$no_agent.Add($vm.name) | Out-Null
 			write-output  ('{0} vm agent is not running.' -f $vm.name)
 			# Stop-AzVM -ResourceGroupName $vm.ResourceGroupName -Name $vm.Name -force
@@ -79,7 +85,8 @@ foreach ($vm in $vms) {
 	}
 }
 
-write-output Total Running VMs: $how_many
+
+write-output ('Total Running VMs: {0}' -f $how_many)
 $avetime = [int]$all_minutes/[int]$how_many
 $hrs = [int]$avetime/60
 write-output  ('Average time up  {0} minutes ...  {1} hours' -f $avetime, $hrs)
