@@ -37,6 +37,10 @@ resource "azurerm_automation_module" "az-resources" {
     uri = "https://www.powershellgallery.com/api/v2/package/Az.Resources"
   }
 }
+# These schedule will throw an error on terraform apply
+# like "Error: start_time is" 
+# not an impactful error
+
 resource "azurerm_automation_schedule" "once-a-week" {
   name                    = "once-a-week"
   resource_group_name     = azurerm_automation_account.resource-monitor.resource_group_name
