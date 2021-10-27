@@ -37,6 +37,10 @@ resource "azurerm_automation_module" "az-resources" {
     uri = "https://www.powershellgallery.com/api/v2/package/Az.Resources"
   }
 }
+# These schedule will throw an error on terraform apply
+# like "Error: start_time is" 
+# not an impactful error
+
 resource "azurerm_automation_schedule" "once-a-week" {
   name                    = "once-a-week"
   resource_group_name     = azurerm_automation_account.resource-monitor.resource_group_name
@@ -60,6 +64,22 @@ resource "azurerm_automation_schedule" "every-4-hours" {
   frequency               = "Hour"
   interval                = 4
   description             = "Every 4 hours"
+}
+resource "azurerm_automation_schedule" "every-2-hours" {
+    name                    = "every-2-hours"
+    resource_group_name     = azurerm_automation_account.resource-monitor.resource_group_name
+    automation_account_name = azurerm_automation_account.resource-monitor.name
+    frequency               = "Hour"
+    interval                = 2
+    description             = "Every 2 hours"
+}
+resource "azurerm_automation_schedule" "every-hour" {
+  name                    = "every-hour"
+  resource_group_name     = azurerm_automation_account.resource-monitor.resource_group_name
+  automation_account_name = azurerm_automation_account.resource-monitor.name
+  frequency               = "Hour"
+  interval                = 1
+  description             = "Every hour"
 }
 resource "azurerm_automation_schedule" "once" {
   name                    = "once"
@@ -120,49 +140,28 @@ resource "azurerm_automation_job_schedule" "vm_day_audit" {
   runbook_name            = azurerm_automation_runbook.vm_day_audit.name
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+data "local_file" "worker_scanner_helper_ps1" {
+  filename = "runbooks/worker_scanner_helper.ps1"
+}
+resource "azurerm_automation_runbook" "worker_scanner_helper" {
+  name                    = "worker_scanner_helper"
+  location                = azurerm_automation_account.resource-monitor.location
+  resource_group_name     = azurerm_automation_account.resource-monitor.resource_group_name
+  automation_account_name = azurerm_automation_account.resource-monitor.name
+  log_verbose             = "false"
+  log_progress            = "true"
+  description             = "Delete unassociated old resources"
+  runbook_type            = "PowerShell"
+  content                 = data.local_file.worker_scanner_helper_ps1.content
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "tmp_rg_cleanup"
+    })
+  )
+}
+resource "azurerm_automation_job_schedule" "worker_scanner_helper" {
+  resource_group_name     = azurerm_automation_account.resource-monitor.resource_group_name
+  automation_account_name = azurerm_automation_account.resource-monitor.name
+  schedule_name           = azurerm_automation_schedule.every-2-hours.name
+  runbook_name            = azurerm_automation_runbook.worker_scanner_helper.name
+}
