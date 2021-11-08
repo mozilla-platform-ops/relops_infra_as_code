@@ -24,6 +24,18 @@ resource "azurerm_network_security_group" "nsg-north-central-us-ff-enterprise" {
   name                = "nsg-north-central-us-ff-enterprise"
   location            = "North Central US"
   resource_group_name = azurerm_resource_group.rg-north-central-us-ff-enterprise.name
+  security_rule {
+    name                       = "allow-rdp"
+    description                = "allow-rdp"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "3389"
+    source_address_prefix      = "Internet"
+    destination_address_prefix = "*"
+  }
   tags = merge(local.common_tags,
     tomap({
       "Name" = "nsg-north-central-us-ff-enterprise"
