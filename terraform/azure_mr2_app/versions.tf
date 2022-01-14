@@ -4,5 +4,11 @@ terraform {
     aws = {
       source = "hashicorp/aws"
     }
+    azurerm = {
+      source = "hashicorp/azurerm"
+    }
+    azuread = {
+      source = "hashicorp/azuread"
+    }
   }
 }
