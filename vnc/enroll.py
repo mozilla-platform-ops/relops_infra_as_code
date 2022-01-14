@@ -8,11 +8,24 @@ Example: ${0} macmini-m1-1.test.releng.mslv.mozilla.com macmini-m1-2.test.releng
 
 Expects direct access to dns,ssh,vnc for hostnames.
 Expects user Administrator and asks for password.
+Requires configuration (fabric .env file) with:
+ProfileUUID,profile_sha256,simplemdm_enroll_url
+Example fabric .env file to set these:
+```
+admin_user="Administrator"
+admin_password="s3cretp@sss"
+ProfileUUID="A03135CA-10BC-49DC-8E07-34454C52615D"
+profile_sha256="a24f52edcc8b3211dd64315cdaa41e37241d33bfc72835f3be9e8b4e72b13107"
+simplemdm_enroll_url="https://a.simplemdm.com/enroll/?c=12345678"
+```
 
 Connects with ssh and enables legacy VNC (sets password).
 Connects with VNC and approves+installs pending policy.
 
-Screenshot if completed named {hostname}_completed.jpeg.
+If there are problems you can check the following screenshots for a host:
+Screenshot of screen after login named {hostname}_logged_in_screen.png.
+(If other applications are running, they may break the image checks)
+Screenshot if completed named {hostname}_confirmed.png.
 """
 import logging
 import sys
