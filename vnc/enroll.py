@@ -121,7 +121,6 @@ for target in hostnames:
             "look_for_keys": False,
             "allow_agent": False,
         },
-        # gateway=jumphost,
     )
 
     def ensure_dns():
