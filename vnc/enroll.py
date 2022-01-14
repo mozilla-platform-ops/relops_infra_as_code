@@ -109,11 +109,6 @@ def locate_image(screen, image):
     return (top_left[0], top_left[1], max_val)
 
 
-# TODO: jumphost with paramiko
-# jumphost = Connection('ssh.mozilla.com', user="dhouse")
-# jumphost.open()
-# jumphost.run('uptime')
-
 for target in hostnames:
     print(target)
 
