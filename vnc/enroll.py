@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# pylint: disable=cell-var-from-loop, missing-function-docstring, bare-except, invalid-name, too-many-statements, broad-except
+# pylint: disable=cell-var-from-loop, missing-function-docstring, bare-except, invalid-name, too-many-statements, broad-except, logging-format-interpolation
 """
 Automate SimpleMDM enrollment
 
@@ -247,12 +247,7 @@ for target in hostnames:
     def vnc_setup_profile():
         logging.basicConfig(level=logging.DEBUG)
         client = api.connect(target, password=vnc_password, legacy=True)
-
-        # awaken: move mouse.
-        client.mouseMove(1210, 250)
-        client.mouseMove(1220, 150)
-        client.pause(1)
-        client.timeout = 600
+        client.timeout = 60  # global timeout for connection response
 
         capture_prefix = target
         try:
@@ -263,6 +258,8 @@ for target in hostnames:
                     screen_filename = "capture.{}.png".format(
                         time.strftime("%Y-%m-%d_%H:%M:%S", time.gmtime())
                     )
+                    # apple vnc buffer capture times-out sometimes without activity
+                    # if we move the mouse, we are move likely to trigger the update
                     client.mouseMove(1210, 250)
                     client.mouseMove(1220, 150)
                     client.pause(1)
@@ -287,26 +284,22 @@ for target in hostnames:
             try:
                 (x, y) = expectRegion("login_bubbles_not_prompt.png", retries=1, threshold=0.9)
                 logging.warning('wrong login prompt (bubbles)')
+                client.keyPress("right")
                 client.keyPress("enter")
                 (x, y) = expectRegion("login_bubbles_not_prompt.png", retries=1, threshold=0.9)
-                logging.warning('wrong login prompt _still_')
+                logging.warning('wrong login prompt after enter')
                 client.mouseMove(476, 450)
                 client.mouseClick(1)
-                (x, y) = expectRegion("login_bubbles_not_prompt.png", retries=1)
+                (x, y) = expectRegion("login_bubbles_not_prompt.png", retries=1, threshold=0.9)
                 logging.warning('wrong login prompt after click!?')
                 raise Warning('wrong login prompt!?')
             except ImageNotFound:
                 print("login prompt not bubbles")
 
             (x, y) = expectRegion("login.png")
-            # TODO: recover if not found?
-
             client.type(admin_password)
-            client.pause(1)
             (x, y) = expectRegion("login_typed_dots.png")
-            # TODO: verify typed (dots)
             client.keyPress("enter")
-            client.pause(2)
 
             (x, y) = expectRegion("menubar_apple.png")
             retries = 4
@@ -317,7 +310,6 @@ for target in hostnames:
                 client.mouseMove(1220, 150)
                 client.mouseClick(1)
                 stop_screensaver()
-                client.pause(1)
                 (x, y) = expectRegion("menubar_apple.png")
                 retries = retries - 1
                 if retries < 1:
@@ -343,63 +335,57 @@ for target in hostnames:
                         warn=True,
                         timeout=15,
                     )
-                client.pause(1)
 
-            client.pause(1)
             close_apps()
 
             profile_setup = open_profile()
-            print("profile_setup:{}".format(profile_setup))
+            logging.debug("profile_setup:{}".format(profile_setup))
 
             try:
                 # If the profiles panel is blank,
                 # reset+reopen it.
                 (x, y) = expectRegion("profiles_blank.png", retries=1, threshold=0.8)
-                print("blank profiles window")
+                logging.debug("blank profiles window")
                 close_apps()
                 c.sudo('killall "System Preferences"', warn=True)
                 reset_prefs_position()
                 profile_setup = open_profile()
-                print("profile_setup:{}".format(profile_setup))
+                logging.debug("profile_setup:{}".format(profile_setup))
             except ImageNotFound:
-                print("Confirmed profile panel not blank.")
-                print(x, y)
+                logging.debug("Confirmed profile panel not blank.")
 
             try:
                 (x, y) = expectRegion("managed.png", retries=1)
-                logging.error("already enrolled in MDM")
+                logging.warning("already enrolled in MDM")
                 raise Exception("already enrolled in MDM")
             except ImageNotFound:
-                print("Confirmed not already enrolled in MDM.")
+                logging.info("Confirmed not already enrolled in MDM.")
 
             (x, y) = expectRegion("install_button_full.png")
             # TODO: if not found, kill and re-open?
             client.mouseMove(x + 20, y + 10)
             client.mouseClick(1)
-            client.pause(1)
 
             (x, y) = expectRegion("install_button_confirm.png")
             # TODO: if not found, kill and re-open?
             client.mouseMove(x + 5, y + 5)
             client.mouseClick(1)
-            client.pause(1)
 
             (x, y) = expectRegion("install_pw_title.png")
             # TODO: if not found, kill and re-open?
             client.type(admin_password)
 
             (x, y) = expectRegion("install_enroll_button.png")
-            client.pause(1)
             client.mouseMove(x + 20, y + 5)
             client.mouseClick(1)
-            client.pause(1)
+
+            client.pause(5)
 
             (x, y) = expectRegion("managed.png")
             # TODO: if not found, fail?
             client.captureScreen("{}_confirmed.png".format(capture_prefix))
 
             (x, y) = expectRegion("close_button.png")
-            client.pause(1)
             client.mouseMove(x + 25, y + 25)
             client.mouseClick(1)
             client.pause(1)
