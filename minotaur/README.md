@@ -23,3 +23,12 @@ INFLUXDB_USER
 INFLUXDB_PASSWORD
 MOONSHOT_KEY
 
+## Why hardcoded workers.txt?
+  In the first version,
+  this searched workerTypes for each worker based on the hostname pattern.
+  Instead, now just a workers.txt hardcoded list (simple to add+remove).
+  Add nodes to check like:
+```
+ip hostname short_hostname workerType workerGroup worker_status_url chassis node host_id
+10.49.58.1 t-linux64-ms-001.test.releng.mdc1.mozilla.com t-linux64-ms-001 gecko-t-linux-talos-1804 mdc1 https://firefox-ci-tc.services.mozilla.com/api/queue/v1/provisioners/releng-hardware/worker-types/gecko-t-linux-talos-1804/workers/mdc1/t-linux64-ms-001 1 1 001
+```
