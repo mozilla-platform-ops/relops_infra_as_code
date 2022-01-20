@@ -1,12 +1,12 @@
 # Monitor linux nodes on the moonshot chassis
-
+```
 For each worker in workers.txt,
 if no ping response,
     check last task activity and,
         if last task completed more than WORKER_IDLE_MAX minutes ago
         or if current task started more than WORKER_RUNNING_MAX minutes ago,
     then hardware power-cycle the cartridge.
-
+```
 
 # Environment configuration
 ```
@@ -27,7 +27,7 @@ MOONSHOT_KEY
 ## Why hardcoded workers.txt?
   In the first version,
   this searched workerTypes for each worker based on the hostname pattern.
-  Instead, now just a workers.txt hardcoded list (simple to add+remove).
+  Instead, now it uses a workers.txt hardcoded list (simple to add+remove).
   Add nodes to check like:
 ```
 ip hostname short_hostname workerType workerGroup worker_status_url chassis node host_id
