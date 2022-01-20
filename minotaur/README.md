@@ -9,7 +9,7 @@ if no ping response,
 
 
 # Environment configuration
-
+```
 ## Optional (defaults listed):
 WORKER_RUNNING_MAX: 120
 WORKER_IDLE_MAX: 30
@@ -22,6 +22,7 @@ INFLUXDB_URL
 INFLUXDB_USER
 INFLUXDB_PASSWORD
 MOONSHOT_KEY
+```
 
 ## Why hardcoded workers.txt?
   In the first version,
