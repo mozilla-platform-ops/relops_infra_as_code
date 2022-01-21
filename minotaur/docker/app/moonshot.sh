@@ -15,7 +15,7 @@ fi
 
 echo "container_tag:$CONTAINER_TAG"
 USER=$(id --user --name)
-SCRIPT_PATH=$(dirname $(realpath -s "$0"))
+SCRIPT_PATH=$(dirname "$(realpath -s "$0")")
 
 set -o errtrace
 trap 'echo "ERR trap from ${FUNCNAME:-MAIN} context."' ERR
@@ -80,20 +80,20 @@ function working() {
     fi
     count_tasks=$(
       wget -q -O - "${root_url}"/v1/pending/"${provisioner}"/"${workerType}" \
-      | grep pendingTasks | cut -d\: -f2
+      | grep pendingTasks | cut -d: -f2
     )
     queued_tasks[${provisioner}_${workerType}]=$count_tasks
     #echo ${provisioner}_${workerType} ${queued_tasks[${provisioner}_${workerType}]}
   }
   function print_taskname() {
     taskId=$1
-    printf "$(wget -q -O - "${root_url}"/v1/task/"${taskId}" | grep -A6 metadata | grep -o "name.*" | cut -d'"' -f3)"
+    printf "%s" "$(wget -q -O - "${root_url}"/v1/task/"${taskId}" | grep -A6 metadata | grep -o "name.*" | cut -d'"' -f3)"
   }
 
   worker_url=$1
   taskId=$(wget -q -O - "${worker_url}" | grep 'taskId' | tail -1 | cut -d'"' -f4)
-  provisioner=$(echo "$worker_url" | cut -d\/ -f8)
-  workerType=$(echo "$worker_url" | cut -d\/ -f10)
+  provisioner=$(echo "$worker_url" | cut -d/ -f8)
+  workerType=$(echo "$worker_url" | cut -d/ -f10)
   last_task=$(
     wget -q -O - "${root_url}"/v1/task/"${taskId}"/status \
       | jq -r '.status.runs | .[] | [.state,.started,.resolved] | @tsv'
@@ -102,15 +102,15 @@ function working() {
   last_task_started=$(echo "$last_task" | cut -d' ' -f2)
   last_task_ended=$(echo "$last_task" | cut -d' ' -f3)
   tasks_found=$?
-  printf " $last_task_status"
+  printf " %s" "$last_task_status"
   if [[ $tasks_found -ne 0 ]]; then
     check_queues "$provisioner" "$workerType"
     if [[ ${queued_tasks[${provisioner}_${workerType}]} -gt 0 ]]; then
-      printf " q[${queued_tasks[${provisioner}_${workerType}]}]"
+      printf " %s" "q[${queued_tasks[${provisioner}_${workerType}]}]"
       return 1
     fi
   else
-    if [[ ! -z $last_task_ended ]]; then
+    if [[ -n $last_task_ended ]]; then
       if is_older_than "$last_task_ended" "${idle_time_max}"; then
         if [[ "$last_task_status" == "exception" ]]; then
           print_taskname "$taskId"
@@ -119,7 +119,7 @@ function working() {
         else
           check_queues "$provisioner" "$workerType"
           if [[ ${queued_tasks[${provisioner}_${workerType}]} -gt 0 ]]; then
-            printf " Q[${queued_tasks[${provisioner}_${workerType}]}]"
+            printf "%s" " Q[${queued_tasks[${provisioner}_${workerType}]}]"
             return 1
           fi
           # if no queue, say it isn't working anyway
@@ -191,7 +191,7 @@ function report_metric_each() {
   fi
   shift
   shift
-  ids=$@
+  ids=@
   for id in ${ids[*]}; do
     case $id in
       ''|*[!0-9]*) id=$(echo "$id" | grep -o '[0-9]\+$') ;;
@@ -211,11 +211,10 @@ export -f report_metric_each
 uniq -c -w9 "$SCRIPT_PATH"/workers.txt
 declare -A reboots
 (
-  cat "$SCRIPT_PATH"/workers.txt \
-  | while IFS= read -r line; do
-      echo "[${line}]" >&2
-      echo_noping "${line%% *}" "${line}" &
-    done
+  while IFS= read -r line; do
+    echo "[${line}]" >&2
+    echo_noping "${line%% *}" "${line}" &
+  done <"$SCRIPT_PATH"/workers.txt
   wait
 ) \
 | (
@@ -251,7 +250,7 @@ declare -A reboots
 | grep REBOOT \
 | (
 set -xv
-  while IFS=\  read act chassis carts; do
+  while IFS=\  read -r act chassis carts; do
     echo act="$act" chassis="$chassis" ip=10.49.16.$(( 16 + chassis )) C"${carts%%,}"N1
     ssh_reboot 10.49.16.$(( 16 + chassis )) C"${carts%%,}" &
   done
