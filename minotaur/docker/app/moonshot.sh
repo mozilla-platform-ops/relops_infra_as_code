@@ -10,12 +10,12 @@
 #     
 grouped_by_chassis=${1:-true}
 if $grouped_by_chassis; then
-  echo grouped_by_chassis:$grouped_by_chassis
+  echo grouped_by_chassis:"$grouped_by_chassis"
 fi
 
 echo "container_tag:$CONTAINER_TAG"
 USER=$(id --user --name)
-SCRIPT_PATH=$(dirname $(realpath -s $0))
+SCRIPT_PATH=$(dirname $(realpath -s "$0"))
 
 set -o errtrace
 trap 'echo "ERR trap from ${FUNCNAME:-MAIN} context."' ERR
@@ -45,7 +45,7 @@ telegraf_password=$(echo "$INFLUXDB_PASSWORD" | grep relops_wo | cut -d\" -f4)
 ssh-add -l &>/dev/null
 if [ "$?" == 2 ]; then
   eval "$(ssh-agent -s)"
-  ssh-add - <<<$MOONSHOT_KEY
+  ssh-add - <<<"$MOONSHOT_KEY"
   trap "ssh-agent -k" exit
 fi
 ssh-add -l
@@ -66,7 +66,7 @@ function echo_noping() {
 
 function working() {
   function is_older_than() {
-    timestamp="$(echo $1 | cut -d' ' -f4 | sed -e 's/T/ /')"
+    timestamp="$(echo "$1" | cut -d' ' -f4 | sed -e 's/T/ /')"
     task_timestamp=$(date -u --date="$timestamp" +"%s")
     compare_time=$(date -u --date="$2" +"%s")
     [[ $task_timestamp -lt $compare_time ]]
@@ -75,11 +75,11 @@ function working() {
     provisioner=$1
     workerType=$2
     # use cached value
-    if [ -v queued_tasks[${provisioner}_${workerType}] ]; then
+    if [ -v queued_tasks["${provisioner}"_"${workerType}"] ]; then
       return
     fi
     count_tasks=$(
-      wget -q -O - ${root_url}/v1/pending/${provisioner}/${workerType} \
+      wget -q -O - "${root_url}"/v1/pending/"${provisioner}"/"${workerType}" \
       | grep pendingTasks | cut -d\: -f2
     )
     queued_tasks[${provisioner}_${workerType}]=$count_tasks
@@ -87,24 +87,24 @@ function working() {
   }
   function print_taskname() {
     taskId=$1
-    printf "$(wget -q -O - ${root_url}/v1/task/${taskId} | grep -A6 metadata | grep -o "name.*" | cut -d'"' -f3)"
+    printf "$(wget -q -O - "${root_url}"/v1/task/"${taskId}" | grep -A6 metadata | grep -o "name.*" | cut -d'"' -f3)"
   }
 
   worker_url=$1
-  taskId=$(wget -q -O - ${worker_url} | grep 'taskId' | tail -1 | cut -d'"' -f4)
-  provisioner=$(echo $worker_url | cut -d\/ -f8)
-  workerType=$(echo $worker_url | cut -d\/ -f10)
+  taskId=$(wget -q -O - "${worker_url}" | grep 'taskId' | tail -1 | cut -d'"' -f4)
+  provisioner=$(echo "$worker_url" | cut -d\/ -f8)
+  workerType=$(echo "$worker_url" | cut -d\/ -f10)
   last_task=$(
-    wget -q -O - ${root_url}/v1/task/${taskId}/status \
+    wget -q -O - "${root_url}"/v1/task/"${taskId}"/status \
       | jq -r '.status.runs | .[] | [.state,.started,.resolved] | @tsv'
   )
-  last_task_status=$(echo $last_task | cut -d' ' -f1)
-  last_task_started=$(echo $last_task | cut -d' ' -f2)
-  last_task_ended=$(echo $last_task | cut -d' ' -f3)
+  last_task_status=$(echo "$last_task" | cut -d' ' -f1)
+  last_task_started=$(echo "$last_task" | cut -d' ' -f2)
+  last_task_ended=$(echo "$last_task" | cut -d' ' -f3)
   tasks_found=$?
   printf " $last_task_status"
   if [[ $tasks_found -ne 0 ]]; then
-    check_queues $provisioner $workerType
+    check_queues "$provisioner" "$workerType"
     if [[ ${queued_tasks[${provisioner}_${workerType}]} -gt 0 ]]; then
       printf " q[${queued_tasks[${provisioner}_${workerType}]}]"
       return 1
@@ -113,11 +113,11 @@ function working() {
     if [[ ! -z $last_task_ended ]]; then
       if is_older_than "$last_task_ended" "${idle_time_max}"; then
         if [[ "$last_task_status" == "exception" ]]; then
-          print_taskname $taskId
+          print_taskname "$taskId"
           printf " X"
           return 1
         else
-          check_queues $provisioner $workerType
+          check_queues "$provisioner" "$workerType"
           if [[ ${queued_tasks[${provisioner}_${workerType}]} -gt 0 ]]; then
             printf " Q[${queued_tasks[${provisioner}_${workerType}]}]"
             return 1
@@ -128,7 +128,7 @@ function working() {
       fi
     elif is_older_than "$last_task_started" "${run_time_max}"; then
       printf " S"
-      print_taskname $taskId
+      print_taskname "$taskId"
       return 1
     else
       printf " OK"
@@ -145,7 +145,7 @@ function ssh_reboot() {
       #-oControlPath=/tmp/socket_%r@_h-%p \
       ssh -T \
         -oStrictHostKeyChecking=no \
-        -oUserKnownHostsFile=$SCRIPT_PATH/known_hosts \
+        -oUserKnownHostsFile="$SCRIPT_PATH"/known_hosts \
         -oServerAliveInterval=5 -oConnectTimeout=10 \
         -oKexAlgorithms=+diffie-hellman-group14-sha1 -oCiphers=+aes128-cbc \
         "${1}" "$2" \
@@ -156,11 +156,11 @@ function ssh_reboot() {
   }
   function is_autopower_on() {
     chassis=$1
-    ssh_cmd $chassis 'show chassis autopower' | grep 'Chassis Auto-Power: On'
+    ssh_cmd "$chassis" 'show chassis autopower' | grep 'Chassis Auto-Power: On'
   }
   chassis=$1
   nodes=$2
-  if [[ $# -lt 3 ]] || ! is_autopower_on $chassis; then
+  if [[ $# -lt 3 ]] || ! is_autopower_on "$chassis"; then
     # this requires the chassis have `set chassis autopower on`
     ssh_cmd "${ilo_user}@$chassis" "reset cartridge power force $nodes"
   else
@@ -170,7 +170,7 @@ function ssh_reboot() {
     # check power state all down, 5 to 60s
     sleep 5
     for s in {0..10}; do  # 55s max
-      sleep $s
+      sleep "$s"
       nodes_on=$(ssh_cmd "${ilo_user}@$chassis" "show node power $nodes")
       echo "${nodes_on}" | grep -o 'Power State: On' &>/dev/null \
         || break
@@ -194,7 +194,7 @@ function report_metric_each() {
   ids=$@
   for id in ${ids[*]}; do
     case $id in
-      ''|*[!0-9]*) id=$(echo $id | grep -o '[0-9]\+$') ;;
+      ''|*[!0-9]*) id=$(echo "$id" | grep -o '[0-9]\+$') ;;
       *) ;;
     esac
     tags=${cart_tags[$id]}
@@ -208,10 +208,10 @@ function report_metric_each() {
 export -f report_metric_each 
 
 
-uniq -c -w9 $SCRIPT_PATH/workers.txt
+uniq -c -w9 "$SCRIPT_PATH"/workers.txt
 declare -A reboots
 (
-  cat $SCRIPT_PATH/workers.txt \
+  cat "$SCRIPT_PATH"/workers.txt \
   | while IFS= read -r line; do
       echo "[${line}]" >&2
       echo_noping "${line%% *}" "${line}" &
@@ -223,10 +223,10 @@ declare -A reboots
     hostname=${fqdn%%.*}
     echo "noping $hostname" >&2
     cart_tags[$I]=",cart=${cart},chassis=${chassis},host=${hostname},id=$I,workerId=${worker_id},workerType=${worker_type},group=${worker_group} id=${I}i,"
-    report_metric_each noping $I &
+    report_metric_each noping "$I" &
     #(
-      if ! working $worker_url >&2; then
-        report_metric_each reboot $I &
+      if ! working "$worker_url" >&2; then
+        report_metric_each reboot "$I" &
         echo "ARGS:$(printf "%s, " "$I" "$chassis" cart:"$cart" fqdn:"$fqdn" ip:"$ip" "$worker_url")" >&2
         if $grouped_by_chassis; then
           echo "reboots[$chassis]+=$cart, (${reboots[$chassis]})" >&2
@@ -252,8 +252,8 @@ declare -A reboots
 | (
 set -xv
   while IFS=\  read act chassis carts; do
-    echo act=$act chassis=$chassis ip=10.49.16.$(( 16 + chassis )) C${carts%%,}N1
-    ssh_reboot 10.49.16.$(( 16 + chassis )) C${carts%%,} &
+    echo act="$act" chassis="$chassis" ip=10.49.16.$(( 16 + chassis )) C"${carts%%,}"N1
+    ssh_reboot 10.49.16.$(( 16 + chassis )) C"${carts%%,}" &
   done
   echo "... wait during reboots"
   jobs
