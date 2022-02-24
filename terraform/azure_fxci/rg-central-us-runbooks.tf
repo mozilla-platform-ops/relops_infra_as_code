@@ -165,28 +165,3 @@ resource "azurerm_automation_job_schedule" "worker_scanner_helper" {
   schedule_name           = azurerm_automation_schedule.every-2-hours.name
   runbook_name            = azurerm_automation_runbook.worker_scanner_helper.name
 }
-data "local_file" "rg_ff_enterprise_cleanup_ps1" {
-  filename = "runbooks/rg-ff-enterprise-cleanup.ps1"
-}
-resource "azurerm_automation_runbook" "rg_ff_enterprise_cleanup" {
-  name                    = "rg_ff_enterprise_cleanup"
-  location                = azurerm_automation_account.resource-monitor.location
-  resource_group_name     = azurerm_automation_account.resource-monitor.resource_group_name
-  automation_account_name = azurerm_automation_account.resource-monitor.name
-  log_verbose             = "false"
-  log_progress            = "true"
-  description             = "Delete unassociated old resources"
-  runbook_type            = "PowerShell"
-  content                 = data.local_file.rg_ff_enterprise_cleanup_ps1.content
-  tags = merge(local.common_tags,
-    tomap({
-      "Name" = "rg_ff_enterprise_cleanup"
-    })
-  )
-}
-resource "azurerm_automation_job_schedule" "rg_ff_enterprise_cleanup" {
-  resource_group_name     = azurerm_automation_account.resource-monitor.resource_group_name
-  automation_account_name = azurerm_automation_account.resource-monitor.name
-  schedule_name           = azurerm_automation_schedule.once-a-week.name
-  runbook_name            = azurerm_automation_runbook.rg_ff_enterprise_cleanup.name
-}
