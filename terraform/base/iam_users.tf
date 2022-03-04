@@ -17,10 +17,6 @@ resource "aws_iam_user" "mcornmesser" {
   name = "mcornmesser"
 }
 
-resource "aws_iam_user" "rthijssen" {
-  name = "rthijssen"
-}
-
 resource "aws_iam_user" "ajvb" {
   name = "ajvb"
 }
