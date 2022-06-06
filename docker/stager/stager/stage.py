@@ -208,7 +208,10 @@ if len(tasks) <= 0:
 # pattern: ^[a-zA-Z0-9-_]{1,38}/[a-z]([-a-z0-9]{0,36}[a-z0-9])?$
 
 print(target_p + '/' + target_wt)
-print(target_wt, queue.pendingTasks(target_p, target_wt))
+try:
+    print(target_wt, queue.pendingTasks(target_p, target_wt))
+except Exception as e:
+    print(e)
 # create/apply new load
 
 new_tasks = { task_id:copy_task(task_id) for task_id in tasks }
