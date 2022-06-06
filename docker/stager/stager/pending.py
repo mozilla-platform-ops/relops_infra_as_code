@@ -13,5 +13,5 @@ source = sys.argv[1]
 p=source.split('/')[0]
 wt=source.split('/')[1]
 source = queue.getWorkerType(p,wt)
-print(queue.pendingTasks(p,wt)['pendingTasks'])
+print(queue.pendingTasks('{}/{}'.format(p,wt))['pendingTasks'])
 
