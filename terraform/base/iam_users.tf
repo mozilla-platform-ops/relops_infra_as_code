@@ -20,3 +20,11 @@ resource "aws_iam_user" "mcornmesser" {
 resource "aws_iam_user" "ajvb" {
   name = "ajvb"
 }
+
+resource "aws_iam_user" "jmoss" {
+  name = "jmoss"
+}
+
+resource "aws_iam_user" "jgibbs" {
+  name = "jgibbs"
+}
