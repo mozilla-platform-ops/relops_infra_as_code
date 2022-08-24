@@ -4,18 +4,18 @@ parallel=${2:-8}
 search_papertrail=${3:-false}
 limit=${4:-1000}
 
-echo $file
+echo "$file"
 ls -la "$file"
-echo $parallel
+echo "$parallel"
 echo $(( $parallel + 0 ))
-echo $search_papertrail
+echo "$search_papertrail"
 if ! $search_papertrail; then
     echo "not search papertrail"
 fi
 if $search_papertrail; then
     echo "search papertrail"
 fi
-echo $limit
+echo "$limit"
 echo $(( $limit + 0 ))
 
 mkdir logs 2>/dev/null
@@ -33,10 +33,10 @@ function get() {
     taskId=$2
     local host=""
     local status=$(
-        wget -q -O - https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/${taskId}/status
+        wget -q -O - https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/"${taskId}"/status
     )
     local copied_status=$(
-        wget -q -O - https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/${copied_taskId}/status
+        wget -q -O - https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/"${copied_taskId}"/status
     )
     local state=$(echo "$status" | grep -m1 -o 'state": "[^"]*"' | sed -e 's/.*state": "\([^\"]*\)".*/\1/')
     local copied_state=$(echo "$copied_status" | grep -m1 -o 'state": "[^"]*"' | sed -e 's/.*state": "\([^\"]*\)".*/\1/')
@@ -71,7 +71,7 @@ function get() {
                     for collect_retry in {1..3}; do
                         papertrail --group "taskcluster workers" \
                             --min-time "${search_start}" --max-time "${search_end}" \
-                            program:docker-worker ${workerId} \
+                            program:docker-worker "${workerId}" \
                         | grep -m1 "${workerId}" \
                         | sed -Ee 's/.* ([^ ]+) docker-worker:.*/\1/'\
                         && break
@@ -99,14 +99,14 @@ function get() {
 i=0
 declare -A states
 export -f get
-jq -r 'to_entries[] | [.key, .value] | @tsv' <${file} \
+jq -r 'to_entries[] | [.key, .value] | @tsv' <"${file}" \
     | head -"$limit" \
-    | gxargs -P $parallel -d '\n' -I{} \
+    | gxargs -P "$parallel" -d '\n' -I{} \
         sh -c 'get {}; exit 0'
 
 false && (
 for log in logs/*/*live*; do
     printf "$log %s\n" \
-        "$((cat ${log} || zcat --stdout ${log} || gzcat --stdout ${log}) | tail -10 | grep -v PERFHERDER | grep -Eio 'Connection reset by peer|Task timeout|TBPL FAILURE|ERROR.*')"
+        "$((cat "${log}" || zcat --stdout "${log}" || gzcat --stdout "${log}") | tail -10 | grep -v PERFHERDER | grep -Eio 'Connection reset by peer|Task timeout|TBPL FAILURE|ERROR.*')"
 done
 )
