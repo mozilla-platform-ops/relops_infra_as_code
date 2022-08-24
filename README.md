@@ -1,5 +1,4 @@
 # RelOps Infrastructure-As-Code
-[![TravisCI Status](https://travis-ci.com/mozilla-platform-ops/relops_infra_as_code.svg?branch=master)](https://travis-ci.com/mozilla-platform-ops/relops_infra_as_code)
 [![CircleCI Status](https://circleci.com/gh/mozilla-platform-ops/relops_infra_as_code.svg?style=svg)](https://app.circleci.com/pipelines/github/mozilla-platform-ops/relops_infra_as_code)
 
 ## getting started
