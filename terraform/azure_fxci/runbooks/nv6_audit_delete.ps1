@@ -9,7 +9,7 @@ $vms = (get-azvm)
 $current = ((Get-Date).ToUniversalTime())
 
 foreach ($vm in $vms) {
-	if ($VM.HardwareProfile.VMSize -like "Standard_NV6") {
+	if ($VM.HardwareProfile.VMSize -eq "Standard_NV6") {
 		$status = (get-azvm -resourcegroup $vm.ResourceGroupName -name $vm.Name -status -ErrorAction:SilentlyContinue)
 		$provisioned_time = $status.Disks[0].Statuses[0].Time
 		$up_time = (New-TimeSpan -Start $provisioned_time -end $current -ErrorAction:SilentlyContinue)
