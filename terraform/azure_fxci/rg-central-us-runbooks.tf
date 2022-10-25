@@ -139,7 +139,31 @@ resource "azurerm_automation_job_schedule" "vm_day_audit" {
   schedule_name           = azurerm_automation_schedule.once-a-day.name
   runbook_name            = azurerm_automation_runbook.vm_day_audit.name
 }
-
+data "local_file" "nv6_audit_delete_ps1" {
+  filename = "runbooks/nv6_audit_delete.ps1"
+}
+resource "azurerm_automation_runbook" "nv6_audit_delete" {
+  name                    = "nv6_audit_delete"
+  location                = azurerm_automation_account.resource-monitor.location
+  resource_group_name     = azurerm_automation_account.resource-monitor.resource_group_name
+  automation_account_name = azurerm_automation_account.resource-monitor.name
+  log_verbose             = "false"
+  log_progress            = "true"
+  description             = "Audit and delete oldNV6 VMs"
+  runbook_type            = "PowerShell"
+  content                 = data.local_file.nv6_audit_delete_ps1.content
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "nv6_audit_delete"
+    })
+  )
+}
+resource "azurerm_automation_job_schedule" "nv6_audit_delete" {
+  resource_group_name     = azurerm_automation_account.resource-monitor.resource_group_name
+  automation_account_name = azurerm_automation_account.resource-monitor.name
+  schedule_name           = azurerm_automation_schedule.every-4-hours.name
+  runbook_name            = azurerm_automation_runbook.vm_day_audit.name
+}
 data "local_file" "worker_scanner_helper_ps1" {
   filename = "runbooks/worker_scanner_helper.ps1"
 }
