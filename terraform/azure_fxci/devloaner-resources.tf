@@ -1,5 +1,5 @@
-resource "azurerm_resource_group" "devtest" {
-  for_each = var.devtest
+resource "azurerm_resource_group" "devloaner" {
+  for_each = var.devloaner
   name     = "rg-${each.value.rgname}"
   location = each.value.rglocation
   tags = merge(local.common_tags,
@@ -9,10 +9,10 @@ resource "azurerm_resource_group" "devtest" {
   )
 }
 
-resource "azurerm_storage_account" "devtest" {
-  for_each                 = var.devtest
+resource "azurerm_storage_account" "devloaner" {
+  for_each                 = var.devloaner
   name                     = replace("sa${each.value.rgname}", "/\\W|_|\\s/", "")
-  resource_group_name      = azurerm_resource_group.devtest[each.key].name
+  resource_group_name      = azurerm_resource_group.devloaner[each.key].name
   location                 = each.value.rglocation
   account_replication_type = "GRS"
   account_tier             = "Standard"
@@ -23,10 +23,10 @@ resource "azurerm_storage_account" "devtest" {
   )
 }
 
-resource "azurerm_network_security_group" "devtest" {
-  for_each            = var.devtest
+resource "azurerm_network_security_group" "devloaner" {
+  for_each            = var.devloaner
   name                = "nsg-${each.value.rgname}"
-  resource_group_name = azurerm_resource_group.devtest[each.key].name
+  resource_group_name = azurerm_resource_group.devloaner[each.key].name
   location            = each.value.rglocation
   tags = merge(local.common_tags,
     tomap({
@@ -35,10 +35,10 @@ resource "azurerm_network_security_group" "devtest" {
   )
 }
 
-resource "azurerm_virtual_network" "devtest" {
-  for_each            = var.devtest
+resource "azurerm_virtual_network" "devloaner" {
+  for_each            = var.devloaner
   name                = "vn-${each.value.rgname}"
-  resource_group_name = azurerm_resource_group.devtest[each.key].name
+  resource_group_name = azurerm_resource_group.devloaner[each.key].name
   location            = each.value.rglocation
   address_space       = ["10.0.0.0/24"]
   dns_servers         = ["1.1.1.1", "1.1.1.0"]
@@ -50,6 +50,6 @@ resource "azurerm_virtual_network" "devtest" {
   subnet {
     name           = "sn-${each.value.rgname}"
     address_prefix = "10.0.0.0/24"
-    security_group = azurerm_network_security_group.devtest[each.key].id
+    security_group = azurerm_network_security_group.devloaner[each.key].id
   }
 }

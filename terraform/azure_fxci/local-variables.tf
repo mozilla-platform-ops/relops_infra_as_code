@@ -60,12 +60,12 @@ variable "gecko3" {
   }
 }
 
-variable "devtest" {
+variable "devloaner" {
   description = "developers using windows vms to test"
   type        = map(any)
   default = {
-    "rg-west-us-devtest" = {
-      rgname     = "central-us-devtest"
+    "rg-west-us-devloaner" = {
+      rgname     = "central-us-devloaner"
       rglocation = "centralus"
     }
   }
