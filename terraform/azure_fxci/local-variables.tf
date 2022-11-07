@@ -59,3 +59,14 @@ variable "gecko3" {
     }
   }
 }
+
+variable "devtest" {
+  description = "developers using windows vms to test"
+  type        = map(any)
+  default = {
+    "rg-west-us-devtest" = {
+      rgname     = "central-us-devtest"
+      rglocation = "centralus"
+    }
+  }
+}
