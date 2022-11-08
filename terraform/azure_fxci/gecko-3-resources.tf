@@ -49,7 +49,7 @@ resource "azurerm_virtual_network" "gecko3" {
   )
   subnet {
     name           = "sn-${each.value.rgname}"
-    address_prefix = "10.0.0.0/24"
+    address_prefix = "10.0.0.0/23"
     security_group = azurerm_network_security_group.gecko3[each.key].id
   }
 }
