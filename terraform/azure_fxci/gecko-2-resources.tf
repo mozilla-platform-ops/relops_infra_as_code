@@ -40,7 +40,7 @@ resource "azurerm_virtual_network" "gecko2" {
   name                = "vn-${each.value.rgname}"
   resource_group_name = azurerm_resource_group.gecko2[each.key].name
   location            = each.value.rglocation
-  address_space       = ["10.0.0.0/24"]
+  address_space       = ["10.0.0.0/23"]
   dns_servers         = ["1.1.1.1", "1.1.1.0"]
   tags = merge(local.common_tags,
     tomap({

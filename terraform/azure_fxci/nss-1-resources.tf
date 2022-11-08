@@ -40,7 +40,7 @@ resource "azurerm_virtual_network" "nss1" {
   name                = "vn-${each.value.rgname}"
   resource_group_name = azurerm_resource_group.nss1[each.key].name
   location            = each.value.rglocation
-  address_space       = ["10.0.0.0/24"]
+  address_space       = ["10.0.0.0/23"]
   dns_servers         = ["1.1.1.1", "1.1.1.0"]
   tags = merge(local.common_tags,
     tomap({
@@ -49,7 +49,7 @@ resource "azurerm_virtual_network" "nss1" {
   )
   subnet {
     name           = "sn-${each.value.rgname}"
-    address_prefix = "10.0.0.0/24"
+    address_prefix = "10.0.0.0/23"
     security_group = azurerm_network_security_group.nss1[each.key].id
   }
 }
