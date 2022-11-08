@@ -316,5 +316,17 @@ variable "devloaner" {
       rgname     = "central-us-devloaner"
       rglocation = "centralus"
     }
+    "rg-north-central-devloaner" = {
+      rgname     = "north-central-devloaner"
+      rglocation = "northcentralus"
+    }
+    "rg-west-us-2-devloaner" = {
+      rgname     = "west-us-2-devloaner"
+      rglocation = "westus2"
+    }
+    "rg-west-us-3-devloaner" = {
+      rgname     = "west-us-3-devloaner"
+      rglocation = "westus3"
+    }
   }
 }
