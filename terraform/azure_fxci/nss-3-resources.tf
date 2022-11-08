@@ -1,5 +1,5 @@
-resource "azurerm_resource_group" "gecko3" {
-  for_each = var.gecko3
+resource "azurerm_resource_group" "nss3" {
+  for_each = var.nss3
   name     = "rg-${each.value.rgname}"
   location = each.value.rglocation
   tags = merge(local.common_tags,
@@ -9,10 +9,10 @@ resource "azurerm_resource_group" "gecko3" {
   )
 }
 
-resource "azurerm_storage_account" "gecko3" {
-  for_each                 = var.gecko3
+resource "azurerm_storage_account" "nss3" {
+  for_each                 = var.nss3
   name                     = replace("sa${each.value.rgname}", "/\\W|_|\\s/", "")
-  resource_group_name      = azurerm_resource_group.gecko3[each.key].name
+  resource_group_name      = azurerm_resource_group.nss3[each.key].name
   location                 = each.value.rglocation
   account_replication_type = "GRS"
   account_tier             = "Standard"
@@ -23,10 +23,10 @@ resource "azurerm_storage_account" "gecko3" {
   )
 }
 
-resource "azurerm_network_security_group" "gecko3" {
-  for_each            = var.gecko3
+resource "azurerm_network_security_group" "nss3" {
+  for_each            = var.nss3
   name                = "nsg-${each.value.rgname}"
-  resource_group_name = azurerm_resource_group.gecko3[each.key].name
+  resource_group_name = azurerm_resource_group.nss3[each.key].name
   location            = each.value.rglocation
   tags = merge(local.common_tags,
     tomap({
@@ -35,10 +35,10 @@ resource "azurerm_network_security_group" "gecko3" {
   )
 }
 
-resource "azurerm_virtual_network" "gecko3" {
-  for_each            = var.gecko3
+resource "azurerm_virtual_network" "nss3" {
+  for_each            = var.nss3
   name                = "vn-${each.value.rgname}"
-  resource_group_name = azurerm_resource_group.gecko3[each.key].name
+  resource_group_name = azurerm_resource_group.nss3[each.key].name
   location            = each.value.rglocation
   address_space       = ["10.0.0.0/23"]
   dns_servers         = ["1.1.1.1", "1.1.1.0"]
@@ -50,6 +50,6 @@ resource "azurerm_virtual_network" "gecko3" {
   subnet {
     name           = "sn-${each.value.rgname}"
     address_prefix = "10.0.0.0/23"
-    security_group = azurerm_network_security_group.gecko3[each.key].id
+    security_group = azurerm_network_security_group.nss3[each.key].id
   }
 }
