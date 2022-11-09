@@ -80,5 +80,9 @@ variable "devloaner" {
       rgname     = "west-us-3-devloaner"
       rglocation = "westus3"
     }
+    "rg-north-europe-devloaner" = {
+      rgname     = "north-europe-devloaner"
+      rglocation = "northeurope"
+    }
   }
 }
