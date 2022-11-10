@@ -313,8 +313,8 @@ variable "devloaner" {
   type        = map(any)
   default = {
     "rg-west-us-devloaner" = {
-      rgname     = "central-us-devloaner"
-      rglocation = "centralus"
+      rgname     = "west-us-devloaner"
+      rglocation = "westus"
     }
     "rg-north-central-devloaner" = {
       rgname     = "north-central-devloaner"
@@ -327,6 +327,10 @@ variable "devloaner" {
     "rg-west-us-3-devloaner" = {
       rgname     = "west-us-3-devloaner"
       rglocation = "westus3"
+    }
+    "rg-north-europe-devloaner" = {
+      rgname     = "north-europe-devloaner"
+      rglocation = "northeurope"
     }
   }
 }
