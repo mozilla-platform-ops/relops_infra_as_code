@@ -12,6 +12,17 @@ gcloud auth application-default login
 tf apply
 ```
 
+## replacing nodes
+
+```bash
+# get list of resources
+tf state list
+
+# plan and apply while replacing specific resources
+tf plan -replace='google_compute_instance.vm_instance[2]' -replace='google_compute_disk.vm_disk[2]'
+# then `tf apply` with same args
+```
+
 ## troubleshooting
 
 ### `oauth2: cannot fetch token` tf errors
