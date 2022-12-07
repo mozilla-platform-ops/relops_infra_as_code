@@ -25,6 +25,13 @@ tf plan -replace='google_compute_instance.vm_instance[2]' -replace='google_compu
 
 ## troubleshooting
 
+### can't ssh to host
+
+If keys are messed up, GCP can inject a key.
+
+`gcloud compute ssh --zone "us-west1-b" "bitbar-devicepool-2"  --project "bitbar-devicepool"`
+
+
 ### `oauth2: cannot fetch token` tf errors
 
 ```
