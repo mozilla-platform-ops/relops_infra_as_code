@@ -15,6 +15,9 @@ tf apply
 ## replacing nodes
 
 ```bash
+# double check correct key in terraform.tfvars
+# currently uses aerickson
+
 # get list of resources
 tf state list
 
