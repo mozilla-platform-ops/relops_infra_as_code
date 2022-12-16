@@ -2,7 +2,14 @@ resource "google_compute_disk" "vm_disk" {
   name  = "bitbar-devicepool-disk-${count.index}"
   count = var.host_count
   size  = "25"
-  image = "ubuntu-1804-lts"
+  # projects/ubuntu-os-cloud/global/images/ubuntu-2204-jammy-v20220924
+  image = "ubuntu-2204-lts"
+  lifecycle {
+    # don't recreate all disks when this changes, manually `-replace`
+    ignore_changes = [
+      image
+    ]
+  }
 }
 
 resource "google_compute_instance" "vm_instance" {
