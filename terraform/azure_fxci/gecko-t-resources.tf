@@ -24,7 +24,7 @@ resource "azurerm_storage_account" "sacanadacentralgeckot" {
 resource "azurerm_network_security_group" "nsg-canada-central-gecko-t" {
   name                = "nsg-canada-central-gecko-t"
   location            = "Canada Central"
-  resource_group_name      = azurerm_resource_group.rg-canada-central-gecko-t.name
+  resource_group_name = azurerm_resource_group.rg-canada-central-gecko-t.name
   tags = merge(local.common_tags,
     tomap({
       "Name" = "nsg-canada-central-gecko-t"
@@ -34,7 +34,7 @@ resource "azurerm_network_security_group" "nsg-canada-central-gecko-t" {
 resource "azurerm_virtual_network" "vn-canada-central-gecko-t" {
   name                = "vn-canada-central-gecko-t"
   location            = "Canada Central"
-  resource_group_name      = azurerm_resource_group.rg-canada-central-gecko-t.name
+  resource_group_name = azurerm_resource_group.rg-canada-central-gecko-t.name
   address_space       = ["10.0.0.0/24"]
   dns_servers         = ["1.1.1.1", "1.1.1.0"]
   subnet {
@@ -76,7 +76,7 @@ resource "azurerm_storage_account" "sacentralindiageckot" {
 resource "azurerm_network_security_group" "nsg-central-india-gecko-t" {
   name                = "nsg-central-india-gecko-t"
   location            = "Central India"
-  resource_group_name      = azurerm_resource_group.rg-central-india-gecko-t.name
+  resource_group_name = azurerm_resource_group.rg-central-india-gecko-t.name
   tags = merge(local.common_tags,
     tomap({
       "Name" = "nsg-central-india-gecko-t"
@@ -86,7 +86,7 @@ resource "azurerm_network_security_group" "nsg-central-india-gecko-t" {
 resource "azurerm_virtual_network" "vn-central-india-gecko-t" {
   name                = "vn-central-india-gecko-t"
   location            = "Central India"
-  resource_group_name      = azurerm_resource_group.rg-central-india-gecko-t.name
+  resource_group_name = azurerm_resource_group.rg-central-india-gecko-t.name
   address_space       = ["10.0.0.0/24"]
   dns_servers         = ["1.1.1.1", "1.1.1.0"]
   subnet {
