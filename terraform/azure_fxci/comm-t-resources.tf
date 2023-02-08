@@ -1,3 +1,107 @@
+resource "azurerm_resource_group" "rg-canada-central-comm-t" {
+  name     = "rg-canada-central-comm-t"
+  location = "Canada Central"
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "rg-canada-central-comm-t"
+    })
+  )
+}
+
+resource "azurerm_storage_account" "sacanadacentralcommt" {
+  name                     = "sacanadacentralcommt"
+  resource_group_name      = azurerm_resource_group.rg-canada-central-comm-t.name
+  location                 = "Canada Central"
+  account_tier             = "Standard"
+  account_replication_type = "GRS"
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "sacanadacentralcommt"
+    })
+  )
+}
+
+resource "azurerm_network_security_group" "nsg-canada-central-comm-t" {
+  name                = "nsg-canada-central-comm-t"
+  location            = "Canada Central"
+  resource_group_name = azurerm_resource_group.rg-canada-central-comm-t.name
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "nsg-canada-central-comm-t"
+    })
+  )
+}
+resource "azurerm_virtual_network" "vn-canada-central-comm-t" {
+  name                = "vn-canada-central-comm-t"
+  location            = "Canada Central"
+  resource_group_name = azurerm_resource_group.rg-canada-central-comm-t.name
+  address_space       = ["10.0.0.0/24"]
+  dns_servers         = ["1.1.1.1", "1.1.1.0"]
+  subnet {
+    name           = "sn-canada-central-comm-t"
+    address_prefix = "10.0.0.0/24"
+    security_group = azurerm_network_security_group.nsg-canada-central-comm-t.id
+  }
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "vn-canada-central-comm-t"
+    })
+  )
+}
+
+## Central India
+resource "azurerm_resource_group" "rg-central-india-comm-t" {
+  name     = "rg-central-comm-comm-t"
+  location = "Central India"
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "rg-central-india-comm-t"
+    })
+  )
+}
+# storage account names can only consist of lowercase letters and numbers
+resource "azurerm_storage_account" "sacentralindiacommt" {
+  name                     = "sacentralindiacommt"
+  resource_group_name      = azurerm_resource_group.rg-central-india-comm-t.name
+  location                 = "Central India"
+  account_tier             = "Standard"
+  account_replication_type = "GRS"
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "sacentralindiacommt"
+    })
+  )
+}
+
+resource "azurerm_network_security_group" "nsg-central-india-comm-t" {
+  name                = "nsg-central-india-comm-t"
+  location            = "Central India"
+  resource_group_name = azurerm_resource_group.rg-central-india-comm-t.name
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "nsg-central-india-comm-t"
+    })
+  )
+}
+resource "azurerm_virtual_network" "vn-central-india-comm-t" {
+  name                = "vn-central-india-comm-t"
+  location            = "Central India"
+  resource_group_name = azurerm_resource_group.rg-central-india-comm-t.name
+  address_space       = ["10.0.0.0/24"]
+  dns_servers         = ["1.1.1.1", "1.1.1.0"]
+  subnet {
+    name           = "sn-central-india-comm-t"
+    address_prefix = "10.0.0.0/24"
+    security_group = azurerm_network_security_group.nsg-central-india-comm-t.id
+  }
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "vn-central-india-comm-t"
+    })
+  )
+}
+
+#
 resource "azurerm_resource_group" "rg-central-us-comm-t" {
   name     = "rg-central-us-comm-t"
   location = "Central US"
@@ -298,6 +402,56 @@ resource "azurerm_virtual_network" "vn-west-us2-comm-t" {
   )
 }
 
+resource "azurerm_resource_group" "rg-west-us-3-comm-t" {
+  name     = "rg-west-us-3-comm-t"
+  location = "West US"
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "rg-west-us-3-comm-t"
+    })
+  )
+}
+# storage account names can only consist of lowercase letters and numbers
+resource "azurerm_storage_account" "sawestus3commt" {
+  name                     = "sawestus3commt"
+  resource_group_name      = azurerm_resource_group.rg-west-us-3-comm-t.name
+  location                 = "West US 3"
+  account_tier             = "Standard"
+  account_replication_type = "GRS"
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "sawestus3commt"
+    })
+  )
+}
+resource "azurerm_network_security_group" "nsg-west-us-3-comm-t" {
+  name                = "nsg-west-us-3-comm-t"
+  location            = "West US 3"
+  resource_group_name = azurerm_resource_group.rg-west-us-3-comm-t.name
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "nsg-west-us-3-comm-t"
+    })
+  )
+}
+resource "azurerm_virtual_network" "vn-west-us-3-comm-t" {
+  name                = "vn-west-us-3-comm-t"
+  location            = "West US 3"
+  resource_group_name = azurerm_resource_group.rg-west-us-3-comm-t.name
+  address_space       = ["10.0.0.0/24"]
+  dns_servers         = ["1.1.1.1", "1.1.1.0"]
+  subnet {
+    name           = "sn-west-us-3-comm-t"
+    address_prefix = "10.0.0.0/24"
+    security_group = azurerm_network_security_group.nsg-west-us-3-comm-t.id
+  }
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "vn-west-us-3-comm-t"
+    })
+  )
+}
+
 resource "azurerm_resource_group" "rg-west-us-comm-t" {
   name     = "rg-west-us-comm-t"
   location = "West US"
@@ -344,6 +498,106 @@ resource "azurerm_virtual_network" "vn-west-us-comm-t" {
   tags = merge(local.common_tags,
     tomap({
       "Name" = "vn-west-us-comm-t"
+    })
+  )
+}
+
+resource "azurerm_resource_group" "rg-south-india-comm-t" {
+  name     = "rg-south-india-comm-t"
+  location = "South India"
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "rg-south-india-comm-t"
+    })
+  )
+}
+# storage account names can only consist of lowercase letters and numbers
+resource "azurerm_storage_account" "sasouthindiacommt" {
+  name                     = "sasouthindiacommt"
+  resource_group_name      = azurerm_resource_group.rg-south-india-comm-t.name
+  location                 = "South India"
+  account_tier             = "Standard"
+  account_replication_type = "GRS"
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "sasouthindiacommt"
+    })
+  )
+}
+resource "azurerm_network_security_group" "nsg-south-india-comm-t" {
+  name                = "nsg-south-india-comm-t"
+  location            = "South India"
+  resource_group_name = azurerm_resource_group.rg-south-india-comm-t.name
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "nsg-south-india-comm-t"
+    })
+  )
+}
+resource "azurerm_virtual_network" "vn-south-india-comm-t" {
+  name                = "vn-south-india-comm-t"
+  location            = "South India"
+  resource_group_name = azurerm_resource_group.rg-south-india-comm-t.name
+  address_space       = ["10.0.0.0/24"]
+  dns_servers         = ["1.1.1.1", "1.1.1.0"]
+  subnet {
+    name           = "sn-south-india-comm-t"
+    address_prefix = "10.0.0.0/24"
+    security_group = azurerm_network_security_group.nsg-south-india-comm-t.id
+  }
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "vn-south-india-comm-t"
+    })
+  )
+}
+
+resource "azurerm_resource_group" "rg-north-europe-comm-t" {
+  name     = "rg-north-europe-comm-t"
+  location = "North Europe"
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "rg-north-europe-comm-t"
+    })
+  )
+}
+# storage account names can only consist of lowercase letters and numbers
+resource "azurerm_storage_account" "sanortheuropecommt" {
+  name                     = "sanortheuropecommt"
+  resource_group_name      = azurerm_resource_group.rg-north-europe-comm-t.name
+  location                 = "North Europe"
+  account_tier             = "Standard"
+  account_replication_type = "GRS"
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "sanortheuropecommt"
+    })
+  )
+}
+resource "azurerm_network_security_group" "nsg-north-europe-comm-t" {
+  name                = "nsg-north-europe-comm-t"
+  location            = "North Europe"
+  resource_group_name = azurerm_resource_group.rg-north-europe-comm-t.name
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "nsg-north-europe-comm-t"
+    })
+  )
+}
+resource "azurerm_virtual_network" "vn-north-europe-comm-t" {
+  name                = "vn-north-europe-comm-t"
+  location            = "North Europe"
+  resource_group_name = azurerm_resource_group.rg-north-europe-comm-t.name
+  address_space       = ["10.0.0.0/24"]
+  dns_servers         = ["1.1.1.1", "1.1.1.0"]
+  subnet {
+    name           = "sn-north-europe-comm-t"
+    address_prefix = "10.0.0.0/24"
+    security_group = azurerm_network_security_group.nsg-north-europe-comm-t.id
+  }
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "vn-north-europe-comm-t"
     })
   )
 }
