@@ -574,7 +574,7 @@ resource "azurerm_storage_account" "sanortheuropecommt" {
     })
   )
 }
-resource "azurerm_network_security_group" "nsg-North-Europe-comm-t" {
+resource "azurerm_network_security_group" "nsg-north-europe-comm-t" {
   name                = "nsg-north-europe-comm-t"
   location            = "North Europe"
   resource_group_name = azurerm_resource_group.rg-north-europe-comm-t.name
