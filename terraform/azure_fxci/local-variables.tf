@@ -26,6 +26,10 @@ variable "gecko1" {
       rgname     = "west-us-gecko-1"
       rglocation = "westus"
     }
+    "rg-west-us-2-gecko-1" = {
+      rgname     = "west-us-2-gecko-1"
+      rglocation = "westus2"
+    }
   }
 }
 
@@ -56,6 +60,10 @@ variable "gecko2" {
     "rg-west-us-gecko-2" = {
       rgname     = "west-us-gecko-2"
       rglocation = "westus"
+    }
+    "rg-west-us-2-gecko-2" = {
+      rgname     = "west-us-2-gecko-2"
+      rglocation = "westus2"
     }
   }
 }
@@ -88,6 +96,10 @@ variable "comm1" {
       rgname     = "west-us-comm-1"
       rglocation = "westus"
     }
+    "rg-west-us-2-comm-1" = {
+      rgname     = "west-us-2-comm-1"
+      rglocation = "westus2"
+    }
   }
 }
 
@@ -118,6 +130,10 @@ variable "comm2" {
     "rg-west-us-comm-2" = {
       rgname     = "west-us-comm-2"
       rglocation = "westus"
+    }
+    "rg-west-us-2-comm-2" = {
+      rgname     = "west-us-2-comm-2"
+      rglocation = "westus2"
     }
   }
 }
@@ -150,6 +166,10 @@ variable "vpn1" {
       rgname     = "west-us-vpn-1"
       rglocation = "westus"
     }
+    "rg-west-us-2-vpn-1" = {
+      rgname     = "west-us-2-vpn-1"
+      rglocation = "westus2"
+    }
   }
 }
 
@@ -180,6 +200,10 @@ variable "nss1" {
     "rg-west-us-nss-1" = {
       rgname     = "west-us-nss-1"
       rglocation = "westus"
+    }
+    "rg-west-us-2-nss-1" = {
+      rgname     = "west-us-2-nss-1"
+      rglocation = "westus2"
     }
   }
 }
