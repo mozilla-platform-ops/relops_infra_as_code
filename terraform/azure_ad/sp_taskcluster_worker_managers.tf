@@ -119,6 +119,6 @@ resource "azurerm_role_assignment" "taskcluster-worker-manager-production_subscr
 # role assignment: taskcluster-worker-manager-staging, contributor (built in role), within subscription scope
 resource "azurerm_role_assignment" "taskcluster-worker-manager-staging_subscription_contributor" {
   role_definition_name = "Contributor"
-  principal_id         = azuread_service_principal.taskcluster-worker-manager-production.object_id
+  principal_id         = azuread_service_principal.taskcluster-worker-manager-staging.object_id
   scope                = data.azurerm_subscription.currentSubscription.id
 }
