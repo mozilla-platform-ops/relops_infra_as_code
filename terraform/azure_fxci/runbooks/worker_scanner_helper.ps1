@@ -22,15 +22,15 @@ foreach ($nic in $old_nics) {
 	if ((!($nic.MacAddress -like $null)) -and ($nic.ResourceGroupName -eq $target_group)) {
 		$nic_object = Get-AzNetworkInterface -Name $nic.Name -ResourceGroupName $nic.ResourceGroupName
 		$pIP = ($nic.IpConfigurations.PublicIpAddress.Id -replace $pip_prefix )
-		
-		write-output ('Removing NIC and configuration for {0}' -f $nic.Name) 
-		write-output ('Will remove Public IP: {0}' -f $pIP)
-		write-output "$null" 
+
+		write-output ('Removing NIC and configuration for {0}' -f $nic.Name)
+		#write-output ('Will remove Public IP: {0}' -f $pIP)
+		write-output "$null"
 		Remove-AzNetworkInterfaceIpConfig  -Name IPConfig-1 -NetworkInterface $nic_object
 		Remove-AzNetworkInterface -Name $nic.Name -ResourceGroup $nic.ResourceGroupName -force
-		Remove-AzPublicIpAddress -Name $pIP -ResourceGroup $nic.ResourceGroupName -force
+		#Remove-AzPublicIpAddress -Name $pIP -ResourceGroup $nic.ResourceGroupName -force
 		$n = ($n +1)
-	}	
+	}
 }
 
 write-output "Removing unattached disks"
@@ -41,7 +41,7 @@ foreach ($md in $managedDisks) {
 		write-output ('Deleting Disk with Id: {0}' -f $md.Id)
 		write-output "$null"
 		$md | Remove-AzDisk -Force
-		
+
 		$d = ($d + 2)
     }
  }
