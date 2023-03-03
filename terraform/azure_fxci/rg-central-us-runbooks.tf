@@ -1,3 +1,5 @@
+data "azurerm_subscription" "currentSubscription" {}
+
 resource "azurerm_resource_group" "rg-central-us-runbooks" {
   name     = "rg-central-us-runbooks"
   location = "Central US"
@@ -29,6 +31,47 @@ resource "azurerm_automation_module" "az-accounts" {
     uri = "https://www.powershellgallery.com/api/v2/package/Az.Accounts/2.5.2"
   }
 }
+# Though user assign identity is an AD entity it is being managed here
+# since it is in the runbook resource group
+resource "azurerm_user_assigned_identity" "untrusted-resource-manager" {
+  name                = "resource-manager"
+  location            = "Central US"
+  resource_group_name = azurerm_resource_group.rg-central-us-runbooks.name
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "resource-manager"
+    })
+  )
+}
+resource "azurerm_role_definition" "untrusted-resource-manager" {
+  name        = "untrusted-resource-manager"
+  description = "a custom role allowing identifying and delegation of resources"
+  scope       = data.azurerm_subscription.currentSubscription.id
+  permissions {
+    actions = [
+      # read
+      "Microsoft.Compute/*/read",
+      "Microsoft.Network/*/read",
+      "Microsoft.ResourceHealth/availabilityStatuses/read",
+      "Microsoft.Resources/subscriptions/resourceGroups/read",
+      "Microsoft.Resources/subscriptions/resourceGroups/resources/read",
+      "Microsoft.Storage/*/read",
+
+      # delete
+      "Microsoft.Compute/disks/delete",
+      "Microsoft.Compute/virtualMachines/delete",
+      "Microsoft.Network/networkInterfaces/delete",
+      "Microsoft.Network/publicIPAddresses/delete",
+      "Microsoft.Resources/subscriptions/resourceGroups/delete",
+    ]
+  }
+}
+resource "azurerm_role_assignment" "untrusted-resource-manager" {
+  role_definition_name = azurerm_role_definition.untrusted-resource-manager.name
+  principal_id         = azurerm_user_assigned_identity.untrusted-resource-manager.principal_id
+  scope                = data.azurerm_subscription.currentSubscription.id
+}
+
 resource "azurerm_automation_module" "az-resources" {
   name                    = "Az.Resources"
   resource_group_name     = azurerm_automation_account.resource-monitor.resource_group_name
