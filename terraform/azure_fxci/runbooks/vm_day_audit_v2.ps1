@@ -1,9 +1,10 @@
-# Currently just looking for VMs that are older than 1 day or with no running agent
-# just report not shutdown
+# Currently just looking for VMs that are older than 1 day
 # Commented out code is for future use if we want to expand the scope.
 
-$connection = Get-AutomationConnection -Name AzureRunAsConnection
-$connectionResult = Connect-AzAccount -ServicePrincipal -Tenant $connection.TenantID -ApplicationId $connection.ApplicationID -CertificateThumbprint $connection.CertificateThumbprint
+$subscriptionID = "108d46d5-fe9b-4850-9a7d-8c914aa6c1f0"
+$uamiID ="6061cb58-20ec-49ae-9af3-a7c84118bbe9"
+Connect-AzAccount -Identity -AccountId $uamiID
+Set-AzContext -Subscription $subscriptionID
 
 $current = (get-date -format g)
 $vms = (get-azvm)
@@ -11,14 +12,12 @@ $issued_vms = New-Object System.Collections.ArrayList
 $new_vms = New-Object System.Collections.ArrayList
 $how_many = [int]0
 $all_minutes = [int]0
+$num_shut = [int]0
 $failed = New-Object System.Collections.ArrayList
 $no_agent = New-Object System.Collections.ArrayList
 $shutdown = New-Object System.Collections.ArrayList
 
 $current = ((Get-Date).ToUniversalTime())
-
- write-host $current `(UTC`)
-
 
 foreach ($vm in $vms) {
 	# write-host checking  $vm.name
@@ -52,7 +51,11 @@ foreach ($vm in $vms) {
 		$hours = [int]$hrs
 		$all_minutes = [int]$all_minutes + [int]$up_time.TotalMinutes
 		$tags = (Get-AzResource -ResourceGroupName $vm.ResourceGroupName -Name $vm.name).Tags
-		$worker_pool = $tags['worker-pool-id']
+        if ($tags) {
+		    $worker_pool = $tags['worker-pool-id']
+        } else {
+            $worker_pool = "unkown pool"
+        }
 
 		if ($agent_status -eq $null) {
 			# most likely new vm/ do nothing
@@ -69,7 +72,7 @@ foreach ($vm in $vms) {
 				# Longer than a day assuming it is off the rails
 				write-output ('{0} up days {1}. up hours {2}. Worker pool: {3} ' -f $vm.name, $up_time.days, $up_time.hours, $worker_pool )
 				write-output ('shutting down {0} . It has been up for {1} days.' -f $vm.Name, $days)
-				write-output $null
+				$num_shut = $num_shut + 1
 				Stop-AzVM -ResourceGroupName $vm.ResourceGroupName -Name $vm.Name -force
 				$shutdown.Add($vm.name)| Out-Null
 			}  #else {
@@ -89,18 +92,8 @@ foreach ($vm in $vms) {
 }
 
 
+write-output ('Total VMs shutdown: {0}' -f $num_shut)
 write-output ('Total Running VMs: {0}' -f $how_many)
 $avetime = [int]$all_minutes/[int]$how_many
 $hrs = [int]$avetime/60
 write-output  ('Average time up  {0} minutes ...  {1} hours' -f $avetime, $hrs)
-<#
-write-host
-write-host VMs that failed to completely provision:
-write-host $failed
-write-host
-write-host VMs with out VM agent running:
-write-host $no_agent
-write-host
-write-host VMs that have been shutdown
-write-host $shutdown
-#>
