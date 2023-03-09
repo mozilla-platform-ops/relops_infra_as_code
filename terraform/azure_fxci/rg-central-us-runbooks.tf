@@ -136,7 +136,7 @@ resource "azurerm_automation_runbook" "tmp_rg_cleanup_v2" {
 resource "azurerm_automation_job_schedule" "tmp_rg_cleanup_v2" {
   resource_group_name     = azurerm_automation_account.untrusted-resource-manager.resource_group_name
   automation_account_name = azurerm_automation_account.untrusted-resource-manager.name
-  schedule_name           = azurerm_automation_schedule.once-a-day-untrusted-resource-manager.name
+  schedule_name           = azurerm_automation_schedule.once-a-week-untrusted-resource-manager.name
   runbook_name            = azurerm_automation_runbook.tmp_rg_cleanup_v2.name
 }
 data "local_file" "vm_day_audit_v2_ps1" {
