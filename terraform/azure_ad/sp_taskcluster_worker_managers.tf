@@ -86,6 +86,9 @@ resource "azurerm_role_definition" "taskcluster-worker-manager" {
       "Microsoft.Compute/virtualMachines/delete",
       "Microsoft.Network/networkInterfaces/delete",
       "Microsoft.Network/publicIPAddresses/delete",
+      "Microsoft.Compute/diskAccesses/delete",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnectionProxies/delete",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnections/delete",
 
       # do
       "Microsoft.Compute/disks/beginGetAccess/action",
@@ -95,6 +98,8 @@ resource "azurerm_role_definition" "taskcluster-worker-manager" {
       "Microsoft.Network/networkSecurityGroups/join/action",
       "Microsoft.Network/publicIPAddresses/join/action",
       "Microsoft.Network/virtualNetworks/subnets/join/action",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnectionProxies/validate/action",
+      "Microsoft.Compute/diskAccesses/privateEndpointConnectionsApproval/action"
     ]
   }
 }

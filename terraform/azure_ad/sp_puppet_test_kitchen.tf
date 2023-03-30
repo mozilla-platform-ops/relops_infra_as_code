@@ -1,13 +1,6 @@
-data "azuread_user" "jwatkins" {
-  user_principal_name = "jwatkins@mozilla.com"
-}
-
-data "azurerm_resource_group" "puppet_test_kitchen_rg" {
-  name = "Puppet-Test-Kitchen"
-}
 resource "azuread_application" "puppet_test_kitchen" {
   display_name = "Puppet-Test-Kitchen"
-  owners       = [data.azuread_user.jwatkins.id]
+  owners       = [data.azuread_user.mcornmesser.id]
 }
 
 resource "azuread_service_principal" "puppet_test_kitchen" {
