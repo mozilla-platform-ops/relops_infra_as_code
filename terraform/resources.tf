@@ -10,3 +10,37 @@ locals {
   }
 }
 
+# service accounts
+
+resource "google_service_account" "tc_worker" {
+  account_id   = "taskcluster-worker"
+  display_name = "taskcluster worker"
+  project      = "translations-sandbox"
+}
+
+resource "google_service_account" "tc_worker_manager" {
+  account_id   = "taskcluster-worker-manager"
+  display_name = "taskcluster worker manager"
+  project      = "translations-sandbox"
+}
+
+# assign rights to service accounts
+
+resource "google_project_iam_member" "tc_worker_binding_log_writer" {
+  project = "translations-sandbox"
+  role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${google_service_account.tc_worker.email}"
+}
+
+resource "google_project_iam_member" "tc_worker_binding_metric_writer" {
+  project = "translations-sandbox"
+  role    = "roles/monitoring.metricWriter"
+  member  = "serviceAccount:${google_service_account.tc_worker.email}"
+}
+
+# for worker_manager
+# roles/compute.admin
+# roles/iam.serviceAccountUser
+
+
+
