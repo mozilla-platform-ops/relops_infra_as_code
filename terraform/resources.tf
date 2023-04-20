@@ -63,7 +63,7 @@ resource "google_project_iam_member" "tc_worker_manager_binding_service_account"
 ## keys
 
 # to extract key:
-#   `tc show` and save private key contents to file, then run `base64 -D FILE`
+#   `terraform show` and save private key contents to file, then run `base64 -D FILE`
 
 resource "google_service_account_key" "tc_worker_key" {
   service_account_id = google_service_account.tc_worker.name
