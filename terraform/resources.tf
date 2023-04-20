@@ -10,7 +10,12 @@ locals {
   }
 }
 
-# service accounts
+#######
+
+# TODO: put `project = "translations-sandbox"` in a variable
+
+
+## service accounts
 
 resource "google_service_account" "tc_worker" {
   account_id   = "taskcluster-worker"
@@ -24,7 +29,8 @@ resource "google_service_account" "tc_worker_manager" {
   project      = "translations-sandbox"
 }
 
-# assign rights to service accounts
+## assign rights to service accounts
+# - roles taken from existing service accounts in l1 gcp project
 
 # for worker
 
@@ -52,5 +58,18 @@ resource "google_project_iam_member" "tc_worker_manager_binding_service_account"
   project = "translations-sandbox"
   role    = "roles/iam.serviceAccountUser"
   member  = "serviceAccount:${google_service_account.tc_worker_manager.email}"
+}
+
+## keys
+
+# to extract key:
+#   `tc show` and save private key contents to file, then run `base64 -D FILE`
+
+resource "google_service_account_key" "tc_worker_key" {
+  service_account_id = google_service_account.tc_worker.name
+}
+
+resource "google_service_account_key" "tc_worker_manager_key" {
+  service_account_id = google_service_account.tc_worker_manager.name
 }
 
