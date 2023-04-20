@@ -26,6 +26,8 @@ resource "google_service_account" "tc_worker_manager" {
 
 # assign rights to service accounts
 
+# for worker
+
 resource "google_project_iam_member" "tc_worker_binding_log_writer" {
   project = "translations-sandbox"
   role    = "roles/logging.logWriter"
@@ -39,8 +41,16 @@ resource "google_project_iam_member" "tc_worker_binding_metric_writer" {
 }
 
 # for worker_manager
-# roles/compute.admin
-# roles/iam.serviceAccountUser
 
+resource "google_project_iam_member" "tc_worker_manager_binding_compute_admin" {
+  project = "translations-sandbox"
+  role    = "roles/compute.admin"
+  member  = "serviceAccount:${google_service_account.tc_worker_manager.email}"
+}
 
+resource "google_project_iam_member" "tc_worker_manager_binding_service_account" {
+  project = "translations-sandbox"
+  role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${google_service_account.tc_worker_manager.email}"
+}
 
