@@ -1,12 +1,12 @@
-data "azuread_group" "relops" {
-  display_name = "relops"
+data "azuread_user" "jmoss" {
+  user_principal_name = "jmoss@mozilla.com"
 }
 
 # application: worker_images_dev
 resource "azuread_application" "worker_images_dev" {
   display_name = "worker_images_dev"
   homepage     = "https://github.com/mozilla-platform-ops/worker-images"
-  owners       = [data.azuread_group.relops.id]
+  owners       = [data.azuread_user.jmoss.id]
 }
 
 resource "azuread_service_principal" "worker_images_dev" {
@@ -22,7 +22,7 @@ resource "azurerm_role_assignment" "worker_images_dev" {
 resource "azuread_application" "worker_images_fxci" {
   display_name = "worker_images_fxci"
   homepage     = "https://github.com/mozilla-platform-ops/worker-images"
-  owners       = [data.azuread_group.relops.id]
+  owners       = [data.azuread_user.jmoss.id]
 }
 
 resource "azuread_service_principal" "worker_images_fxci" {
@@ -38,7 +38,7 @@ resource "azurerm_role_assignment" "worker_images_fxci" {
 resource "azuread_application" "worker_images_fxci_trusted" {
   display_name = "worker_images_fxci_trusted"
   homepage     = "https://github.com/mozilla-platform-ops/worker-images"
-  owners       = [data.azuread_group.relops.id]
+  owners       = [data.azuread_user.jmoss.id]
 }
 
 resource "azuread_service_principal" "worker_images_fxci_trusted" {
