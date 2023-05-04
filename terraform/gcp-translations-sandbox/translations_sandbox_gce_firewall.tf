@@ -80,6 +80,10 @@ resource "google_compute_firewall" "allow-all-from-vpn" {
     ports    = ["0-65535"]
   }
 
+  allow {
+    protocol = "icmp"
+  }
+
   # from ../vault/lb.tf
   source_ranges = [
     "10.48.240.0/23", # MDC1 VPN prod udp
@@ -87,4 +91,26 @@ resource "google_compute_firewall" "allow-all-from-vpn" {
     "10.64.0.0/16",   # Ber3 VPN and future vpn space
   ]
   priority = 2000
+}
+
+# temporary, allow ssh from 0.0.0.0/0
+#   - TODO: figure out how to get traffic to transit via OpenVPN
+#     nc -vz 34.134.254.175 22
+#     // works
+#
+#     nc -b utun10 -vz 34.134.254.175 22
+#     // fails
+
+resource "google_compute_firewall" "allow-ssh-from-all" {
+  name        = "default-allow-ssh-from-all"
+  network     = "default"
+  description = "TF_MANAGED"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  priority      = 3000
 }
