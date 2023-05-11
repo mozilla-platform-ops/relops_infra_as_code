@@ -29,6 +29,7 @@ resource "azurerm_shared_image" "win10_64_2009_alpha" {
   location            = azurerm_resource_group.rg-packer-worker-images.location
   os_type             = "Windows"
   release_note_uri    = "https://github.com/mozilla-platform-ops/worker-images/releases"
+  hyper_v_generation  = "V2"
 
   identifier {
     publisher = "MicrosoftWindowsDesktop"
@@ -58,6 +59,7 @@ resource "azurerm_shared_image" "win10_64_2009" {
   location            = azurerm_resource_group.rg-packer-worker-images.location
   os_type             = "Windows"
   release_note_uri    = "https://github.com/mozilla-platform-ops/worker-images/releases"
+  hyper_v_generation  = "V2"
 
   identifier {
     publisher = "MicrosoftWindowsDesktop"
@@ -87,6 +89,7 @@ resource "azurerm_shared_image" "win11_64_2009_alpha" {
   location            = azurerm_resource_group.rg-packer-worker-images.location
   os_type             = "Windows"
   release_note_uri    = "https://github.com/mozilla-platform-ops/worker-images/releases"
+  hyper_v_generation  = "V2"
 
   identifier {
     publisher = "MicrosoftWindowsDesktop"
@@ -116,6 +119,7 @@ resource "azurerm_shared_image" "win11_64_2009" {
   location            = azurerm_resource_group.rg-packer-worker-images.location
   os_type             = "Windows"
   release_note_uri    = "https://github.com/mozilla-platform-ops/worker-images/releases"
+  hyper_v_generation  = "V2"
 
   identifier {
     publisher = "MicrosoftWindowsDesktop"
