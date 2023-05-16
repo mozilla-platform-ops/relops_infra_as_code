@@ -1,8 +1,8 @@
 # Currently just looking for VMs that are older than 1 day
 # Commented out code is for future use if we want to expand the scope.
 
-$subscriptionID = "108d46d5-fe9b-4850-9a7d-8c914aa6c1f0"
-$uamiID ="6061cb58-20ec-49ae-9af3-a7c84118bbe9"
+$subscriptionID = "a30e97ab-734a-4f3b-a0e4-c51c0bff0701"
+$uamiID ="6ccfd5c0-507b-45e5-b5c3-ba17bb67c762"
 Connect-AzAccount -Identity -AccountId $uamiID
 Set-AzContext -Subscription $subscriptionID
 
