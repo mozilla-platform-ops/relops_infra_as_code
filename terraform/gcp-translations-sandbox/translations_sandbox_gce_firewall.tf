@@ -101,8 +101,23 @@ resource "google_compute_firewall" "allow-all-from-vpn" {
 #     nc -b utun10 -vz 34.134.254.175 22
 #     // fails
 
-resource "google_compute_firewall" "allow-ssh-from-all" {
-  name        = "default-allow-ssh-from-all"
+# resource "google_compute_firewall" "allow-ssh-from-all" {
+#   name        = "default-allow-ssh-from-all"
+#   network     = "default"
+#   description = "TF_MANAGED"
+
+#   allow {
+#     protocol = "tcp"
+#     ports    = ["22"]
+#   }
+
+#   source_ranges = ["0.0.0.0/0"]
+#   priority      = 3000
+# }
+
+# aerickson
+resource "google_compute_firewall" "allow-ssh-from-aerickson-home" {
+  name        = "default-ssh-from-aerickson-home"
   network     = "default"
   description = "TF_MANAGED"
 
@@ -111,6 +126,6 @@ resource "google_compute_firewall" "allow-ssh-from-all" {
     ports    = ["22"]
   }
 
-  source_ranges = ["0.0.0.0/0"]
-  priority      = 3000
+  source_ranges = ["136.25.89.230/32"]
+  priority      = 4000
 }
