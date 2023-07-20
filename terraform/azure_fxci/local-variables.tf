@@ -234,3 +234,14 @@ variable "devloaner" {
     }
   }
 }
+
+variable "geckot" {
+  description = "geckot taskcluster azure resources"
+  type        = map(any)
+  default = {
+    "rg-uk-south-gecko-t" = {
+      rgname     = "uk-south-gecko-t"
+      rglocation = "uksouth"
+    }
+  }
+}
