@@ -651,3 +651,60 @@ resource "azurerm_virtual_network" "vn-west-us-3-gecko-t" {
     })
   )
 }
+
+# gecko-t looping through variables
+resource "azurerm_resource_group" "geckot" {
+  for_each = var.geckot
+  name     = "rg-${each.value.rgname}"
+  location = each.value.rglocation
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "${each.value.rgname}"
+    })
+  )
+}
+
+resource "azurerm_storage_account" "geckot" {
+  for_each                 = var.geckot
+  name                     = replace("sa${each.value.rgname}", "/\\W|_|\\s/", "")
+  resource_group_name      = azurerm_resource_group.geckot[each.key].name
+  location                 = each.value.rglocation
+  account_replication_type = "GRS"
+  account_tier             = "Standard"
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "${each.value.rgname}"
+    })
+  )
+}
+
+resource "azurerm_network_security_group" "geckot" {
+  for_each            = var.geckot
+  name                = "nsg-${each.value.rgname}"
+  resource_group_name = azurerm_resource_group.geckot[each.key].name
+  location            = each.value.rglocation
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "${each.value.rgname}"
+    })
+  )
+}
+
+resource "azurerm_virtual_network" "geckot" {
+  for_each            = var.geckot
+  name                = "vn-${each.value.rgname}"
+  resource_group_name = azurerm_resource_group.geckot[each.key].name
+  location            = each.value.rglocation
+  address_space       = ["10.0.0.0/22"]
+  dns_servers         = ["1.1.1.1", "1.1.1.0"]
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "${each.value.rgname}"
+    })
+  )
+  subnet {
+    name           = "sn-${each.value.rgname}"
+    address_prefix = "10.0.0.0/22"
+    security_group = azurerm_network_security_group.geckot[each.key].id
+  }
+}
