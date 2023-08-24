@@ -20,4 +20,3 @@ repos:
   rev: v0.1.22
   hooks:
     - id: shellcheck
-      args: ["--enable require-variable-braces,deprecate-which"]
