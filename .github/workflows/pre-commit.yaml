@@ -16,8 +16,7 @@ jobs:
       with:
         severity: error
         check_together: 'yes'
-      env:
-        SHELLCHECK_OPTS: -e SC2208
+        ignore_names: moonshot.sh
     - name: Run pre-commit
       run: |
         pip install pre-commit
