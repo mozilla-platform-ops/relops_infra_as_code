@@ -11,6 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v3
+    - uses: hashicorp/setup-terraform@v2
     - name: Linting
       run: |
         pip install pre-commit
