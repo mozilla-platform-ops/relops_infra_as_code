@@ -82,7 +82,7 @@ function find_group_id() {
         groups[$name]=$id
     done <  <(callit device_groups \
         | jq -r '.[] | [.id,.attributes.name] | @tsv')
-    
+
     if [ -v "groups[$group]" ]; then
         echo "${groups[$group]}"
     fi
