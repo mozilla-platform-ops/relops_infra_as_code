@@ -9,7 +9,7 @@ repos:
   - id: trailing-whitespace
 
 - repo: https://github.com/jumanjihouse/pre-commit-hooks
-  rev: master
+  rev: 3.0.0
   hooks:
     - id: shellcheck
 
@@ -20,4 +20,3 @@ repos:
       args:
         - --args=-recursive
         - --args=-write=false
-    - id: terraform_docs
