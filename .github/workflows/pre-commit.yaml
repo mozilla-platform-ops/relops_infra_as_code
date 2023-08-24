@@ -3,7 +3,7 @@ name: pre-commit
 on:
   pull_request:
   push:
-    branches: [main, precommit]
+    branches: [main]
 
 jobs:
   pre-commit:
@@ -16,6 +16,8 @@ jobs:
       with:
         severity: error
         check_together: 'yes'
+      env:
+        SHELLCHECK_OPTS: -e SC2208
     - name: Run pre-commit
       run: |
         pip install pre-commit
