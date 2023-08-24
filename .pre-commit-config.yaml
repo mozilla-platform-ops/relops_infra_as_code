@@ -15,3 +15,9 @@ repos:
       args:
         - --args=-recursive
         - --args=-write=false
+
+- repo: https://github.com/gruntwork-io/pre-commit
+  rev: v0.1.22
+  hooks:
+    - id: shellcheck
+      args: ["--enable require-variable-braces,deprecate-which"]
