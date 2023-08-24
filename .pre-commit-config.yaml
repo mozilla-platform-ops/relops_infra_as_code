@@ -8,11 +8,6 @@ repos:
   - id: detect-private-key
   - id: trailing-whitespace
 
-- repo: https://github.com/jumanjihouse/pre-commit-hooks
-  rev: 3.0.0
-  hooks:
-    - id: shellcheck
-
 - repo: https://github.com/antonbabenko/pre-commit-terraform
   rev: v1.82.0
   hooks:
