@@ -7,7 +7,7 @@
 #     fi
 #   fi
 # fi
-#     
+#
 grouped_by_chassis=${1:-true}
 if $grouped_by_chassis; then
   echo grouped_by_chassis:"$grouped_by_chassis"
@@ -179,7 +179,7 @@ function ssh_reboot() {
   fi
 }
 export -f ssh_reboot
-  
+
 
 function report_metric_each() {
   if [[ $1 == *"="* ]]; then
@@ -205,7 +205,7 @@ function report_metric_each() {
     #echo "systemcheck,type=moonshot,event=${type}${tag}${tags}${type}=1" -o /dev/null -w "%{http_code}" >> ./keep.metrics
   done
 }
-export -f report_metric_each 
+export -f report_metric_each
 
 
 uniq -c -w9 "$SCRIPT_PATH"/workers.txt

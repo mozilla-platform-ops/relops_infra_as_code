@@ -242,6 +242,6 @@ for i in range(90):
         states[state] = states.get(state, 0) + 1
     [ task_result(new_tasks[task]) for task in new_tasks ]
     print(states)
-    
+
     print(target_p, target_wt, 'pending:{}'.format(queue.pendingTasks('{}/{}'.format(target_p, target_wt))['pendingTasks']), 'active:{}'.format(count_active_workers(target_p, target_wt)))
     time.sleep(60)
