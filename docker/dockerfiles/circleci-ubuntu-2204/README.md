@@ -2,7 +2,7 @@
 
 used to generate https://hub.docker.com/r/mozillarelops/circleci-ubuntu-2204
 
-managment link (requires login): https://hub.docker.com/repository/docker/mozillarelops/circleci-ubuntu-2204
+management link (requires login): https://hub.docker.com/repository/docker/mozillarelops/circleci-ubuntu-2204
 
 ## build, test, publish process
 
