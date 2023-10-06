@@ -1,4 +1,4 @@
-# circleci-ubuntu-2004
+# circleci-ubuntu-2204
 
 used to generate https://hub.docker.com/repository/docker/mozillarelops/circleci-ubuntu-2204
 
