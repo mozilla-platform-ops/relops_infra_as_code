@@ -243,5 +243,9 @@ variable "geckot" {
       rgname     = "uk-south-gecko-t"
       rglocation = "uksouth"
     }
+    "rg-uk-west-gecko-t" = {
+      rgname     = "uk-west-gecko-t"
+      rglocation = "ukwest"
+    }
   }
 }
