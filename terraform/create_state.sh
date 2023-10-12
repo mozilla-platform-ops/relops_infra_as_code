@@ -4,7 +4,6 @@ set -e
 #set -x
 
 # TODO: provide user with a `tf apply -target` command that will avoid the risk of deletions
-# TODO: create terraform.tfvars with the module name set?
 
 function usage ()
 {
@@ -49,6 +48,15 @@ terraform {
     region         = "us-west-2"
   }
 }
+EOF
+
+echo "Generating ${STATE_NAME}/terraform.tfvars"
+cat <<EOF >"${STATE_NAME}/terraform.tfvars"
+tag_project_name = "${STATE_NAME}"
+
+tag_production_state = "production"
+
+tag_owner_email = "${USER}@mozilla.com"
 EOF
 
 echo "Generating base/tf_state_lock_${STATE_NAME}.tf"
