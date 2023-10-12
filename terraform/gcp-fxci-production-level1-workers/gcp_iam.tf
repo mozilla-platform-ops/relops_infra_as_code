@@ -29,7 +29,7 @@ resource "google_project_iam_member" "releng-users-monitoring" {
 }
 
 resource "google_project_iam_member" "translations-users-monitoring" {
-    for_each = "${var.releng_users}"
+    for_each = "${var.translations_users}"
 
   project = "fxci-production-level1-workers"
   role    = "roles/monitoring.viewer"
@@ -46,7 +46,7 @@ resource "google_project_iam_member" "releng-users-compute" {
 }
 
 resource "google_project_iam_member" "translations-users-compute" {
-    for_each = "${var.releng_users}"
+    for_each = "${var.translations_users}"
 
   project = "fxci-production-level1-workers"
   role    = "roles/compute.viewer"
