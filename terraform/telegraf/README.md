@@ -54,6 +54,17 @@ docker pull 961225894672.dkr.ecr.us-east-1.amazonaws.com/telegraf:'1.7'
 docker run -it 961225894672.dkr.ecr.us-east-1.amazonaws.com/telegraf /bin/bash
 ```
 
+### reverse-engineering an image to a Dockerfile
+
+Uses https://hub.docker.com/r/alpine/dfimage (that uses https://github.com/P3GLEG/Whaler).
+
+```
+alias dfimage="docker run -v /var/run/docker.sock:/var/run/docker.sock --rm alpine/dfimage"
+
+# once image has been pulled, see above
+dfimage -sV=1.36 961225894672.dkr.ecr.us-east-1.amazonaws.com/telegraf:latest
+```
+
 ## reference links
 
 - https://docs.aws.amazon.com/ecs/
