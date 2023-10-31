@@ -56,6 +56,8 @@ docker run -it 961225894672.dkr.ecr.us-east-1.amazonaws.com/telegraf /bin/bash
 
 ### reverse-engineering an image to a Dockerfile
 
+From https://stackoverflow.com/questions/19104847/how-to-generate-a-dockerfile-from-an-image.
+
 Uses https://hub.docker.com/r/alpine/dfimage (that uses https://github.com/P3GLEG/Whaler).
 
 ```
@@ -63,6 +65,16 @@ alias dfimage="docker run -v /var/run/docker.sock:/var/run/docker.sock --rm alpi
 
 # once image has been pulled, see above
 dfimage -sV=1.36 961225894672.dkr.ecr.us-east-1.amazonaws.com/telegraf:latest
+```
+
+### exporting layers of a Docker image
+
+https://github.com/micahyoung/docker-layer-extract
+
+```bash
+go install github.com/micahyoung/docker-layer-extract@latest
+~/go/bin/docker-layer-extract -h
+
 ```
 
 ## reference links
