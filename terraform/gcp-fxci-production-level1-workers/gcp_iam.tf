@@ -52,3 +52,20 @@ resource "google_project_iam_member" "translations-users-compute" {
   role    = "roles/compute.viewer"
   member  = "user:${each.value}@mozilla.com"
 }
+
+# roles/logging.viewer
+resource "google_project_iam_member" "releng-users-logs" {
+    for_each = "${var.releng_users}"
+
+  project = "fxci-production-level1-workers"
+  role    = "roles/logging.viewer"
+  member  = "user:${each.value}@mozilla.com"
+}
+
+resource "google_project_iam_member" "translations-users-logs" {
+    for_each = "${var.translations_users}"
+
+  project = "fxci-production-level1-workers"
+  role    = "roles/logging.viewer"
+  member  = "user:${each.value}@mozilla.com"
+}
