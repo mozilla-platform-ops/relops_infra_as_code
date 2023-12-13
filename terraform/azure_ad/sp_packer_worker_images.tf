@@ -50,3 +50,19 @@ resource "azurerm_role_assignment" "worker_images_fxci_trusted" {
   principal_id         = azuread_service_principal.worker_images_fxci_trusted.object_id
   scope                = "/subscriptions/a30e97ab-734a-4f3b-a0e4-c51c0bff0701"
 }
+
+# application: worker_manager_tceng
+resource "azuread_application" "worker_images_tceng" {
+  display_name = "worker_images_tceng"
+  owners       = [data.azuread_user.mcornmesser.id]
+}
+
+resource "azuread_service_principal" "worker_images_tceng" {
+  application_id = azuread_application.worker_images_tceng.application_id
+}
+
+resource "azurerm_role_assignment" "worker_images_tceng" {
+  role_definition_name = "Contributor"
+  principal_id         = azuread_service_principal.worker_images_tceng.object_id
+  scope                = "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9"
+}

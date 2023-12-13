@@ -127,3 +127,19 @@ resource "azurerm_role_assignment" "taskcluster-worker-manager-staging_subscript
   principal_id         = azuread_service_principal.taskcluster-worker-manager-staging.object_id
   scope                = data.azurerm_subscription.currentSubscription.id
 }
+
+# application: worker_manager_tceng
+resource "azuread_application" "worker_manager_tceng" {
+  display_name = "worker_manager_tceng"
+  owners       = [data.azuread_user.mcornmesser.id]
+}
+
+resource "azuread_service_principal" "worker_manager_tceng" {
+  application_id = azuread_application.worker_manager_tceng.application_id
+}
+
+resource "azurerm_role_assignment" "worker_manager_tceng" {
+  role_definition_name = "Contributor"
+  principal_id         = azuread_service_principal.worker_manager_tceng.object_id
+  scope                = "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9"
+}
