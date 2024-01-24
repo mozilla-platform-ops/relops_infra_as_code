@@ -34,4 +34,5 @@ variable "repo_url" {
 variable "insightcloudsec_scope" {
   type = list(any)
   description = "List of subscriptions to be used with insightcloudsec"
+  default = []
 }
