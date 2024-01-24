@@ -30,8 +30,3 @@ variable "repo_url" {
   description = "A link to this github repo"
   default     = "https://github.com/mozilla-platform-ops/relops_cloud"
 }
-
-variable "insightcloudsec_scope" {
-  type = list(any)
-  description = "List of subscriptions to be used with insightcloudsec"
-}
