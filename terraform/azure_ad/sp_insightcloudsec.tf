@@ -1,3 +1,9 @@
+variable "insightcloudsec_scope" {
+  type = list(any)
+  description = "List of subscriptions to be used with insightcloudsec"
+  default = []
+}
+
 resource "azuread_application" "insightcloudsec" {
   display_name = "sp-infosec-insightcloudsec"
   homepage     = "https://www.rapid7.com/products/insightcloudsec/"
