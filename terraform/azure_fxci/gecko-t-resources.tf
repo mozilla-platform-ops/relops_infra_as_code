@@ -538,11 +538,11 @@ resource "azurerm_virtual_network" "vn-west-us2-gecko-t" {
   name                = "vn-west-us-2-gecko-t"
   location            = "West US 2"
   resource_group_name = azurerm_resource_group.rg-west-us-2-gecko-t.name
-  address_space       = ["10.0.0.0/24"]
+  address_space       = ["10.0.0.0/20"]
   dns_servers         = ["1.1.1.1", "1.1.1.0"]
   subnet {
     name           = "sn-west-us-2-gecko-t"
-    address_prefix = "10.0.0.0/24"
+    address_prefix = "10.0.0.0/20"
     security_group = azurerm_network_security_group.nsg-west-us2-gecko-t.id
   }
   tags = merge(local.common_tags,
@@ -638,11 +638,11 @@ resource "azurerm_virtual_network" "vn-west-us-3-gecko-t" {
   name                = "vn-west-us-3-gecko-t"
   location            = "West US 3"
   resource_group_name = azurerm_resource_group.rg-west-us-3-gecko-t.name
-  address_space       = ["10.0.0.0/24"]
+  address_space       = ["10.0.0.0/20"]
   dns_servers         = ["1.1.1.1", "1.1.1.0"]
   subnet {
     name           = "sn-west-us-3-gecko-t"
-    address_prefix = "10.0.0.0/24"
+    address_prefix = "10.0.0.0/20"
     security_group = azurerm_network_security_group.nsg-west-us-3-gecko-t.id
   }
   tags = merge(local.common_tags,
