@@ -137,11 +137,11 @@ resource "azurerm_virtual_network" "vn-central-us-gecko-t" {
   name                = "vn-central-us-gecko-t"
   location            = "Central US"
   resource_group_name = azurerm_resource_group.rg-central-us-gecko-t.name
-  address_space       = ["10.0.0.0/24"]
+  address_space       = ["10.0.0.0/20"]
   dns_servers         = ["1.1.1.1", "1.1.1.0"]
   subnet {
     name           = "sn-central-us-gecko-t"
-    address_prefix = "10.0.0.0/24"
+    address_prefix = "10.0.0.0/20"
     security_group = azurerm_network_security_group.nsg-central-us-gecko-t.id
   }
   tags = merge(local.common_tags,
@@ -287,11 +287,11 @@ resource "azurerm_virtual_network" "vn-north-central-us-gecko-t" {
   name                = "vn-north-central-us-gecko-t"
   location            = "North Central US"
   resource_group_name = azurerm_resource_group.rg-north-central-us-gecko-t.name
-  address_space       = ["10.0.0.0/24"]
+  address_space       = ["10.0.0.0/20"]
   dns_servers         = ["1.1.1.1", "1.1.1.0"]
   subnet {
     name           = "sn-north-central-us-gecko-t"
-    address_prefix = "10.0.0.0/24"
+    address_prefix = "10.0.0.0/20"
     security_group = azurerm_network_security_group.nsg-north-central-us-gecko-t.id
   }
   tags = merge(local.common_tags,
