@@ -1,29 +1,29 @@
-resource "azurerm_resource_group" "rg-north-central-us-ff-enterprise" {
-  name     = "rg-north-central-us-ff-enterprise"
+resource "azurerm_resource_group" "rg-north-central-us-ff-desktop" {
+  name     = "rg-north-central-us-ff-desktop"
   location = "North Central US"
   tags = merge(local.common_tags,
     tomap({
-      "Name" = "rg-north-central-us-ff-enterprise"
+      "Name" = "rg-north-central-us-ff-desktop"
     })
   )
 }
 # storage account names can only consist of lowercase letters and numbers
-resource "azurerm_storage_account" "sanorthcentralusffenterp" {
-  name                     = "sanorthcentralusffenterp"
-  resource_group_name      = azurerm_resource_group.rg-north-central-us-ff-enterprise.name
+resource "azurerm_storage_account" "sanorthcentralusffd" {
+  name                     = "sanorthcentralusffd"
+  resource_group_name      = azurerm_resource_group.rg-north-central-us-ff-desktop.name
   location                 = "North Central US"
   account_tier             = "Standard"
   account_replication_type = "GRS"
   tags = merge(local.common_tags,
     tomap({
-      "Name" = "sanorthcentralusffenterp"
+      "Name" = "sanorthcentralusffd"
     })
   )
 }
-resource "azurerm_network_security_group" "nsg-north-central-us-ff-enterprise" {
-  name                = "nsg-north-central-us-ff-enterprise"
+resource "azurerm_network_security_group" "nsg-north-central-us-ff-desktop" {
+  name                = "nsg-north-central-us-ff-desktop"
   location            = "North Central US"
-  resource_group_name = azurerm_resource_group.rg-north-central-us-ff-enterprise.name
+  resource_group_name = azurerm_resource_group.rg-north-central-us-ff-desktop.name
   security_rule {
     name                       = "allow-rdp-prod-uswest-mdc1"
     description                = "allows access to rdp over uswest mdc1"
@@ -62,24 +62,24 @@ resource "azurerm_network_security_group" "nsg-north-central-us-ff-enterprise" {
   }
   tags = merge(local.common_tags,
     tomap({
-      "Name" = "nsg-north-central-us-ff-enterprise"
+      "Name" = "nsg-north-central-us-ff-desktop"
     })
   )
 }
-resource "azurerm_virtual_network" "vn-north-central-us-ff-enterprise1" {
-  name                = "vn-north-central-us-ff-enterprise1"
+resource "azurerm_virtual_network" "vn-north-central-us-ff-desktop1" {
+  name                = "vn-north-central-us-ff-desktop1"
   location            = "North Central US"
-  resource_group_name = azurerm_resource_group.rg-north-central-us-ff-enterprise.name
+  resource_group_name = azurerm_resource_group.rg-north-central-us-ff-desktop.name
   address_space       = ["10.0.0.0/24"]
   dns_servers         = ["1.1.1.1", "1.1.1.0"]
   subnet {
-    name           = "sn-north-central-us-ff-enterprise"
+    name           = "sn-north-central-us-ff-desktop"
     address_prefix = "10.0.0.0/24"
-    security_group = azurerm_network_security_group.nsg-north-central-us-ff-enterprise.id
+    security_group = azurerm_network_security_group.nsg-north-central-us-ff-desktop.id
   }
   tags = merge(local.common_tags,
     tomap({
-      "Name" = "vn-north-central-us-ff-enterprise"
+      "Name" = "vn-north-central-us-ff-desktop"
     })
   )
 }
