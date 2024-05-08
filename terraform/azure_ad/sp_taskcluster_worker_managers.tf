@@ -131,7 +131,11 @@ resource "azurerm_role_assignment" "taskcluster-worker-manager-staging_subscript
 # application: worker_manager_tceng
 resource "azuread_application" "worker_manager_tceng" {
   display_name = "worker_manager_tceng"
-  owners       = [data.azuread_user.mcornmesser.id]
+  owners = [
+    "fdb37821-4f7e-4c00-8c7e-e5344306e6f8",
+    "a1ca5b04-b1ad-4e52-9edb-2d7b30e9198c",
+    "4cdab8cc-ae18-4a1f-92ad-264e67a1cc30"
+  ]
 }
 
 resource "azuread_service_principal" "worker_manager_tceng" {
