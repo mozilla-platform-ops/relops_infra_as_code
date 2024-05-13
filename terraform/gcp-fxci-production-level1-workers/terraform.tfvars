@@ -4,5 +4,5 @@ tag_production_state = "production"
 
 tag_owner_email = "aerickson@mozilla.com"
 
-releng_users = ["bhearsum", "gbustamante"]
+releng_users = ["bhearsum", "gbustamante", "mcastelluccio", "jlorenzo", "jmaher", "ahalberstat", "gbrown", "hneiva", "jcristau"]
 translations_users = ["epavlov","gtatum"]
