@@ -1,9 +1,16 @@
+# grants various read-only permissions to releng, translations, and other users
+
 variable "releng_users" {
     type = set(string)
     description = "list of usernames"
 }
 
 variable "translations_users" {
+    type = set(string)
+    description = "list of usernames"
+}
+
+variable "read_only_users" {
     type = set(string)
     description = "list of usernames"
 }
@@ -36,6 +43,14 @@ resource "google_project_iam_member" "translations-users-monitoring" {
   member  = "user:${each.value}@mozilla.com"
 }
 
+resource "google_project_iam_member" "read-only-users-monitoring" {
+    for_each = "${var.read_only_users}"
+
+  project = "fxci-production-level1-workers"
+  role    = "roles/monitoring.viewer"
+  member  = "user:${each.value}@mozilla.com"
+}
+
 # roles/compute.viewer
 resource "google_project_iam_member" "releng-users-compute" {
     for_each = "${var.releng_users}"
@@ -53,6 +68,14 @@ resource "google_project_iam_member" "translations-users-compute" {
   member  = "user:${each.value}@mozilla.com"
 }
 
+resource "google_project_iam_member" "read-only-users-compute" {
+    for_each = "${var.read_only_users}"
+
+  project = "fxci-production-level1-workers"
+  role    = "roles/compute.viewer"
+  member  = "user:${each.value}@mozilla.com"
+}
+
 # roles/logging.viewer
 resource "google_project_iam_member" "releng-users-logs" {
     for_each = "${var.releng_users}"
@@ -64,6 +87,14 @@ resource "google_project_iam_member" "releng-users-logs" {
 
 resource "google_project_iam_member" "translations-users-logs" {
     for_each = "${var.translations_users}"
+
+  project = "fxci-production-level1-workers"
+  role    = "roles/logging.viewer"
+  member  = "user:${each.value}@mozilla.com"
+}
+
+resource "google_project_iam_member" "read-only-users-logs" {
+    for_each = "${var.read_only_users}"
 
   project = "fxci-production-level1-workers"
   role    = "roles/logging.viewer"
@@ -88,19 +119,10 @@ resource "google_project_iam_member" "translations-users-monitoring-editor" {
   member  = "user:${each.value}@mozilla.com"
 }
 
-# bhearsum wants compute.instances.simulateMaintenanceEvent for spot instance termination testing
+resource "google_project_iam_member" "read-only-users-monitoring-editor" {
+    for_each = "${var.read_only_users}"
 
-# the two pre-existing roles with this perm have too much, create a custom role
-resource "google_project_iam_custom_role" "my-custom-role" {
-  role_id     = "relops_compute_simulate_maintenance"
-  title       = "Relops Compute Simulate Maintenance Role"
-  description = "A role that allows compute.instances.simulateMaintenanceEvent"
-  permissions = ["compute.instances.simulateMaintenanceEvent"]
-}
-
-resource "google_project_iam_member" "bhearsum-compute-simulate-maintenance" {
   project = "fxci-production-level1-workers"
-  # role    = "roles/compute.instances.simulateMaintenanceEvent"
-  role = "projects/fxci-production-level1-workers/roles/relops_compute_simulate_maintenance"
-  member  = "user:bhearsum@mozilla.com"
+  role    = "roles/monitoring.editor"
+  member  = "user:${each.value}@mozilla.com"
 }
