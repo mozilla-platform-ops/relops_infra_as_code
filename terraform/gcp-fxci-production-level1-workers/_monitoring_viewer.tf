@@ -7,5 +7,5 @@
 resource "google_project_iam_member" "monitoring-viewer-svc-account" {
   project = "fxci-production-level1-workers"
   role = "roles/monitoring.viewer"
-  member  = "user:fxci-etl@moz-fx-dev-releng.iam.gserviceaccount.com"
+  member  = "serviceAccount:fxci-etl@moz-fx-dev-releng.iam.gserviceaccount.com"
 }
