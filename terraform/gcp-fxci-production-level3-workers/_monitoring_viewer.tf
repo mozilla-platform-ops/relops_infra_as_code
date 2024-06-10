@@ -5,7 +5,7 @@
 # In both the fxci-production-level1-workers and fxci-production-level3-workers projects.
 
 resource "google_project_iam_member" "monitoring-viewer-svc-account" {
-  project = "fxci-production-level1-workers"
+  project = "fxci-production-level3-workers"
   role = "roles/monitoring.viewer"
   member  = "serviceAccount:fxci-etl@moz-fx-dev-releng.iam.gserviceaccount.com"
 }
