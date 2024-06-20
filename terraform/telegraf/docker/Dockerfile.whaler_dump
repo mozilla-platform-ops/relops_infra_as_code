@@ -1,0 +1,62 @@
+# created by using https://hub.docker.com/r/alpine/dfimage
+
+CMD ["bash"]
+RUN apt-get update  \
+	&& apt-get install -y --no-install-recommends ca-certificates curl netbase wget  \
+	&& rm -rf /var/lib/apt/lists/*
+RUN set -ex; if ! command -v gpg > /dev/null; then apt-get update; apt-get install -y --no-install-recommends gnupg dirmngr ; rm -rf /var/lib/apt/lists/*; fi
+RUN DEBIAN_FRONTEND=noninteractive apt-get update  \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends iputils-ping snmp procps lm-sensors  \
+	&& rm -rf /var/lib/apt/lists/*
+RUN set -ex  \
+	&& for key in 05CE15085FC09D18E99EFB22684A14CF2582E0C5 ; do gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" || gpg --keyserver pgp.mit.edu --recv-keys "$key" || gpg --keyserver keyserver.pgp.com --recv-keys "$key" ; done
+ENV TELEGRAF_VERSION=1.10.1
+RUN ARCH=  \
+	&& dpkgArch="$(dpkg --print-architecture)"  \
+	&& case "${dpkgArch##*-}" in amd64) ARCH='amd64';; arm64) ARCH='arm64';; armhf) ARCH='armhf';; armel) ARCH='armel';; *) echo "Unsupported architecture: ${dpkgArch}"; exit 1;; esac  \
+	&& wget --no-verbose https://dl.influxdata.com/telegraf/releases/telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb.asc  \
+	&& wget --no-verbose https://dl.influxdata.com/telegraf/releases/telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb  \
+	&& gpg --batch --verify telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb.asc telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb  \
+	&& dpkg -i telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb  \
+	&& rm -f telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb*
+EXPOSE 8092/udp 8094 8125/udp
+COPY file:7e725b38b34580a28d521266535fcafc651af09f8af8fc6e03ef74768e1b69a2 in /entrypoint.sh
+	entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["telegraf"]
+ADD dir:a673906d97b0fc6962e576577ab73335f2053e876298e6d6ea1cbaa21bef090d in /etc/telegraf
+	etc/
+	etc/telegraf/
+	etc/telegraf/check_vcs.sh
+	etc/telegraf/ical2txt
+	etc/telegraf/jq
+	etc/telegraf/quarantined.sh
+	etc/telegraf/queue.sh
+	etc/telegraf/queue2.log
+	etc/telegraf/queue2.sh
+	etc/telegraf/queue2_workers
+	etc/telegraf/queue_old.sh
+	etc/telegraf/release_cal.sh
+	etc/telegraf/run.log
+	etc/telegraf/run_pulse.log
+	etc/telegraf/run_test.log
+	etc/telegraf/tc-web.log
+	etc/telegraf/tc-web.sh
+	etc/telegraf/tc-web2.sh
+	etc/telegraf/tc-web_curl.log
+	etc/telegraf/tc-web_data.log
+	etc/telegraf/tc-web_quar.log
+	etc/telegraf/tc-web_running.log
+	etc/telegraf/tc_events.py
+	etc/telegraf/telegraf.conf
+	etc/telegraf/telegraf_pulse.conf
+	etc/telegraf/telegraf_pulse.conf_old
+	etc/telegraf/telegraf_tcweb.conf
+	etc/telegraf/treestatus.sh
+	etc/telegraf/treestatus.sh.tmpfile
+	etc/telegraf/webhooks.conf
+	etc/telegraf/workers.log
+	etc/telegraf/workers.sh
+
+
