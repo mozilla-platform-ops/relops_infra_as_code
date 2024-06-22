@@ -1,20 +1,5 @@
 # grants various read-only permissions to releng, translations, and other users
 
-variable "releng_users" {
-    type = set(string)
-    description = "list of usernames"
-}
-
-variable "translations_users" {
-    type = set(string)
-    description = "list of usernames"
-}
-
-variable "read_only_users" {
-    type = set(string)
-    description = "list of usernames"
-}
-
 # TODO: use this?
 # roles/viewer has a ton of permissions, reduce
 #   - https://console.cloud.google.com/iam-admin/roles/details/roles%3Cviewer?project=fxci-production-level1-workers
