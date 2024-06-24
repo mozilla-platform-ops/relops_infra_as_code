@@ -3,7 +3,7 @@ resource "azurerm_resource_group" "splunkeventhub" {
   location = "East US 2"
   tags = merge(local.common_tags,
     tomap({
-      "tag_owner_email" = ""
+      "tag_owner_email" = "infrastructuresecurity@mozilla.com"
     })
   )
 }
@@ -18,7 +18,7 @@ resource "azurerm_eventhub_namespace" "splunk" {
 
   tags = merge(local.common_tags,
     tomap({
-      "tag_owner_email" = ""
+      "tag_owner_email" = "infrastructuresecurity@mozilla.com"
     })
   )
 }
