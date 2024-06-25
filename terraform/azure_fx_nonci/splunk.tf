@@ -52,7 +52,7 @@ resource "azurerm_monitor_diagnostic_setting" "splunkeventhub" {
   eventhub_name                  = azurerm_eventhub.activitylogs.name
   eventhub_authorization_rule_id = "${data.azurerm_subscription.currentSubscription.id}/resourceGroups/${azurerm_resource_group.splunkeventhub.name}/providers/Microsoft.EventHub/namespaces/${azurerm_eventhub_namespace.splunk.name}/authorizationRules/RootManageSharedAccessKey"
 
- log {
+  log {
     category = "Administrative"
     enabled  = true
   }
@@ -70,5 +70,105 @@ resource "azurerm_monitor_diagnostic_setting" "splunkeventhub" {
   log {
     category = "Policy"
     enabled  = true
+  }
+}
+
+resource "azurerm_monitor_aad_diagnostic_setting" "splunk" {
+  name                           = "splunk-eventhub"
+  eventhub_name                  = azurerm_eventhub.entralogs.name
+  eventhub_authorization_rule_id = "${data.azurerm_subscription.currentSubscription.id}/resourceGroups/${azurerm_resource_group.splunkeventhub.name}/providers/Microsoft.EventHub/namespaces/${azurerm_eventhub_namespace.splunk.name}/authorizationRules/RootManageSharedAccessKey"
+
+  enabled_log {
+    category = "SignInLogs"
+    retention_policy {
+      enabled = false
+    }
+  }
+  enabled_log {
+    category = "AuditLogs"
+    retention_policy {
+      enabled = false
+    }
+  }
+  enabled_log {
+    category = "NonInteractiveUserSignInLogs"
+    retention_policy {
+      enabled = false
+    }
+  }
+  enabled_log {
+    category = "ServicePrincipalSignInLogs"
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "ManagedIdentitySignInLogs"
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "ProvisioningLogs"
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "ADFSSignInLogs"
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "RiskyUsers"
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "UserRiskEvents"
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "NetworkAccessTrafficLogs"
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "ServicePrincipalRiskEvents"
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "EnrichedOffice365AuditLogs"
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "MicrosoftGraphActivityLogs"
+    retention_policy {
+      enabled = false
+    }
+  }
+  enabled_log {
+    category = "RemoteNetworkHealthLogs"
+    retention_policy {
+      enabled = false
+    }
   }
 }
