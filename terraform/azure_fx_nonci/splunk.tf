@@ -9,11 +9,11 @@ resource "azurerm_resource_group" "splunkeventhub" {
 }
 
 resource "azurerm_eventhub_namespace" "splunk" {
-  name                 = "splunk-eventhub"
+  name                 = "mozsplunkeventhub"
   location             = azurerm_resource_group.splunkeventhub.location
   resource_group_name  = azurerm_resource_group.splunkeventhub.name
   sku                  = "Standard"
-  capacity             = 4
+  maximum_throughput_units = 4
   auto_inflate_enabled = true
 
   tags = merge(local.common_tags,
