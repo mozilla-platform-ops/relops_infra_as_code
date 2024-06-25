@@ -1,3 +1,9 @@
+variable "azure_subscriptions" {
+  type        = list(any)
+  description = "List of subscriptions to be used with insightcloudsec"
+  default     = []
+}
+
 resource "azurerm_resource_group" "splunkeventhub" {
   name     = "rg-splunk-eventhub"
   location = "East US 2"
@@ -37,4 +43,47 @@ resource "azurerm_eventhub" "activitylogs" {
   resource_group_name = azurerm_resource_group.splunkeventhub.name
   partition_count     = 2
   message_retention   = 7
+}
+
+resource "azurerm_monitor_diagnostic_setting" "splunkeventhub" {
+  for_each                       = toset(var.azure_subscriptions)
+  name                           = "splunk-eventhub"
+  target_resource_id             = each.value
+  eventhub_name                  = azurerm_eventhub.activitylogs.name
+  eventhub_authorization_rule_id = "${data.azurerm_subscription.currentSubscription.id}/resourceGroups/${azurerm_resource_group.splunkeventhub.name}/providers/Microsoft.EventHub/namespaces/${azurerm_eventhub_namespace.splunk.name}/authorizationRules/RootManageSharedAccessKey"
+
+ log {
+    category = "Administrative"
+    enabled  = true
+  }
+
+  log {
+    category = "Security"
+    enabled  = true
+  }
+
+  log {
+    category = "ServiceHealth"
+    enabled  = true
+  }
+
+  log {
+    category = "Alert"
+    enabled  = true
+  }
+
+  log {
+    category = "Policy"
+    enabled  = true
+  }
+
+  log {
+    category = "Autoscale"
+    enabled  = true
+  }
+
+  log {
+    category = "ResourceHealth"
+    enabled  = true
+  }
 }
