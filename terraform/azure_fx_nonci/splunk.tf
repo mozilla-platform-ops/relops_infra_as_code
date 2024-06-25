@@ -63,27 +63,12 @@ resource "azurerm_monitor_diagnostic_setting" "splunkeventhub" {
   }
 
   log {
-    category = "ServiceHealth"
-    enabled  = true
-  }
-
-  log {
     category = "Alert"
     enabled  = true
   }
 
   log {
     category = "Policy"
-    enabled  = true
-  }
-
-  log {
-    category = "Autoscale"
-    enabled  = true
-  }
-
-  log {
-    category = "ResourceHealth"
     enabled  = true
   }
 }
