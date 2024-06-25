@@ -171,4 +171,11 @@ resource "azurerm_monitor_aad_diagnostic_setting" "splunk" {
       enabled = false
     }
   }
+
+  enabled_log {
+    category = "RiskyServicePrincipals"
+    retention_policy {
+      enabled = false
+    }
+  }
 }
