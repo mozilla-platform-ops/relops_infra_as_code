@@ -28,7 +28,7 @@ resource "azurerm_eventhub" "entralogs" {
   namespace_name      = azurerm_eventhub_namespace.splunk.name
   resource_group_name = azurerm_resource_group.splunkeventhub.name
   partition_count     = 2
-  message_retention   = 1
+  message_retention   = 7
 }
 
 resource "azurerm_eventhub" "activitylogs" {
@@ -36,5 +36,5 @@ resource "azurerm_eventhub" "activitylogs" {
   namespace_name      = azurerm_eventhub_namespace.splunk.name
   resource_group_name = azurerm_resource_group.splunkeventhub.name
   partition_count     = 2
-  message_retention   = 1
+  message_retention   = 7
 }
