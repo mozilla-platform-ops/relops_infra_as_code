@@ -14,6 +14,6 @@ variable "read_only_users" {
 }
 
 variable "oidc_github_repositories" {
-  type = list(string)
+  type = set(string)
   description = "Owner/Repository for configuring OIDC"
 }
