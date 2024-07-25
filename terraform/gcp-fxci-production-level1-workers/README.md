@@ -1,5 +1,7 @@
 # fxci-production-level1-workers
 
+https://console.cloud.google.com/compute/instances?orgonly=true&project=fxci-production-level1-workers&supportedpurview=organizationId
+
 ## applying
 
 ```bash
