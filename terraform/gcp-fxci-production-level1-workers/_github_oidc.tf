@@ -1,3 +1,5 @@
+# This Terraform configuration file's goal is to assign IAM roles to github actions.
+
 module "google_deployment_accounts" {
   source              = "github.com/mozilla/terraform-modules//google_deployment_accounts?ref=main"
   project             = "fxci-production-level1-workers"
