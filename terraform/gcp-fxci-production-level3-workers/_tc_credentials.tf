@@ -6,5 +6,5 @@ resource "google_project_iam_member" "worker-manager-compute-admin" {
 }
 
 # TODO:
-# - taskcluster-worker@fxci-production-level1-workers.iam.gserviceaccount.com
-# - deploy-prod@fxci-production-level1-workers.iam.gserviceaccount.com
+# - taskcluster-worker@fxci-production-level3-workers.iam.gserviceaccount.com
+# - deploy-prod@fxci-production-level3-workers.iam.gserviceaccount.com
