@@ -1,3 +1,6 @@
+# This Terraform configuration file's goal is to assign IAM roles to
+# Taskcluster service accounts.
+
 # required for worker-manager to be able to do anything in GCP
 resource "google_project_iam_member" "worker-manager-compute-admin" {
   project = "fxci-production-level1-workers"
