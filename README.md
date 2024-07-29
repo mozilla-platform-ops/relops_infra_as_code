@@ -34,7 +34,7 @@ cd terraform
 
 Then follow the directions given.
 
-### Authenticating to Azure, Google Cloud, or AWS
+## Authenticating to Azure, Google Cloud, or AWS
 
 ```Bash
 ## AWS
@@ -47,4 +47,12 @@ export GOOGLE_CLOUD_KEYFILE_JSON=~/.config/gcloud/application_default_credential
 ## Azure
 $ az login
 $ az account set --subscription "108d46d5-fe9b-4850-9a7d-8c914aa6c1f0" ## based on subscription
+```
+
+## Updating providers
+
+Providers should be regularly upgraded. If you get an error during a plan or apply, always try this first.
+
+```bash
+terraform init -upgrade
 ```
