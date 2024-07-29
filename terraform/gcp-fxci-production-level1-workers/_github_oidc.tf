@@ -1,3 +1,5 @@
+# This Terraform configuration file's goal is to assign IAM roles to github actions.
+
 module "google_deployment_accounts" {
   source              = "github.com/mozilla/terraform-modules//google_deployment_accounts?ref=main"
   project             = "fxci-production-level1-workers"
@@ -7,8 +9,11 @@ module "google_deployment_accounts" {
   wip_project_number  = 324168772199
 }
 
-resource "google_project_iam_binding" "compute_admin" {
+# google_project_iam_binding is authoritative, so DO NOT USE IT!
+# - it will wipe out all other users of that role
+
+resource "google_project_iam_member" "google_deployment_accounts_compute_admin" {
   project = "fxci-production-level1-workers"
   role    = "roles/compute.admin"
-  members = ["serviceAccount:${module.google_deployment_accounts.service_account.email}"]
+  member  = "serviceAccount:${module.google_deployment_accounts.service_account.email}"
 }
