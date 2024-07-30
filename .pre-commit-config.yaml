@@ -21,3 +21,8 @@ repos:
   rev: v0.1.22
   hooks:
     - id: shellcheck
+
+- repo: https://github.com/aerickson/tf_authoritative_scanner.git
+  rev: v1.0.2
+  hooks:
+    - id: tfas
