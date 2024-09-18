@@ -9,3 +9,8 @@ export GOOGLE_CLOUD_KEYFILE_JSON=~/.gcp_credentials/BLAH
 gcloud auth login --update-adc
 tf apply
 ```
+
+## TODO
+
+- add taskcluster related IAM perms
+  - see `iam_perms.png`
