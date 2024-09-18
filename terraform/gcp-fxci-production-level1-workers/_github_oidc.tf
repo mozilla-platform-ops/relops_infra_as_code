@@ -17,3 +17,9 @@ resource "google_project_iam_member" "google_deployment_accounts_compute_admin" 
   role    = "roles/compute.admin"
   member  = "serviceAccount:${module.google_deployment_accounts.service_account.email}"
 }
+
+resource "google_project_iam_member" "google_deployment_accounts_service_account_user" {
+  project = "fxci-production-level1-workers"
+  role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${module.google_deployment_accounts.service_account.email}"
+}
