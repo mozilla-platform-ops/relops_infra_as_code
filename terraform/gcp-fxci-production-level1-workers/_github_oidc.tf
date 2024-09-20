@@ -23,3 +23,9 @@ resource "google_project_iam_member" "google_deployment_accounts_service_account
   role    = "roles/iam.serviceAccountUser"
   member  = "serviceAccount:${module.google_deployment_accounts.service_account.email}"
 }
+
+resource "google_project_iam_member" "google_deployment_accounts_iap_user" {
+  project = "fxci-production-level1-workers"
+  role    = "roles/iap.tunnelResourceAccessor"
+  member  = "serviceAccount:${module.google_deployment_accounts.service_account.email}"
+}
