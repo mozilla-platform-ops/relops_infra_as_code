@@ -8,6 +8,7 @@ boto3 = "*"
 
 [packages]
 influxdb = "*"
+boto3 = "*"
 
 [requires]
 python_version = "3.9"
