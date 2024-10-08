@@ -19,6 +19,9 @@ except ImportError:
 #      Looks like queue.listWorkerTypes was deprecated in favor of queue.listTaskQueues
 #      https://firefox-ci-tc.services.mozilla.com/docs/reference/platform/queue/api#listTaskQueues
 #   downside: need an api key
+
+# generated with `bin/generate_influx_function_py_array` in
+#   https://github.com/mozilla-platform-ops/mozilla-bitbar-devicepool
 URLS = [
   'https://firefox-ci-tc.services.mozilla.com/api/queue/v1/pending/proj-autophone/gecko-t-bitbar-gw-unit-p5',
   'https://firefox-ci-tc.services.mozilla.com/api/queue/v1/pending/proj-autophone/gecko-t-bitbar-gw-perf-p5',
