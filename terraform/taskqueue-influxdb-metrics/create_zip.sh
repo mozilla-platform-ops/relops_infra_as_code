@@ -14,11 +14,13 @@ cd package || exit 1
 touch setup.cfg
 printf '[install]\nprefix=  \n' > setup.cfg
 
-# intall deps to . with pip3
+# install deps to . with pip3
 # pip3 install influxdb --target .
 # equivalent pipenv command:
 #   https://github.com/pypa/pipenv/issues/746
-pipenv run pip install -r <(pipenv lock -r) --target .
+pipenv requirements > requirements.txt
+pipenv run pip install -r requirements.txt --target .
+#pipenv requirements > requirements.txt
 zip -r9 ../function.zip .
 cd ..
 zip -g function.zip function.py
