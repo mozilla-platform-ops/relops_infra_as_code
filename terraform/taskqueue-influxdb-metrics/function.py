@@ -13,6 +13,12 @@ except ImportError:
     from urllib2 import urlopen
 
 
+# TODO: replace this list with a query to proj-autophone
+#   is there a tc api call that will get me a list of provisioners on this page
+#   (https://firefox-ci-tc.services.mozilla.com/provisioners/proj-autophone)?
+#      Looks like queue.listWorkerTypes was deprecated in favor of queue.listTaskQueues
+#      https://firefox-ci-tc.services.mozilla.com/docs/reference/platform/queue/api#listTaskQueues
+#   downside: need an api key
 URLS = [
     # tc-w queues
     "https://firefox-ci-tc.services.mozilla.com/api/queue/v1/pending/proj-autophone/gecko-t-ap-unit-p2",
