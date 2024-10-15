@@ -19,4 +19,4 @@ jobs:
     - name: Run pre-commit
       run: |
         pip install pre-commit
-        pre-commit run --all-files
+        pre-commit run --all-files --verbose
