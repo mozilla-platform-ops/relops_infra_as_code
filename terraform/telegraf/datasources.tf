@@ -16,6 +16,18 @@ data "aws_subnet_ids" "public_subnets" {
   }
 }
 
+# replaces above in v5+
+data "aws_subnets" "public_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = data.aws_vpcs.moz_internal_us_west_2.ids
+  }
+
+  tags = {
+    Subnet_type = "public"
+  }
+}
+
 data "aws_route53_zone" "relops_mozops_net" {
   name = "relops.mozops.net."
 }
