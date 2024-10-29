@@ -205,7 +205,7 @@ resource "azurerm_shared_image_gallery" "win11_a64_24h2_tester_alpha" {
 
 resource "azurerm_shared_image" "win11_a64_24h2_tester_alpha" {
   name                = "win11_a64_24h2_tester_alpha"
-  gallery_name        = azurerm_shared_image_gallery.win11_a64_24h2_tester.name
+  gallery_name        = azurerm_shared_image_gallery.win11_a64_24h2_tester_alpha.name
   resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
   location            = azurerm_resource_group.rg-packer-worker-images.location
   os_type             = "Windows"
@@ -235,7 +235,7 @@ resource "azurerm_shared_image_gallery" "win11_a64_24h2_tester" {
 
 resource "azurerm_shared_image" "win11_a64_24h2_tester" {
   name                = "win11_a64_24h2_tester"
-  gallery_name        = azurerm_shared_image_gallery.win11_a64_24h2_tester_alpha.name
+  gallery_name        = azurerm_shared_image_gallery.win11_a64_24h2_tester.name
   resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
   location            = azurerm_resource_group.rg-packer-worker-images.location
   os_type             = "Windows"
