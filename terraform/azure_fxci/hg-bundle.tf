@@ -32,7 +32,8 @@ resource "azurerm_resource_group" "hgbundle" {
 resource "azurerm_storage_account" "hgbundle" {
   for_each = local.regions
   #name                     = "mozhgazure${each.value}"
-  name                     = replace("mozhgazure${each.value}", "/\\W|_|\\s/", "")
+  ## Remove Removes any non-word characters, underscores, or whitespace from the concatenated string & limit to 24 characters
+  name                     = substr(replace("mozhg${each.value}", "/\\W|_|\\s/", ""), 0, 24) 
   resource_group_name      = azurerm_resource_group.hgbundle[each.value].name
   account_replication_type = "LRS"
   location                 = each.value
