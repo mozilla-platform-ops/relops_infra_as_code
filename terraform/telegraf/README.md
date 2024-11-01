@@ -11,7 +11,18 @@ see https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-pull-ecr-image
 ### login to ECR
 
 ```bash
+# get these from the aws SSO portal
+#
+# project is:
+#   relops-aws-prod
+#     961225894672 | relops-aws-prod@mozilla.com
+export AWS_ACCESS_KEY_ID=...
+export AWS_SECRET_ACCESS_KEY=...
+export AWS_SESSION_TOKEN=...
+
  aws ecr get-login-password --region us-east-1  | docker login --username AWS --password-stdin 961225894672.dkr.ecr.us-east-1.amazonaws.com
+
+ docker login
 ```
 
 ### list ECR repos and images
@@ -29,18 +40,6 @@ aws ecr describe-images \
 
 # list tags
 aws ecr describe-images --repository-name telegraf --query "sort_by(imageDetails,& imagePushedAt)[ * ].imageTags[ * ]"
-```
-
-### using curl
-
-```bash
-
-TOKEN=$(aws ecr get-authorization-token --region us-east-1 --output text --query 'authorizationData[].authorizationToken')
-
-# list tags
-curl -i -H "Authorization: Basic $TOKEN" https://961225894672.dkr.ecr.us-east-1.amazonaws.com/v2/telegraf/tags/list
-# shows only latest!?!
-
 ```
 
 ### pulling a container
