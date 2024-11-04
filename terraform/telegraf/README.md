@@ -4,7 +4,11 @@
 
 most of the work is done via `aws_ecs_service` and `aws_ecs_task_definition` instances. search for those.
 
-## pulling an image from ECR
+## reverse engineering the existing infrastructure
+
+The dockerfile was missing.
+
+### pulling an image from ECR
 
 see https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-pull-ecr-image.html
 

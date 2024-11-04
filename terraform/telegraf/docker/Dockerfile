@@ -1,28 +1,46 @@
-# created by using https://hub.docker.com/r/alpine/dfimage
+# Use the latest Ubuntu LTS as the base image
+# FROM ubuntu:22.04
+FROM telegraf:1.32.2
 
-CMD ["bash"]
-RUN apt-get update  \
-	&& apt-get install -y --no-install-recommends ca-certificates curl netbase wget  \
-	&& rm -rf /var/lib/apt/lists/*
-RUN set -ex; if ! command -v gpg > /dev/null; then apt-get update; apt-get install -y --no-install-recommends gnupg dirmngr ; rm -rf /var/lib/apt/lists/*; fi
-RUN DEBIAN_FRONTEND=noninteractive apt-get update  \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends iputils-ping snmp procps lm-sensors  \
-	&& rm -rf /var/lib/apt/lists/*
-RUN set -ex  \
-	&& for key in 05CE15085FC09D18E99EFB22684A14CF2582E0C5 ; do gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" || gpg --keyserver pgp.mit.edu --recv-keys "$key" || gpg --keyserver keyserver.pgp.com --recv-keys "$key" ; done
-ENV TELEGRAF_VERSION=1.10.1
-RUN ARCH=  \
-	&& dpkgArch="$(dpkg --print-architecture)"  \
-	&& case "${dpkgArch##*-}" in amd64) ARCH='amd64';; arm64) ARCH='arm64';; armhf) ARCH='armhf';; armel) ARCH='armel';; *) echo "Unsupported architecture: ${dpkgArch}"; exit 1;; esac  \
-	&& wget --no-verbose https://dl.influxdata.com/telegraf/releases/telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb.asc  \
-	&& wget --no-verbose https://dl.influxdata.com/telegraf/releases/telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb  \
-	&& gpg --batch --verify telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb.asc telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb  \
-	&& dpkg -i telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb  \
-	&& rm -f telegraf_${TELEGRAF_VERSION}-1_${ARCH}.deb*
+# Install essential packages and dependencies in a single layer
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        gnupg \
+        dirmngr \
+        wget \
+        iputils-ping \
+        snmp \
+        procps \
+        lm-sensors && \
+    rm -rf /var/lib/apt/lists/*
+
+# Import GPG keys to verify Telegraf package
+# RUN gpg --keyserver keys.openpgp.org --recv-keys 9D539D90D3328DC7D6C8D3B9D8FF8E1F7DF8B07E || \
+#     gpg --keyserver keyserver.ubuntu.com --recv-keys 9D539D90D3328DC7D6C8D3B9D8FF8E1F7DF8B07E
+
+# # Set Telegraf version and architecture for download
+# ENV TELEGRAF_VERSION=1.32.1
+# RUN dpkgArch="$(dpkg --print-architecture)" && \
+#     case "${dpkgArch##*-}" in \
+#         amd64) ARCH='amd64' ;; \
+#         arm64) ARCH='arm64' ;; \
+#         *) echo "Unsupported architecture: ${dpkgArch}"; exit 1 ;; \
+#     esac && \
+#     wget https://dl.influxdata.com/telegraf/releases/telegraf-${TELEGRAF_VERSION}_linux_${ARCH}.tar.gz && \
+#     wget https://dl.influxdata.com/telegraf/releases/telegraf-${TELEGRAF_VERSION}_linux_${ARCH}.tar.gz.asc && \
+#     gpg --batch --verify telegraf-${TELEGRAF_VERSION}_linux_${ARCH}.tar.gz.asc telegraf-${TELEGRAF_VERSION}_linux_${ARCH}.tar.gz && \
+#     tar -xzf telegraf-${TELEGRAF_VERSION}_linux_${ARCH}.tar.gz -C /usr/local/bin --strip-components=2 telegraf*/usr/bin/telegraf && \
+#     rm -f telegraf-${TELEGRAF_VERSION}_linux_${ARCH}.tar.gz*
+
+# Expose necessary ports for Telegraf
 EXPOSE 8092/udp 8094 8125/udp
 
+# Copy the entrypoint script and configuration directory
 COPY entrypoint.sh /entrypoint.sh
 COPY ./etc /etc/telegraf
 
+# Set entrypoint and default command
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["telegraf"]
