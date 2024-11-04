@@ -1,0 +1,26 @@
+FROM telegraf:1.32.2
+
+# Install essential packages and dependencies in a single layer
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        gnupg \
+        dirmngr \
+        wget \
+        iputils-ping \
+        snmp \
+        procps \
+        lm-sensors && \
+    rm -rf /var/lib/apt/lists/*
+
+# Expose necessary ports for Telegraf
+EXPOSE 8092/udp 8094 8125/udp
+
+# Copy the entrypoint script and configuration directory
+COPY entrypoint.sh /entrypoint.sh
+COPY ./etc_v19 /etc/telegraf
+
+# Set entrypoint and default command
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["telegraf"]

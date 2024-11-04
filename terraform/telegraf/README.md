@@ -37,15 +37,7 @@ telegraf_vcs: 1.9
 telegraf_worker: 1.16
 ```
 
-#### issues pulling numbered or sha256'd images
 
-```bash
-# works
-docker pull 961225894672.dkr.ecr.us-west-2.amazonaws.com/telegraf:latest
-
-# fails
-docker pull 961225894672.dkr.ecr.us-west-2.amazonaws.com/telegraf:1.9
-```
 
 ## reverse engineering the dockerfile
 

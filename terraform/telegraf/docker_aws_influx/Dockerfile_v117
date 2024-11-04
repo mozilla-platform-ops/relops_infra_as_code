@@ -19,7 +19,7 @@ EXPOSE 8092/udp 8094 8125/udp
 
 # Copy the entrypoint script and configuration directory
 COPY entrypoint.sh /entrypoint.sh
-COPY ./etc /etc/telegraf
+COPY ./etc_v117 /etc/telegraf
 
 # Set entrypoint and default command
 ENTRYPOINT ["/entrypoint.sh"]
