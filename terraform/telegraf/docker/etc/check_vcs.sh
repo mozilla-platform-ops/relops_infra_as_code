@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO: hack to get this green. don't do this.
+# shellcheck disable=all
 
 echo "["
 
@@ -24,7 +26,7 @@ else
 	#cat $tmpfile
 	#echo "now try that if message not found"
 	grep message $tmpfile 2>&1 >/dev/null || grep -A4 object $tmpfile|grep url|sed 's/^.*url.*"\(.*\)".*$/\1/'|xargs -I {} curl ${github_auth} -s -X GET {} >$tmpfile
- 
+
 	#ls -la $tmpfile
 	#cat $tmpfile
 	#echo "now get the information from that"

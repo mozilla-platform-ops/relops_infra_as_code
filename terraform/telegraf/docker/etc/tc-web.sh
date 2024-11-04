@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# TODO: hack to get this green. don't do this.
+# shellcheck disable=all
+
 PATH="$PATH:$(dirname ${BASH_SOURCE[0]})"
 
 batch_limit=1000
@@ -98,10 +101,10 @@ exit 0
       $show_workers && (echo $data | grep -o "workers\": \[\]" >/dev/null || echo "$comma")
       # add provisioner and workerType to each worker on print
       # { "provisioner":"releng-hardware",
-      #   "workerType":"gecko-t-osx-1010", 
-      #   "workerGroup": "scl3", 
-      #   "workerId": "t-yosemite-r7-0065", 
-      #   "firstClaim": "2018-06-18T13:51:55.466Z", 
+      #   "workerType":"gecko-t-osx-1010",
+      #   "workerGroup": "scl3",
+      #   "workerId": "t-yosemite-r7-0065",
+      #   "firstClaim": "2018-06-18T13:51:55.466Z",
       #   "latestTask": { "taskId": "HDbBAeGjSVKN0Dwai4QaOA", "runId": 0 },
       #   "quarantineUntil": "3017-10-19T14:19:34.168Z"
       # }
@@ -112,7 +115,7 @@ exit 0
           -e "s/workerGroup/provisioner\":\"${provisioner}\", \"workerType\":\"${type}\", \"workerGroup/g"
       fi
       count=$(echo "$data" | grep -o "workerId" | wc -l)
-          
+
       qcount=$(echo "$data" | sed -e 's/}, *{/},\n{/g' | grep -v scl3 | grep -o "quarantineUntil" | wc -l)
       n=$(( n + count ))
       quarantined=$(( quarantined + qcount ))

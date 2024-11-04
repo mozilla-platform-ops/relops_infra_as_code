@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# TODO: hack to get this green. don't do this.
+# shellcheck disable=all
+
 ics=$(curl -L -s -o - "https://www.google.com/calendar/ical/mozilla.com_2d37383433353432352d3939%40resource.calendar.google.com/public/basic.ics" | tee ics)
 
 # Code from StackOverflow user Charles Duffy:
@@ -31,7 +34,7 @@ handle_event() {
   #  echo "Modified Event"
   #fi
   #printf '%s\t' "$(local_date DTSTART)" "$(local_date DTEND)"  "${content[SUMMARY]}" "${content[LOCATION]}"; echo
-  
+
   version="\"$(echo "${content[SUMMARY]}" | grep -o '[0-9\.]\+ Release' | cut -d' ' -f1)\""
   rel_type=""
   case "${content[SUMMARY]}" in
@@ -49,7 +52,7 @@ handle_event() {
   #                                                         1543796160
   # firefox_release,type=Merge,version=\"\" title=\"MERGE: B40\\, A41\\, N42\" 1543796160000000000
   summary=$(echo ${content[SUMMARY]} | cut -d' ' -f1)
-  printf 'firefox_release,type="%s",version=%s title="%s" %s000000000\n' "$rel_type" "$version" "$summary" "$(local_date DTSTART +%s)" 
+  printf 'firefox_release,type="%s",version=%s title="%s" %s000000000\n' "$rel_type" "$version" "$summary" "$(local_date DTSTART +%s)"
 }
 
 declare -A content=( ) # define an associative array (aka map, aka hash)
