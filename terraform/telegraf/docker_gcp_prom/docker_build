@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -e
+set -x
+
+# IMG_NAME="moz_telegraf"
+IMG_NAME="moz_telegraf_gcp"
+
+docker build . -f "./Dockerfile" -t "$IMG_NAME"
