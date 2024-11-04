@@ -11,30 +11,41 @@ most of the work is done via `aws_ecs_service` and `aws_ecs_task_definition` ins
 
 ```
 ecs-cluster.tf:
-  107: resource "aws_ecs_service" "main" {
-  108    name            = "telegraf"
+  52: resource "aws_ecs_task_definition" "app" {
+  53    family                   = "telegraf"
 
 ecs-queues.tf:
-  1: resource "aws_ecs_service" "main_queues" {
-  2    name            = "telegraf_queues"
+  17: resource "aws_ecs_task_definition" "app_queues" {
+  38:       { "name" : "TELEGRAF_CONFIG", "value" : "telegraf_queues.conf" },
 
 ecs-vcs.tf:
-  1: resource "aws_ecs_service" "main_vcs" {
-  2    name            = "telegraf_vcs"
+  16
+  17: resource "aws_ecs_task_definition" "app_vcs" {
+  38:       { "name" : "TELEGRAF_CONFIG", "value" : "telegraf_vcs.conf" },
 
 ecs-workers.tf:
-  1: resource "aws_ecs_service" "main_workers" {
-  2    name            = "telegraf_workers"
+  17: resource "aws_ecs_task_definition" "app_workers" {
+  38:       { "name" : "TELEGRAF_CONFIG", "value" : "telegraf_workers.conf" },
 ```
 
 #### docker image ekr versions
 
-appear to be wrong in latest (1.17)
-
+```
 telegraf: 1.9
 telegraf_queues: 1.9
 telegraf_vcs: 1.9
 telegraf_worker: 1.16
+```
+
+#### issues pulling numbered or sha256'd images
+
+```bash
+# works
+docker pull 961225894672.dkr.ecr.us-west-2.amazonaws.com/telegraf:latest
+
+# fails
+docker pull 961225894672.dkr.ecr.us-west-2.amazonaws.com/telegraf:1.9
+```
 
 ## reverse engineering the dockerfile
 
