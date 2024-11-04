@@ -67,9 +67,9 @@ export AWS_ACCESS_KEY_ID=...
 export AWS_SECRET_ACCESS_KEY=...
 export AWS_SESSION_TOKEN=...
 
- aws ecr get-login-password --region us-east-1  | docker login --username AWS --password-stdin 961225894672.dkr.ecr.us-east-1.amazonaws.com
+ aws ecr get-login-password --region us-west-2  | docker login --username AWS --password-stdin 961225894672.dkr.ecr.us-west-2.amazonaws.com
 
- docker login
+#  docker login
 ```
 
 ### list ECR repos and images
@@ -92,12 +92,12 @@ aws ecr describe-images --repository-name telegraf --query "sort_by(imageDetails
 ### pulling a container
 
 ```bash
-docker pull 961225894672.dkr.ecr.us-east-1.amazonaws.com/telegraf:latest
+docker pull 961225894672.dkr.ecr.us-west-2.amazonaws.com/telegraf:latest
 
-docker pull 961225894672.dkr.ecr.us-east-1.amazonaws.com/telegraf:'1.7'
+docker pull 961225894672.dkr.ecr.us-west-2.amazonaws.com/telegraf:'1.7'
 
 # run it
-docker run -it 961225894672.dkr.ecr.us-east-1.amazonaws.com/telegraf /bin/bash
+docker run -it 961225894672.dkr.ecr.us-west-2.amazonaws.com/telegraf /bin/bash
 ```
 
 ### reverse-engineering an image to a Dockerfile
