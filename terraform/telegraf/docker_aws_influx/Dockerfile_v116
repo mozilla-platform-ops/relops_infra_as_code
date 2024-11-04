@@ -9,10 +9,10 @@ RUN apt-get update && \
         gnupg \
         iputils-ping \
         jq \
-        lm-sensors && \
+        lm-sensors \
         procps \
         snmp \
-        wget \
+        wget && \
     rm -rf /var/lib/apt/lists/*
 
 # Expose necessary ports for Telegraf
