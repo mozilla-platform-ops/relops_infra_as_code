@@ -4,6 +4,38 @@
 
 most of the work is done via `aws_ecs_service` and `aws_ecs_task_definition` instances. search for those.
 
+### details
+
+
+####  map of tf files to `aws_ecs_service` names
+
+```
+ecs-cluster.tf:
+  107: resource "aws_ecs_service" "main" {
+  108    name            = "telegraf"
+
+ecs-queues.tf:
+  1: resource "aws_ecs_service" "main_queues" {
+  2    name            = "telegraf_queues"
+
+ecs-vcs.tf:
+  1: resource "aws_ecs_service" "main_vcs" {
+  2    name            = "telegraf_vcs"
+
+ecs-workers.tf:
+  1: resource "aws_ecs_service" "main_workers" {
+  2    name            = "telegraf_workers"
+```
+
+#### docker image ekr versions
+
+appear to be wrong in latest (1.17)
+
+telegraf: 1.9
+telegraf_queues: 1.9
+telegraf_vcs: 1.9
+telegraf_worker: 1.16
+
 ## reverse engineering the dockerfile
 
 The dockerfile was missing. Recreated from the image running in AWS.

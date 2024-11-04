@@ -1,3 +1,7 @@
+# from v1.17 of the ekr image
+#   961225894672.dkr.ecr.us-west-2.amazonaws.com/telegraf:1.17
+#   sha256:9c387afe257a4b0371c8da2d05f5a3ce68505d5228d644de01ec063652b80c4d
+
 # created by using https://hub.docker.com/r/alpine/dfimage
 
 # image was built on (from /etc/os-release):
