@@ -1,5 +1,8 @@
 # created by using https://hub.docker.com/r/alpine/dfimage
 
+# image was built on (from /etc/os-release):
+# PRETTY_NAME="Debian GNU/Linux 9 (stretch)"
+
 CMD ["bash"]
 RUN apt-get update  \
 	&& apt-get install -y --no-install-recommends ca-certificates curl netbase wget  \

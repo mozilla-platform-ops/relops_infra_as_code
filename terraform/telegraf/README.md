@@ -4,9 +4,9 @@
 
 most of the work is done via `aws_ecs_service` and `aws_ecs_task_definition` instances. search for those.
 
-## reverse engineering the existing infrastructure
+## reverse engineering the dockerfile
 
-The dockerfile was missing.
+The dockerfile was missing. Recreated from the image running in AWS.
 
 ### pulling an image from ECR
 
