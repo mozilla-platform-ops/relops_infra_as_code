@@ -22,7 +22,7 @@ RUN ARCH=  \
 EXPOSE 8092/udp 8094 8125/udp
 
 COPY entrypoint.sh /entrypoint.sh
-COPY ./etc /etc/telegraf	
+COPY ./etc /etc/telegraf
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["telegraf"]
