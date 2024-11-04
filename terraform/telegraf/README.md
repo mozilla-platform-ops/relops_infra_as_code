@@ -37,6 +37,30 @@ telegraf_vcs: 1.9
 telegraf_worker: 1.16
 ```
 
+#### what they do
+
+```bash
+# format: conf file used, what it does/runs, instances (default is 1)
+telegraf: telgraf.conf, listens for webhooks, 2 instances
+telegraf_queues: telegraf_queues.conf, provides tc worker pool info,
+            runs queue.sh and tc-web.sh,
+            tc-web example output:
+                (  "workers": 2,
+                "runningWorkers": 0,
+                "idleWorkers": 0,
+                "quarantinedWorkers": 2,
+                "pendingTasks": 0
+                )
+telegraf_vcs: telegraf_vcs.conf, runs:
+            release_cal.sh
+            google_chrome_releases.sh
+            check_vcs.sh
+            treestatus2.sh
+telegraf_worker: telegraf_workers.conf, provides tc worker success info,
+            runs queue2.sh which provides:
+                "workers":4,"completed": 2, "failed": 3, "idle":4,"quarantined":0,"pendingTasks": 0
+
+```
 
 
 ## reverse engineering the dockerfile
