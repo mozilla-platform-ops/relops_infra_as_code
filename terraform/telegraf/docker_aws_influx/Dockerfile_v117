@@ -5,13 +5,14 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
-        gnupg \
         dirmngr \
-        wget \
+        gnupg \
         iputils-ping \
-        snmp \
-        procps \
+        jq \
         lm-sensors && \
+        procps \
+        snmp \
+        wget \
     rm -rf /var/lib/apt/lists/*
 
 # Expose necessary ports for Telegraf
