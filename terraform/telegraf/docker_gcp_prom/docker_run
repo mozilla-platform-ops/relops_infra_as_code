@@ -6,5 +6,12 @@ set -x
 # IMG_NAME="moz_telegraf"
 IMG_NAME="moz_telegraf_gcp"
 
-docker run -it "$IMG_NAME" /bin/bash
+
 # docker run -it "$IMG_NAME"
+# docker run -it "$IMG_NAME" /bin/bash
+
+docker run --init \
+  -p 9273:9273 \
+  -e TELEGRAF_CONFIG="$TELEGRAF_CONFIG" \
+  -it "$IMG_NAME" \
+  "$1"
