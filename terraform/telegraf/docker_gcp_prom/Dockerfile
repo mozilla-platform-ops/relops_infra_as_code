@@ -19,11 +19,12 @@ RUN apt-get update && \
 
 # Expose necessary ports for Telegraf
 EXPOSE 8092/udp 8094 8125/udp
+# Expose for Prometheus
+EXPOSE 9273
 
 # Copy the entrypoint script and configuration directory
 COPY entrypoint.sh /entrypoint.sh
 COPY ./etc /etc/telegraf
 
-# Set entrypoint and default command
-ENTRYPOINT ["/bin/bash", "/etc/telegraf/startup.sh"]
-CMD ["/bin/bash"]
+# Set default command
+CMD ["/bin/bash", "/etc/telegraf/startup.sh"]

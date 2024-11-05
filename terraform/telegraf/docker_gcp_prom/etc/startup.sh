@@ -3,6 +3,8 @@
 # TODO: hack to get this green. don't do this.
 # shellcheck disable=all
 
+set -x
+
 date
 echo "ECS_CONTAINER_METADATA_URI: ${ECS_CONTAINER_METADATA_URI}"
 curl "${ECS_CONTAINER_METADATA_URI}"
@@ -22,10 +24,15 @@ if ! [[ "x${filter}" = "x" ]]; then
     echo "filter arg: ${filter}"
 fi
 
+# if TELEGRAF_CONFIG is not set, default to telegraf.conf
+TELEGRAF_CONFIG=${TELEGRAF_CONFIG:-telegraf.conf}
+
 set -x
 while true; do
   timeout ${TELEGRAF_TIMEOUT_PROC:-12h} /entrypoint.sh telegraf --config "/etc/telegraf/${TELEGRAF_CONFIG}" $@ ${filter}
   echo "telegraf ended"
   echo "Re-run telegraf"
   date
+  # if exit code was non-zero, sleep for a bit before trying again
+  sleep 30
 done

@@ -73,6 +73,13 @@ TELEGRAF_CONFIG=telegraf_workers.conf \
 INTERVAL="300s" MEDIUM_INTERVAL="600s" LONG_INTERVAL="1200s" \
 AWS_REGION='test-123' \
 /etc/telegraf/startup.sh
+
+# another example
+TELEGRAF_CONFIG=telegraf-aerickson-testing.conf \
+INTERVAL="300s" MEDIUM_INTERVAL="600s" LONG_INTERVAL="1200s" \
+AWS_REGION='test-123' \
+/etc/telegraf/startup.sh
+
 ```
 
 ## reverse engineering the dockerfile
