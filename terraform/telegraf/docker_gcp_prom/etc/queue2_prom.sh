@@ -56,10 +56,13 @@ for provisioner in "${prov_filter[@]}"; do
     # Define labels for this metric output in Prometheus format
     labels="provisioner=\"${provisioner}\",worker_type=\"${type}\""
 
+    # TODO: use "tc_queue2."?
+    prefix="tc_queue2_"
+
     # Output Prometheus-compatible metrics in the required format
-    output_metric "worker_count" "${labels}" "${n}"
-    output_metric "quarantined_workers" "${labels}" "${quarantined}"
-    output_metric "pending_tasks" "${labels}" "${tasks}"
+    output_metric "${prefix}worker_count" "${labels}" "${n}"
+    output_metric "${prefix}quarantined_workers" "${labels}" "${quarantined}"
+    output_metric "${prefix}pending_tasks" "${labels}" "${tasks}"
 
   done
 done

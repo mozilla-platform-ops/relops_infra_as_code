@@ -17,5 +17,6 @@ IMG_VERSION="0.1.0"
 docker run --init \
   -p 9273:9273 \
   -e TELEGRAF_CONFIG="$TELEGRAF_CONFIG" \
+  -e INTERVAL="300s" \
   -it "$IMG_NAME:$IMG_VERSION" \
   $1

@@ -36,7 +36,7 @@ export LONG_INTERVAL=${LONG_INTERVAL:-1200s}
 set -x
 
 # basic
-exec /entrypoint.sh telegraf --config "/etc/telegraf/${TELEGRAF_CONFIG}" $@ ${filter}
+/entrypoint.sh telegraf --config "/etc/telegraf/${TELEGRAF_CONFIG}" $@ ${filter}
 exit $?
 
 # loop forever
