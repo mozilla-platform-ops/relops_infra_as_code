@@ -6,12 +6,16 @@ queue='https://firefox-ci-tc.services.mozilla.com/api/queue/v1'
 # Filter for specific provisioners if specified
 prov_filter=("$@")
 
-# Function to output Prometheus metrics
+# Current timestamp in nanoseconds for Prometheus format
+timestamp=$(date +%s%N)
+
+# Function to output metrics in Telegraf Prometheus serializer format
 function output_metric {
   local metric_name=$1
-  local labels=$2
-  local value=$3
-  echo "${metric_name}{${labels}} ${value}"
+  local tags=$2
+  local fields=$3
+  local timestamp=$4
+  echo "${metric_name},${tags} ${fields} ${timestamp}"
 }
 
 # Loop over each provisioner specified in prov_filter
@@ -53,13 +57,11 @@ for provisioner in "${prov_filter[@]}"; do
     tasks=$(curl -s "${queue}/pending/${provisioner}/${type}" | grep -o '"pendingTasks":[0-9]*' | awk -F: '{print $2}')
     tasks=${tasks:-0}
 
-    # Define labels for this metric output
-    labels="provisioner=\"${provisioner}\",worker_type=\"${type}\""
+    # Define tags and fields in Telegraf Prometheus serializer format
+    tags="provisioner=${provisioner},worker_type=${type}"
+    fields="worker_count=${n},quarantined_workers=${quarantined},pending_tasks=${tasks}"
 
-    # Output Prometheus-compatible metrics
-    output_metric "worker_count" "${labels}" "${n}"
-    output_metric "quarantined_workers" "${labels}" "${quarantined}"
-    output_metric "pending_tasks" "${labels}" "${tasks}"
-
+    # Output metrics in Telegraf Prometheus serializer format
+    output_metric "taskcluster_workers" "${tags}" "${fields}" "${timestamp}"
   done
 done

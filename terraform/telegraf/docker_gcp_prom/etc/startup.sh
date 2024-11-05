@@ -27,6 +27,12 @@ fi
 # if TELEGRAF_CONFIG is not set, default to telegraf.conf
 TELEGRAF_CONFIG=${TELEGRAF_CONFIG:-telegraf.conf}
 
+# TODO: not working for some reason. need to debug.
+# set defaults for INTERVAL="300s", MEDIUM_INTERVAL="600s", LONG_INTERVAL="1200s"
+export INTERVAL=${INTERVAL:-300s}
+export MEDIUM_INTERVAL=${MEDIUM_INTERVAL:-600s}
+export LONG_INTERVAL=${LONG_INTERVAL:-1200s}
+
 set -x
 while true; do
   timeout ${TELEGRAF_TIMEOUT_PROC:-12h} /entrypoint.sh telegraf --config "/etc/telegraf/${TELEGRAF_CONFIG}" $@ ${filter}
