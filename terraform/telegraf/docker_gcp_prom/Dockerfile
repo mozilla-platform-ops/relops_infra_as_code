@@ -12,6 +12,7 @@ RUN apt-get update && \
         lm-sensors \
         procps \
         snmp \
+        vim \
         wget \
             && \
     rm -rf /var/lib/apt/lists/*
@@ -24,5 +25,5 @@ COPY entrypoint.sh /entrypoint.sh
 COPY ./etc /etc/telegraf
 
 # Set entrypoint and default command
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "/etc/telegraf/startup.sh"]
 CMD ["/bin/bash"]

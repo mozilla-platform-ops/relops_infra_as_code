@@ -62,6 +62,18 @@ telegraf_worker: telegraf_workers.conf, provides tc worker success info,
 
 ```
 
+#### running locally (gcp)
+
+```bash
+# open a interactive docker container
+./docker_build && ./docker_run
+
+# run stuff
+TELEGRAF_CONFIG=telegraf_workers.conf \
+INTERVAL="300s" MEDIUM_INTERVAL="600s" LONG_INTERVAL="1200s" \
+AWS_REGION='test-123' \
+/etc/telegraf/startup.sh
+```
 
 ## reverse engineering the dockerfile
 

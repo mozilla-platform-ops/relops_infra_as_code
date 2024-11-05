@@ -23,5 +23,5 @@ COPY entrypoint.sh /entrypoint.sh
 COPY ./etc_v116 /etc/telegraf
 
 # Set entrypoint and default command
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["telegraf"]
+ENTRYPOINT ["/bin/bash", "/etc/telegraf/startup.sh"]
+CMD ["/bin/bash"]
