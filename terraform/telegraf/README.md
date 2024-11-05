@@ -74,6 +74,14 @@ TELEGRAF_CONFIG=telegraf_workers.conf ./docker_run
 # another example
 TELEGRAF_CONFIG=telegraf-aerickson-testing.conf ./docker_run
 
+# lower level test, collects data, prints data, exits
+docker_run /bin/bash
+TELEGRAF_CONFIG=telegraf-aerickson-testing-2.conf /etc/telegraf/startup.sh --test
+
+# test
+curl http://localhost:9273/metrics
+./test.sh
+
 # kill leftover containers
 docker stop $(docker ps | grep moz_telegraf_gcp | cut -f 1 -d ' ')
 
