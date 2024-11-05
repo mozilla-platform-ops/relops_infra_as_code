@@ -5,5 +5,6 @@ set -x
 
 # IMG_NAME="moz_telegraf"
 IMG_NAME="moz_telegraf_gcp"
+IMG_VERSION="0.1.0"
 
-docker build . -f "./Dockerfile" -t "$IMG_NAME"
+docker build . -f "./Dockerfile" -t "$IMG_NAME:$IMG_VERSION"
