@@ -34,6 +34,12 @@ export MEDIUM_INTERVAL=${MEDIUM_INTERVAL:-600s}
 export LONG_INTERVAL=${LONG_INTERVAL:-1200s}
 
 set -x
+
+# basic
+exec /entrypoint.sh telegraf --config "/etc/telegraf/${TELEGRAF_CONFIG}" $@ ${filter}
+exit $?
+
+# loop forever
 while true; do
   timeout ${TELEGRAF_TIMEOUT_PROC:-12h} /entrypoint.sh telegraf --config "/etc/telegraf/${TELEGRAF_CONFIG}" $@ ${filter}
   echo "telegraf ended"

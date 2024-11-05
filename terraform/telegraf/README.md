@@ -69,16 +69,13 @@ telegraf_worker: telegraf_workers.conf, provides tc worker success info,
 ./docker_build && ./docker_run
 
 # run stuff
-TELEGRAF_CONFIG=telegraf_workers.conf \
-INTERVAL="300s" MEDIUM_INTERVAL="600s" LONG_INTERVAL="1200s" \
-AWS_REGION='test-123' \
-/etc/telegraf/startup.sh
+TELEGRAF_CONFIG=telegraf_workers.conf ./docker_run
 
 # another example
-TELEGRAF_CONFIG=telegraf-aerickson-testing.conf \
-INTERVAL="300s" MEDIUM_INTERVAL="600s" LONG_INTERVAL="1200s" \
-AWS_REGION='test-123' \
-/etc/telegraf/startup.sh
+TELEGRAF_CONFIG=telegraf-aerickson-testing.conf ./docker_run
+
+# kill leftover containers
+docker stop $(docker ps | grep moz_telegraf_gcp | cut -f 1 -d ' ')
 
 ```
 
