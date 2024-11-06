@@ -11,6 +11,7 @@
 #    1.30.0, 1.30.3, 1.31.3, 1.32.2
 #
 # 1.29.5 is the latest version that works
+# FROM telegraf:1.18.3
 FROM telegraf:1.29.5
 
 # Install essential packages and dependencies in a single layer
