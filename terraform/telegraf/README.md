@@ -171,5 +171,7 @@ go install github.com/micahyoung/docker-layer-extract@latest
   - https://prometheus.io/docs/instrumenting/exposition_formats/#text-based-format
   - https://github.com/prometheus/docs/blob/main/content/docs/instrumenting/exposition_formats.md
   - https://github.com/influxdata/telegraf/tree/master/plugins/outputs/prometheus_client
+  - https://github.com/influxdata/telegraf/blob/master/plugins/inputs/prometheus
+    - used to scan other prometheus sources, not so useful in our case
 - telegraf
   - https://github.com/influxdata/telegraf/blob/master/plugins/inputs/exec/README.md
