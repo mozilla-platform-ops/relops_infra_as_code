@@ -3,6 +3,19 @@
 # Base URL for Taskcluster queue
 queue='https://firefox-ci-tc.services.mozilla.com/api/queue/v1'
 
+# TODO: use "tc_queue2."?
+prefix="tc_queue2_"
+
+# here doc
+cat <<EOF
+# HELP ${prefix}worker_count taskcluster queue worker count
+# TYPE ${prefix}worker_count gauge
+# HELP ${prefix}quarantined_workers taskcluster queue quarantined workers
+# TYPE ${prefix}quarantined_workers gauge
+# HELP ${prefix}pending_tasks taskcluster queue pending tasks
+# TYPE ${prefix}pending_tasks gauge
+EOF
+
 # Filter for specific provisioners if specified
 prov_filter=("$@")
 
@@ -55,9 +68,6 @@ for provisioner in "${prov_filter[@]}"; do
 
     # Define labels for this metric output in Prometheus format
     labels="provisioner=\"${provisioner}\",worker_type=\"${type}\""
-
-    # TODO: use "tc_queue2."?
-    prefix="tc_queue2_"
 
     # Output Prometheus-compatible metrics in the required format
     output_metric "${prefix}worker_count" "${labels}" "${n}"

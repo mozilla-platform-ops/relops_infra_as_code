@@ -1,0 +1,33 @@
+# HELP tc_queue2_worker_count taskcluster queue worker count
+# TYPE tc_queue2_worker_count gauge
+# HELP tc_queue2_quarantined_workers taskcluster queue quarantined workers
+# TYPE tc_queue2_quarantined_workers gauge
+# HELP tc_queue2_pending_tasks taskcluster queue pending tasks
+# TYPE tc_queue2_pending_tasks gauge
+tc_queue2_worker_count{provisioner="gecko-3",worker_type="b-linux-gcp"} 5775
+tc_queue2_quarantined_workers{provisioner="gecko-3",worker_type="b-linux-gcp"} 1
+tc_queue2_pending_tasks{provisioner="gecko-3",worker_type="b-linux-gcp"} 0
+tc_queue2_worker_count{provisioner="gecko-3",worker_type="b-linux-gcp-aarch64"} 2
+tc_queue2_quarantined_workers{provisioner="gecko-3",worker_type="b-linux-gcp-aarch64"} 0
+tc_queue2_pending_tasks{provisioner="gecko-3",worker_type="b-linux-gcp-aarch64"} 0
+tc_queue2_worker_count{provisioner="gecko-3",worker_type="b-linux-kvm-gcp"} 60
+tc_queue2_quarantined_workers{provisioner="gecko-3",worker_type="b-linux-kvm-gcp"} 0
+tc_queue2_pending_tasks{provisioner="gecko-3",worker_type="b-linux-kvm-gcp"} 0
+tc_queue2_worker_count{provisioner="gecko-3",worker_type="b-linux-large-gcp"} 54
+tc_queue2_quarantined_workers{provisioner="gecko-3",worker_type="b-linux-large-gcp"} 0
+tc_queue2_pending_tasks{provisioner="gecko-3",worker_type="b-linux-large-gcp"} 0
+tc_queue2_worker_count{provisioner="gecko-3",worker_type="b-linux-medium-gcp"} 1830
+tc_queue2_quarantined_workers{provisioner="gecko-3",worker_type="b-linux-medium-gcp"} 0
+tc_queue2_pending_tasks{provisioner="gecko-3",worker_type="b-linux-medium-gcp"} 0
+tc_queue2_worker_count{provisioner="gecko-3",worker_type="b-linux-xlarge-gcp"} 448
+tc_queue2_quarantined_workers{provisioner="gecko-3",worker_type="b-linux-xlarge-gcp"} 1
+tc_queue2_pending_tasks{provisioner="gecko-3",worker_type="b-linux-xlarge-gcp"} 0
+tc_queue2_worker_count{provisioner="gecko-3",worker_type="b-win2022"} 771
+tc_queue2_quarantined_workers{provisioner="gecko-3",worker_type="b-win2022"} 0
+tc_queue2_pending_tasks{provisioner="gecko-3",worker_type="b-win2022"} 0
+tc_queue2_worker_count{provisioner="gecko-3",worker_type="decision-gcp"} 198
+tc_queue2_quarantined_workers{provisioner="gecko-3",worker_type="decision-gcp"} 0
+tc_queue2_pending_tasks{provisioner="gecko-3",worker_type="decision-gcp"} 0
+tc_queue2_worker_count{provisioner="gecko-3",worker_type="images-gcp"} 8
+tc_queue2_quarantined_workers{provisioner="gecko-3",worker_type="images-gcp"} 0
+tc_queue2_pending_tasks{provisioner="gecko-3",worker_type="images-gcp"} 0
