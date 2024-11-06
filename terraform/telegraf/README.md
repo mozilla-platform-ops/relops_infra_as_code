@@ -164,6 +164,10 @@ go install github.com/micahyoung/docker-layer-extract@latest
 ```
 
 ## reference links
-
-- https://docs.aws.amazon.com/ecs/
-- https://docs.aws.amazon.com/ecr/
+- aws services
+  - https://docs.aws.amazon.com/ecs/
+  - https://docs.aws.amazon.com/ecr/
+- prometheus
+  - https://prometheus.io/docs/instrumenting/exposition_formats/#text-based-format
+  - https://github.com/prometheus/docs/blob/main/content/docs/instrumenting/exposition_formats.md
+  - https://github.com/influxdata/telegraf/tree/master/plugins/outputs/prometheus_client
