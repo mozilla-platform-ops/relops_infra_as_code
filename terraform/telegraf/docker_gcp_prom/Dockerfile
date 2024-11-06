@@ -1,4 +1,11 @@
-FROM telegraf:1.32.2
+# 1.32.2 has a bug where metrics aren't ingested
+# log files have errors like:
+#    2024-11-06T18:15:00Z D! [parsers.prometheus::file] Unknown format ""... Trying to continue...
+# FROM telegraf:1.32.2
+#
+# use older version that seems to work
+# TODO: do bisect and find latest version that works
+FROM telegraf:1.18.3
 
 # Install essential packages and dependencies in a single layer
 RUN apt-get update && \
