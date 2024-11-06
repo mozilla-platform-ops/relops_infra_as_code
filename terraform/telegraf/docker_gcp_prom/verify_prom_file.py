@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# see https://github.com/prometheus/docs/blob/main/content/docs/instrumenting/exposition_formats.md
+
 from prometheus_client.parser import text_string_to_metric_families
 import sys
 
