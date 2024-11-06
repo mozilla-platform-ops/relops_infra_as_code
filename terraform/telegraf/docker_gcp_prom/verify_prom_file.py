@@ -5,34 +5,52 @@
 from prometheus_client.parser import text_string_to_metric_families
 import sys
 
-def validate_prometheus_metrics(file_path):
-    """
-    Parses a file containing Prometheus metrics and checks for correct formatting.
-
-    Parameters:
-    - file_path: Path to the file containing Prometheus metrics.
-
-    Returns:
-    - None
-    """
+# Load the file from the given path
+def load_file(file_path):
     try:
         with open(file_path, 'r') as f:
-            metrics_data = f.read()
+            return f.read()
+    except Exception as e:
+        print(f"Error: Could not load the file.\nDetails: {e}")
+        return None
 
-        # Attempt to parse the metrics using the Prometheus client parser
+# Validate the Prometheus metrics
+def validate_prometheus_metrics(metrics_data):
+    # Attempt to parse the metrics using the Prometheus client parser
+    try:
         for metric_family in text_string_to_metric_families(metrics_data):
             print(f"Metric Family: {metric_family.name}")
             for sample in metric_family.samples:
                 print(f"  Sample: {sample}")
-
-        print("File is correctly formatted for Prometheus metrics.")
-
     except Exception as e:
-        print(f"Error: The file is not correctly formatted.\nDetails: {e}")
+        print(f"Error: Could not parse the metrics.\nDetails: {e}")
+        return
 
 if __name__ == "__main__":
+    # Ensure the correct number of arguments are provided
     if len(sys.argv) != 2:
         print("Usage: python validate_metrics.py <path_to_metrics_file>")
+    # Read the metrics data from the file or stdin
+    elif sys.argv[1] == "-":
+        metrics_data = sys.stdin.read()
+    # Read the metrics data from the file
     else:
-        file_path = sys.argv[1]
-        validate_prometheus_metrics(file_path)
+        metrics_data = load_file(sys.argv[1])
+    validate_prometheus_metrics(metrics_data)
+
+    # show success message
+    if metrics_data:
+        # saluting person
+        print("🫡 😁 " * 8)
+        print("    File validated successfully!")
+        # dice time
+        print("🎲 🧨 " * 8)
+
+
+
+
+
+
+
+
+
