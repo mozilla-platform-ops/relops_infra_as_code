@@ -57,6 +57,10 @@ for provisioner in "${prov_filter[@]}"; do
     quarantined=0
     states=""
 
+    # Define labels for Prometheus metrics, including taskQueueId
+    taskQueueId="${provisioner}/${type}"
+    labels="{provisioner=\"${provisioner}\", workerType=\"${type}\", taskQueueId=\"${taskQueueId}\"}"
+
     while true; do
       data=$(curl -s -o - "${url}${continuation}")
       count=$(echo "$data" | grep -o "workerId" | wc -l)
@@ -93,13 +97,13 @@ for provisioner in "${prov_filter[@]}"; do
     tasks=$(curl -s -o - "${queue}/pending/${provisioner}/${type}")
     pendingTasks=$(echo "$tasks" | jq -r '.pendingTasks')
 
-    # Output metric values with prefix
-    echo "${metric_prefix}workers_total{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${n}"
-    echo "${metric_prefix}running_workers{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${running}"
-    echo "${metric_prefix}idle_workers{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${idle}"
-    echo "${metric_prefix}quarantined_workers{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${quarantined}"
-    echo "${metric_prefix}completed_tasks{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${completed}"
-    echo "${metric_prefix}exception_tasks{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${exception}"
-    echo "${metric_prefix}pending_tasks{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${pendingTasks}"
+    # Output metric values with prefix and labels
+    echo "${metric_prefix}workers_total${labels} ${n}"
+    echo "${metric_prefix}running_workers${labels} ${running}"
+    echo "${metric_prefix}idle_workers${labels} ${idle}"
+    echo "${metric_prefix}quarantined_workers${labels} ${quarantined}"
+    echo "${metric_prefix}completed_tasks${labels} ${completed}"
+    echo "${metric_prefix}exception_tasks${labels} ${exception}"
+    echo "${metric_prefix}pending_tasks${labels} ${pendingTasks}"
   done
 done
