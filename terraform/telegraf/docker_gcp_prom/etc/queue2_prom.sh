@@ -58,8 +58,11 @@ for provisioner in "${prov_filter[@]}"; do
     states=""
 
     # Define labels for Prometheus metrics, including taskQueueId
-    taskQueueId="${provisioner}/${type}"
     labels="{provisioner=\"${provisioner}\", workerType=\"${type}\", taskQueueId=\"${taskQueueId}\"}"
+    #
+    # add taskQueueId to labels
+    # taskQueueId="${provisioner}/${type}"
+    # labels="{provisioner=\"${provisioner}\", workerType=\"${type}\", taskQueueId=\"${taskQueueId}\"}"
 
     while true; do
       data=$(curl -s -o - "${url}${continuation}")
