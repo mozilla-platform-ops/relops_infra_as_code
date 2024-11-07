@@ -58,7 +58,7 @@ for provisioner in "${prov_filter[@]}"; do
     states=""
 
     # Define labels for Prometheus metrics, including taskQueueId
-    labels="{provisioner=\"${provisioner}\", workerType=\"${type}\", taskQueueId=\"${taskQueueId}\"}"
+    labels="{provisioner=\"${provisioner}\", workerType=\"${type}\"}"
     #
     # add taskQueueId to labels
     # taskQueueId="${provisioner}/${type}"
