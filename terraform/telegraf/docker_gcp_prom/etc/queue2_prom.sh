@@ -1,78 +1,95 @@
 #!/bin/bash
 
-# Base URL for Taskcluster queue
+# Disable shellcheck warnings
+# shellcheck disable=all
+
+# Script to pull taskcluster worker stats and output in Prometheus format for Telegraf
+
+PATH="$PATH:$(dirname ${BASH_SOURCE[0]})"
+
+# Variables
+show_workers=false
+prov_filter=('releng-hardware')
 queue='https://firefox-ci-tc.services.mozilla.com/api/queue/v1'
 
-# TODO: use "tc_queue2."?
-prefix="tc_queue2_"
+# Collect provisioners
+provisioners=$(curl -s -o - "${queue}/provisioners" | grep '"provisionerId' | cut -d\" -f4)
+queues=""
 
-# here doc
-cat <<EOF
-# HELP ${prefix}worker_count taskcluster queue worker count
-# TYPE ${prefix}worker_count gauge
-# HELP ${prefix}quarantined_workers taskcluster queue quarantined workers
-# TYPE ${prefix}quarantined_workers gauge
-# HELP ${prefix}pending_tasks taskcluster queue pending tasks
-# TYPE ${prefix}pending_tasks gauge
-EOF
-
-# Filter for specific provisioners if specified
-prov_filter=("$@")
-
-# Function to output Prometheus-compatible metrics
-function output_metric {
-  local metric_name=$1
-  local labels=$2
-  local value=$3
-  echo "${metric_name}{${labels}} ${value}"
-}
-
-# Loop over each provisioner specified in prov_filter
 for provisioner in "${prov_filter[@]}"; do
-  # Fetch worker types for the current provisioner
-  workerTypes=$(curl -s "${queue}/provisioners/${provisioner}/worker-types" \
-    | grep workerType | awk '{print $2}' | grep -o '[^":, \[]\+')
+  workerTypes=$(curl -s -o - "${queue}/provisioners/${provisioner}/worker-types" | grep workerType | cut -d\" -f4)
 
-  # Loop over each worker type
   for type in $workerTypes; do
-    # Initialize counts for workers and quarantined workers
-    n=0
-    quarantined=0
     queryparams="limit=1000"
     url="${queue}/provisioners/${provisioner}/worker-types/${type}/workers?${queryparams}"
 
-    # Continuation loop to fetch all workers
-    continuation=""
+    n=0
+    quarantined=0
+    states=""
+
     while true; do
-      data=$(curl -s "${url}${continuation}")
+      data=$(curl -s -o - "${url}${continuation}")
       count=$(echo "$data" | grep -o "workerId" | wc -l)
       qcount=$(echo "$data" | sed -e 's/}, *{/},\n{/g' | grep -v scl3 | grep -o "quarantineUntil" | wc -l)
+      n=$((n + count))
+      quarantined=$((quarantined + qcount))
+      workers=$(echo "$data" | jq -r '.workers[] | [.workerGroup, .workerId, .latestTask?.taskId] | @tsv')
 
-      # Update counters
-      n=$(( n + count ))
-      quarantined=$(( quarantined + qcount ))
+      # Collect states of each worker's tasks
+      states="${states}"$(
+        (
+          while read -r dc hostname taskId; do
+            wget -o /dev/null -q -O - ${queue}/task/${taskId}/status | jq -r '.status.runs | .[] | [.state] | @tsv' &
+          done <<< "$workers"
+          wait
+        ) | sort)
 
-      # Check for continuation
-      if echo "${data}" | grep "continuation" >/dev/null; then
-        continuation=$(echo "$data" | grep -o 'continuationToken": "[^"]*"' \
-          | sed -e 's/.*continuationToken": "\([^"]*\)".*/\&continuationToken=\1/')
-        sleep 2
+      # Check for continuation token
+      if echo "$data" | grep "continuation" >/dev/null; then
+        continuation=$(echo "$data" | grep -o 'continuationToken": "[^\"]*"' | sed -e 's/.*continuationToken": "\([^"]*\)".*/\&continuationToken=\1/')
+        sleep 1
       else
         break
       fi
     done
 
-    # Fetch pending tasks for this worker type
-    tasks=$(curl -s "${queue}/pending/${provisioner}/${type}" | grep -o '"pendingTasks":[0-9]*' | awk -F: '{print $2}')
-    tasks=${tasks:-0}
+    # Summarize state counts
+    running=$(echo "$states" | sort | grep running | wc -l)
+    idle=$((n - running - quarantined))
+    completed=$(echo "$states" | sort | grep completed | wc -l)
+    exception=$(echo "$states" | sort | grep exception | wc -l)
 
-    # Define labels for this metric output in Prometheus format
-    labels="provisioner=\"${provisioner}\",worker_type=\"${type}\""
+    # Get pending tasks count
+    tasks=$(curl -s -o - "${queue}/pending/${provisioner}/${type}")
+    pendingTasks=$(echo "$tasks" | jq -r '.pendingTasks')
 
-    # Output Prometheus-compatible metrics in the required format
-    output_metric "${prefix}worker_count" "${labels}" "${n}"
-    output_metric "${prefix}quarantined_workers" "${labels}" "${quarantined}"
-    output_metric "${prefix}pending_tasks" "${labels}" "${tasks}"
+    # Output in Prometheus format
+    echo "# HELP taskcluster_workers_total Number of workers."
+    echo "# TYPE taskcluster_workers_total gauge"
+    echo "taskcluster_workers_total{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${n}"
 
+    echo "# HELP taskcluster_running_workers Number of workers in running state."
+    echo "# TYPE taskcluster_running_workers gauge"
+    echo "taskcluster_running_workers{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${running}"
+
+    echo "# HELP taskcluster_idle_workers Number of idle workers."
+    echo "# TYPE taskcluster_idle_workers gauge"
+    echo "taskcluster_idle_workers{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${idle}"
+
+    echo "# HELP taskcluster_quarantined_workers Number of quarantined workers."
+    echo "# TYPE taskcluster_quarantined_workers gauge"
+    echo "taskcluster_quarantined_workers{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${quarantined}"
+
+    echo "# HELP taskcluster_completed_tasks Number of tasks in completed state."
+    echo "# TYPE taskcluster_completed_tasks gauge"
+    echo "taskcluster_completed_tasks{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${completed}"
+
+    echo "# HELP taskcluster_exception_tasks Number of tasks in exception state."
+    echo "# TYPE taskcluster_exception_tasks gauge"
+    echo "taskcluster_exception_tasks{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${exception}"
+
+    echo "# HELP taskcluster_pending_tasks Number of pending tasks."
+    echo "# TYPE taskcluster_pending_tasks gauge"
+    echo "taskcluster_pending_tasks{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${pendingTasks}"
   done
 done
