@@ -29,9 +29,9 @@ TELEGRAF_CONFIG=${TELEGRAF_CONFIG:-telegraf.conf}
 
 # TODO: not working for some reason. need to debug.
 # set defaults for INTERVAL="300s", MEDIUM_INTERVAL="600s", LONG_INTERVAL="1200s"
-export INTERVAL=${INTERVAL:-300s}
-export MEDIUM_INTERVAL=${MEDIUM_INTERVAL:-600s}
-export LONG_INTERVAL=${LONG_INTERVAL:-1200s}
+export INTERVAL=${INTERVAL:-5m}
+export MEDIUM_INTERVAL=${MEDIUM_INTERVAL:-10m}
+export LONG_INTERVAL=${LONG_INTERVAL:-20m}
 
 set -x
 
