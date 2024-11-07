@@ -7,11 +7,18 @@
 
 PATH="$PATH:$(dirname ${BASH_SOURCE[0]})"
 
+# Argument checking
+if [ "$#" -eq 0 ]; then
+  echo "Usage: $0 <provisioner1> [<provisioner2> ...]"
+  echo "Please specify at least one provisioner filter."
+  exit 1
+fi
+
 # Variables
 show_workers=false
-prov_filter=('releng-hardware')
+prov_filter=("$@") # Provisioner filters from command line
 queue='https://firefox-ci-tc.services.mozilla.com/api/queue/v1'
-metric_prefix="tc_queue2_"
+metric_prefix="tc_queue2_" # Static prefix for all metrics
 
 # Print HELP and TYPE comments once per metric
 echo "# HELP ${metric_prefix}workers_total Number of workers."
