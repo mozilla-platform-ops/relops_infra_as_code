@@ -11,6 +11,29 @@ PATH="$PATH:$(dirname ${BASH_SOURCE[0]})"
 show_workers=false
 prov_filter=('releng-hardware')
 queue='https://firefox-ci-tc.services.mozilla.com/api/queue/v1'
+metric_prefix="${1:-tc_queue2_}" # Set prefix from the first argument or default to "tc_queue2_"
+
+# Print HELP and TYPE comments once per metric
+echo "# HELP ${metric_prefix}workers_total Number of workers."
+echo "# TYPE ${metric_prefix}workers_total gauge"
+
+echo "# HELP ${metric_prefix}running_workers Number of workers in running state."
+echo "# TYPE ${metric_prefix}running_workers gauge"
+
+echo "# HELP ${metric_prefix}idle_workers Number of idle workers."
+echo "# TYPE ${metric_prefix}idle_workers gauge"
+
+echo "# HELP ${metric_prefix}quarantined_workers Number of quarantined workers."
+echo "# TYPE ${metric_prefix}quarantined_workers gauge"
+
+echo "# HELP ${metric_prefix}completed_tasks Number of tasks in completed state."
+echo "# TYPE ${metric_prefix}completed_tasks gauge"
+
+echo "# HELP ${metric_prefix}exception_tasks Number of tasks in exception state."
+echo "# TYPE ${metric_prefix}exception_tasks gauge"
+
+echo "# HELP ${metric_prefix}pending_tasks Number of pending tasks."
+echo "# TYPE ${metric_prefix}pending_tasks gauge"
 
 # Collect provisioners
 provisioners=$(curl -s -o - "${queue}/provisioners" | grep '"provisionerId' | cut -d\" -f4)
@@ -63,33 +86,13 @@ for provisioner in "${prov_filter[@]}"; do
     tasks=$(curl -s -o - "${queue}/pending/${provisioner}/${type}")
     pendingTasks=$(echo "$tasks" | jq -r '.pendingTasks')
 
-    # Output in Prometheus format
-    echo "# HELP taskcluster_workers_total Number of workers."
-    echo "# TYPE taskcluster_workers_total gauge"
-    echo "taskcluster_workers_total{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${n}"
-
-    echo "# HELP taskcluster_running_workers Number of workers in running state."
-    echo "# TYPE taskcluster_running_workers gauge"
-    echo "taskcluster_running_workers{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${running}"
-
-    echo "# HELP taskcluster_idle_workers Number of idle workers."
-    echo "# TYPE taskcluster_idle_workers gauge"
-    echo "taskcluster_idle_workers{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${idle}"
-
-    echo "# HELP taskcluster_quarantined_workers Number of quarantined workers."
-    echo "# TYPE taskcluster_quarantined_workers gauge"
-    echo "taskcluster_quarantined_workers{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${quarantined}"
-
-    echo "# HELP taskcluster_completed_tasks Number of tasks in completed state."
-    echo "# TYPE taskcluster_completed_tasks gauge"
-    echo "taskcluster_completed_tasks{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${completed}"
-
-    echo "# HELP taskcluster_exception_tasks Number of tasks in exception state."
-    echo "# TYPE taskcluster_exception_tasks gauge"
-    echo "taskcluster_exception_tasks{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${exception}"
-
-    echo "# HELP taskcluster_pending_tasks Number of pending tasks."
-    echo "# TYPE taskcluster_pending_tasks gauge"
-    echo "taskcluster_pending_tasks{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${pendingTasks}"
+    # Output metric values with prefix
+    echo "${metric_prefix}workers_total{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${n}"
+    echo "${metric_prefix}running_workers{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${running}"
+    echo "${metric_prefix}idle_workers{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${idle}"
+    echo "${metric_prefix}quarantined_workers{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${quarantined}"
+    echo "${metric_prefix}completed_tasks{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${completed}"
+    echo "${metric_prefix}exception_tasks{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${exception}"
+    echo "${metric_prefix}pending_tasks{provisioner=\"${provisioner}\", workerType=\"${type}\"} ${pendingTasks}"
   done
 done
