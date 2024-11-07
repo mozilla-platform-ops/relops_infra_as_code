@@ -11,7 +11,7 @@ PATH="$PATH:$(dirname ${BASH_SOURCE[0]})"
 show_workers=false
 prov_filter=('releng-hardware')
 queue='https://firefox-ci-tc.services.mozilla.com/api/queue/v1'
-metric_prefix="${1:-tc_queue2_}" # Set prefix from the first argument or default to "tc_queue2_"
+metric_prefix="tc_queue2_"
 
 # Print HELP and TYPE comments once per metric
 echo "# HELP ${metric_prefix}workers_total Number of workers."
