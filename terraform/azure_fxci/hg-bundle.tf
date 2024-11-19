@@ -53,3 +53,21 @@ resource "azurerm_storage_container" "hgbundle" {
   storage_account_name  = azurerm_storage_account.hgbundle[each.value].name
   container_access_type = "container"
 }
+
+resource "azurerm_storage_management_policy" "hgbundle" {
+  for_each           = local.regions
+  storage_account_id = azurerm_storage_account.hgbundle[each.value].id
+  rule {
+    name    = "delete-old-hgbundle"
+    enabled = true
+    filters {
+      blob_types   = ["blockBlob"]
+      prefix_match = ["hgbundle/*"]
+    }
+    actions {
+      base_blob {
+        delete_after_days_since_creation_greater_than = 7
+      }
+    }
+  }
+}
