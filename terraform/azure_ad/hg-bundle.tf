@@ -38,7 +38,7 @@ resource "azuread_service_principal" "hgbundle" {
 
 resource "azurerm_role_assignment" "hgbundle" {
   for_each             = local.regions
-  role_definition_name = "Storage Blob Data Contributor"
+  role_definition_name = "Storage Blob Data Owner"
   principal_id         = azuread_service_principal.hgbundle.object_id
   scope                = data.azurerm_resource_group.hgbundle[each.key].id
 }
