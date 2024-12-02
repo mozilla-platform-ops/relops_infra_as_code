@@ -45,6 +45,9 @@ resource "azurerm_storage_account" "hgbundle" {
   account_tier             = "Premium"
   tags                     = local.tags
   account_kind             = "BlockBlobStorage"
+  blob_properties {
+    versioning_enabled = true
+  }
 }
 
 resource "azurerm_storage_container" "hgbundle" {
