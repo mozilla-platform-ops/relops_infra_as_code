@@ -30,10 +30,34 @@ data "azurerm_resource_group" "hgbundle" {
 resource "azuread_application" "hgbundle" {
   display_name = "moz_hgbundle"
   owners       = [data.azuread_user.jmoss.id]
+  web {
+    redirect_uris = []
+
+    implicit_grant {
+      access_token_issuance_enabled = false
+      id_token_issuance_enabled     = true
+    }
+  }
+  api {
+    known_client_applications      = []
+    mapped_claims_enabled          = false
+    requested_access_token_version = 1
+
+    oauth2_permission_scope {
+      admin_consent_description  = "Allow the application to access moz_hgbundle on behalf of the signed-in user."
+      admin_consent_display_name = "Access moz_hgbundle"
+      enabled                    = true
+      id                         = "9b2c56f6-3371-49f3-8023-d11c3472ef2e"
+      type                       = "User"
+      user_consent_description   = "Allow the application to access moz_hgbundle on your behalf."
+      user_consent_display_name  = "Access moz_hgbundle"
+      value                      = "user_impersonation"
+    }
+  }
 }
 
 resource "azuread_service_principal" "hgbundle" {
-  application_id = azuread_application.hgbundle.application_id
+  client_id = azuread_application.hgbundle.client_id
 }
 
 resource "azurerm_role_assignment" "hgbundle" {
