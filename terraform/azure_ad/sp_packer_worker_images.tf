@@ -5,12 +5,34 @@ data "azuread_user" "jmoss" {
 # application: worker_images_dev
 resource "azuread_application" "worker_images_dev" {
   display_name = "worker_images_dev"
-  homepage     = "https://github.com/mozilla-platform-ops/worker-images"
   owners       = [data.azuread_user.jmoss.id]
+  web {
+    homepage_url = "https://github.com/mozilla-platform-ops/worker-images"
+    implicit_grant {
+      access_token_issuance_enabled = false
+      id_token_issuance_enabled     = true
+    }
+  }
+  api {
+    known_client_applications      = []
+    mapped_claims_enabled          = false
+    requested_access_token_version = 1
+
+    oauth2_permission_scope {
+      admin_consent_description  = "Allow the application to access worker_images_dev on behalf of the signed-in user."
+      admin_consent_display_name = "Access worker_images_dev"
+      enabled                    = true
+      id                         = "eed6d0f7-2a3d-4ec0-9cf1-450561e39baa"
+      type                       = "User"
+      user_consent_description   = "Allow the application to access worker_images_dev on your behalf."
+      user_consent_display_name  = "Access worker_images_dev"
+      value                      = "user_impersonation"
+    }
+  }
 }
 
 resource "azuread_service_principal" "worker_images_dev" {
-  application_id = azuread_application.worker_images_dev.application_id
+  client_id = azuread_application.worker_images_dev.client_id
 }
 
 resource "azurerm_role_assignment" "worker_images_dev" {
@@ -21,12 +43,34 @@ resource "azurerm_role_assignment" "worker_images_dev" {
 
 resource "azuread_application" "worker_images_fxci" {
   display_name = "worker_images_fxci"
-  homepage     = "https://github.com/mozilla-platform-ops/worker-images"
   owners       = [data.azuread_user.jmoss.id]
+  web {
+    homepage_url = "https://github.com/mozilla-platform-ops/worker-images"
+    implicit_grant {
+      access_token_issuance_enabled = false
+      id_token_issuance_enabled     = true
+    }
+  }
+  api {
+    known_client_applications      = []
+    mapped_claims_enabled          = false
+    requested_access_token_version = 1
+
+    oauth2_permission_scope {
+      admin_consent_description  = "Allow the application to access worker_images_fxci on behalf of the signed-in user."
+      admin_consent_display_name = "Access worker_images_fxci"
+      enabled                    = true
+      id                         = "3713cebd-288c-4e92-8094-f1eaeda6068b"
+      type                       = "User"
+      user_consent_description   = "Allow the application to access worker_images_fxci on your behalf."
+      user_consent_display_name  = "Access worker_images_fxci"
+      value                      = "user_impersonation"
+    }
+  }
 }
 
 resource "azuread_service_principal" "worker_images_fxci" {
-  application_id = azuread_application.worker_images_fxci.application_id
+  client_id = azuread_application.worker_images_fxci.client_id
 }
 
 resource "azurerm_role_assignment" "worker_images_fxci" {
@@ -37,12 +81,34 @@ resource "azurerm_role_assignment" "worker_images_fxci" {
 
 resource "azuread_application" "worker_images_fxci_trusted" {
   display_name = "worker_images_fxci_trusted"
-  homepage     = "https://github.com/mozilla-platform-ops/worker-images"
   owners       = [data.azuread_user.jmoss.id]
+  web {
+    homepage_url = "https://github.com/mozilla-platform-ops/worker-images"
+    implicit_grant {
+      access_token_issuance_enabled = false
+      id_token_issuance_enabled     = true
+    }
+  }
+  api {
+    known_client_applications      = []
+    mapped_claims_enabled          = false
+    requested_access_token_version = 1
+
+    oauth2_permission_scope {
+      admin_consent_description  = "Allow the application to access worker_images_fxci_trusted on behalf of the signed-in user."
+      admin_consent_display_name = "Access worker_images_fxci_trusted"
+      enabled                    = true
+      id                         = "6c3df0e0-a624-493e-b5d9-fdc8dd0a23ed"
+      type                       = "User"
+      user_consent_description   = "Allow the application to access worker_images_fxci_trusted on your behalf."
+      user_consent_display_name  = "Access worker_images_fxci_trusted"
+      value                      = "user_impersonation"
+    }
+  }
 }
 
 resource "azuread_service_principal" "worker_images_fxci_trusted" {
-  application_id = azuread_application.worker_images_fxci_trusted.application_id
+  client_id = azuread_application.worker_images_fxci_trusted.client_id
 }
 
 resource "azurerm_role_assignment" "worker_images_fxci_trusted" {
@@ -55,10 +121,35 @@ resource "azurerm_role_assignment" "worker_images_fxci_trusted" {
 resource "azuread_application" "worker_images_tceng" {
   display_name = "worker_images_tceng"
   owners       = [data.azuread_user.mcornmesser.id]
+  api {
+    known_client_applications      = []
+    mapped_claims_enabled          = false
+    requested_access_token_version = 1
+
+    oauth2_permission_scope {
+      admin_consent_description  = "Allow the application to access worker_manager_tceng on behalf of the signed-in user."
+      admin_consent_display_name = "Access worker_manager_tceng"
+      enabled                    = true
+      id                         = "6fba0d54-b477-4351-bdbf-6ecdfa7b27aa"
+      type                       = "User"
+      user_consent_description   = "Allow the application to access worker_manager_tceng on your behalf."
+      user_consent_display_name  = "Access worker_manager_tceng"
+      value                      = "user_impersonation"
+    }
+  }
+
+  web {
+    redirect_uris = []
+
+    implicit_grant {
+      access_token_issuance_enabled = false
+      id_token_issuance_enabled     = true
+    }
+  }
 }
 
 resource "azuread_service_principal" "worker_images_tceng" {
-  application_id = azuread_application.worker_images_tceng.application_id
+  client_id = azuread_application.worker_images_tceng.client_id
 }
 
 resource "azurerm_role_assignment" "worker_images_tceng" {

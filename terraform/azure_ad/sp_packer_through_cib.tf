@@ -6,8 +6,7 @@ data "azuread_user" "mcornmesser" {
 resource "azuread_application" "Packer_Through_CIB" {
   display_name = "Packer_Through_CIB"
   # Packer bits live in the CloudImageBuilder repo
-  homepage = "https://github.com/mozilla-platform-ops/cloud-image-builder"
-  owners   = [data.azuread_user.mcornmesser.id]
+  owners = [data.azuread_user.mcornmesser.id]
   required_resource_access {
     # azure management service api
     resource_app_id = "797f4846-ba00-4fd7-ba43-dac1f8f63013"
@@ -25,11 +24,37 @@ resource "azuread_application" "Packer_Through_CIB" {
       type = "Scope"
     }
   }
+  web {
+    homepage_url = "https://github.com/mozilla-platform-ops/cloud-image-builder"
+    implicit_grant {
+      access_token_issuance_enabled = false
+      id_token_issuance_enabled     = true
+    }
+  }
+  api {
+    known_client_applications      = []
+    mapped_claims_enabled          = false
+    requested_access_token_version = 1
+
+    oauth2_permission_scope {
+      admin_consent_description  = "Allow the application to access Packer_Through_CIB on behalf of the signed-in user."
+      admin_consent_display_name = "Access Packer_Through_CIB"
+      enabled                    = true
+      id                         = "46ebc1f1-6740-4a19-ba74-0c604dfe1fd9"
+      type                       = "User"
+      user_consent_description   = "Allow the application to access Packer_Through_CIB on your behalf."
+      user_consent_display_name  = "Access Packer_Through_CIB"
+      value                      = "user_impersonation"
+    }
+  }
 }
 # service principal: Packer_Through_CIB
 resource "azuread_service_principal" "Packer_Through_CIB" {
-  application_id = azuread_application.Packer_Through_CIB.application_id
-  tags           = concat(["name:Packer_Through_CIB"], local.sp_tags)
+  client_id = azuread_application.Packer_Through_CIB.client_id
+  tags      = concat(["name:Packer_Through_CIB"], local.sp_tags)
+  owners = [
+    "4e48c4fe-303d-4d1d-bd6f-76f39f7b1c08"
+  ]
 }
 # role definition: Packer_Through_CIB
 resource "azurerm_role_definition" "Packer_Through_CIB" {
