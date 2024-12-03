@@ -12,23 +12,23 @@
 #
 # 1.29.5 is the latest version that works
 # FROM telegraf:1.18.3
-FROM telegraf:1.29.5
+FROM telegraf:1.32
 
 # Install essential packages and dependencies in a single layer
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        ca-certificates \
-        curl \
-        dirmngr \
-        gnupg \
-        iputils-ping \
-        jq \
-        lm-sensors \
-        procps \
-        snmp \
-        vim \
-        wget \
-            && \
+    ca-certificates \
+    curl \
+    dirmngr \
+    gnupg \
+    iputils-ping \
+    jq \
+    lm-sensors \
+    procps \
+    snmp \
+    vim \
+    wget \
+    && \
     rm -rf /var/lib/apt/lists/*
 
 #
@@ -46,7 +46,7 @@ RUN apt-get update && \
 
 #
 # use locally built binary
-COPY telegraf /usr/bin/telegraf
+# COPY telegraf /usr/bin/telegraf
 
 # Expose necessary ports for Telegraf
 EXPOSE 8092/udp 8094 8125/udp
