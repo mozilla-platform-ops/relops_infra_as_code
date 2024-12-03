@@ -28,7 +28,7 @@ ecs-workers.tf:
   38:       { "name" : "TELEGRAF_CONFIG", "value" : "telegraf_workers.conf" },
 ```
 
-#### docker image ekr versions
+#### docker image ecr versions
 
 ```
 telegraf: 1.9
@@ -61,6 +61,13 @@ telegraf_worker: telegraf_workers.conf, provides tc worker success info,
                 "workers":4,"completed": 2, "failed": 3, "idle":4,"quarantined":0,"pendingTasks": 0
 
 ```
+
+##### prom migration status
+
+- telegraf_workers: DONE, see telegraf_workers.conf and queue2_prom.sh
+- telegraf_queues: TBD
+- telegraf_vcs: TBD
+- telegraf: TBD
 
 #### running locally (gcp)
 
