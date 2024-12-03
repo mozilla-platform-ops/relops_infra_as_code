@@ -64,10 +64,48 @@ telegraf_worker: telegraf_workers.conf, provides tc worker success info,
 
 ##### prom migration status
 
-- telegraf_workers: DONE, see telegraf_workers.conf and queue2_prom.sh
+TODO:
+- decide on prefix/namespace
+
+- telegraf_workers: DONE
+  - see telegraf_workers.conf and queue2_prom.sh
 - telegraf_queues: TBD
+  - can be replaced with queue2_prom.sh (only difference is quarantinedWorkers vs quarantined)
 - telegraf_vcs: TBD
 - telegraf: TBD
+
+```bash
+powderdry  etc git:(telegraf_work) ✗  ➜  ./queue.sh proj-autophone
+[
+{
+  "provisionerId": "proj-autophone",
+  "workerType": "gecko-t-bitbar-gw-perf-a55",
+  "taskQueueId": "proj-autophone/gecko-t-bitbar-gw-perf-a55",
+  "workers":75,"quarantinedWorkers":0,"pendingTasks": 82
+},{
+  "provisionerId": "proj-autophone",
+  "workerType": "gecko-t-bitbar-gw-perf-p6",
+  "taskQueueId": "proj-autophone/gecko-t-bitbar-gw-perf-p6",
+  "workers":3,"quarantinedWorkers":0,"pendingTasks": 0
+},{
+  "provisionerId": "proj-autophone",
+  "workerType": "gecko-t-bitbar-gw-perf-s24",
+  "taskQueueId": "proj-autophone/gecko-t-bitbar-gw-perf-s24",
+  "workers":3,"quarantinedWorkers":0,"pendingTasks": 0
+},{
+  "provisionerId": "proj-autophone",
+  "workerType": "gecko-t-bitbar-gw-unit-p5",
+  "taskQueueId": "proj-autophone/gecko-t-bitbar-gw-unit-p5",
+  "workers":16,"quarantinedWorkers":0,"pendingTasks": 0
+}
+]
+powderdry  etc git:(telegraf_work) ✗  ➜  ./queue2.sh proj-autophone
+exec,provisionerId=proj-autophone,workerType=gecko-t-bitbar-gw-perf-a55 idle=11,pendingTasks=82,quarantined=0,running=64,workers=75 1733254240000000000
+exec,provisionerId=proj-autophone,workerType=gecko-t-bitbar-gw-perf-p6 idle=3,pendingTasks=0,quarantined=0,running=0,workers=3 1733254241000000000
+exec,provisionerId=proj-autophone,workerType=gecko-t-bitbar-gw-perf-s24 idle=3,pendingTasks=0,quarantined=0,running=0,workers=3 1733254242000000000
+exec,provisionerId=proj-autophone,workerType=gecko-t-bitbar-gw-unit-p5 idle=16,pendingTasks=0,quarantined=0,running=0,workers=16 1733254243000000000
+
+```
 
 #### running locally (gcp)
 

@@ -18,6 +18,7 @@ fi
 show_workers=false
 prov_filter=("$@") # Provisioner filters from command line
 queue='https://firefox-ci-tc.services.mozilla.com/api/queue/v1'
+# TODO: load from common.sh or similar
 metric_prefix="tc_queue2_" # Static prefix for all metrics
 
 # Print HELP and TYPE comments once per metric
