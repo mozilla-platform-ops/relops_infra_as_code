@@ -72,6 +72,9 @@ telegraf_worker: telegraf_workers.conf, provides tc worker success info,
 #### what each config does
 
 ```bash
+$ cd git/relops_infra_as_code
+$ cd terraform/telegraf/docker_aws_influx/etc_v200
+$ rg -A 1 commands | grep /etc/telegraf
 telegraf_vcs.conf-    "/etc/telegraf/treestatus2.sh"
 telegraf_vcs.conf-    "/etc/telegraf/check_vcs.sh"
 telegraf_vcs.conf-    "/etc/telegraf/google_chrome_releases.sh"
