@@ -1,9 +1,13 @@
 #!/bin/bash
 
-# shellcheck disable=SC1012
+# Disable shellcheck warnings
+# shellcheck disable=all
 
-# TODO: add prefix
-# TODO: add header
+set -e
+
+# source common.sh
+source "$(dirname "$0")/common.sh"
+
 
 # Set the filename for the downloaded .ics file
 filename=${1:-firefox.ics}
@@ -73,12 +77,16 @@ handle_event() {
 
   # Output metrics in Prometheus exposition format
   start_time=$(local_date DTSTART)
-  echo "release_cal_event{type=\"$rel_type\",version=\"$version\",summary=\"$summary\"} $start_time"
+  echo "${metric_prefix}release_cal_event{type=\"$rel_type\",version=\"$version\",summary=\"$summary\"} $start_time"
 }
 
 # Parse the .ics file
 declare -A content=() # Associative array for event content
 declare -A tzid=()    # Associative array for timezone info
+
+# Print HELP and TYPE comments once per metric
+echo "# HELP ${metric_prefix}release_cal_event Release calendar event."
+echo "# TYPE ${metric_prefix}release_cal_event gauge"
 
 while IFS=: read -r key value; do
   value=${value%$'\r'} # Remove DOS newlines

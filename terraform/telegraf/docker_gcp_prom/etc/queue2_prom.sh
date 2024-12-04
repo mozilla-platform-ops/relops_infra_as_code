@@ -3,9 +3,14 @@
 # Disable shellcheck warnings
 # shellcheck disable=all
 
+set -e
+
+# source common.sh
+. "$(dirname "$0")/common.sh"
+
 # Script to pull taskcluster worker stats and output in Prometheus format for Telegraf
 
-PATH="$PATH:$(dirname ${BASH_SOURCE[0]})"
+PATH="$PATH:$(dirname $0)"
 
 # Argument checking
 if [ "$#" -eq 0 ]; then
@@ -19,7 +24,6 @@ show_workers=false
 prov_filter=("$@") # Provisioner filters from command line
 queue='https://firefox-ci-tc.services.mozilla.com/api/queue/v1'
 # TODO: load from common.sh or similar
-metric_prefix="tc_queue2_" # Static prefix for all metrics
 
 # Print HELP and TYPE comments once per metric
 echo "# HELP ${metric_prefix}workers_total Number of workers."
