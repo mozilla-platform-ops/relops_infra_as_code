@@ -41,9 +41,16 @@ telegraf_worker: 1.16
 
 ```bash
 # format: conf file used, what it does/runs, instances (default is 1)
-telegraf: telgraf.conf, listens for webhooks, 2 instances
+telegraf: telgraf.conf, listens for GH and papertrail webhooks, 2 instances
 telegraf_queues: telegraf_queues.conf, provides tc worker pool info,
             runs queue.sh and tc-web.sh,
+            queue.sh example output:
+            {
+              "provisionerId": "proj-autophone",
+              "workerType": "gecko-t-bitbar-gw-perf-a55",
+              "taskQueueId": "proj-autophone/gecko-t-bitbar-gw-perf-a55",
+              "workers":73,"quarantinedWorkers":0,"pendingTasks": 0
+            }
             tc-web example output:
                 (  "workers": 2,
                 "runningWorkers": 0,
@@ -58,7 +65,7 @@ telegraf_vcs: telegraf_vcs.conf, runs:
             treestatus2.sh
 telegraf_worker: telegraf_workers.conf, provides tc worker success info,
             runs queue2.sh which provides:
-                "workers":4,"completed": 2, "failed": 3, "idle":4,"quarantined":0,"pendingTasks": 0
+                exec,provisionerId=proj-autophone,workerType=gecko-t-bitbar-gw-perf-a55 idle=70,pendingTasks=0,quarantined=0,running=3,workers=73 1733350927000000000
 
 ```
 
@@ -68,7 +75,7 @@ telegraf_worker: telegraf_workers.conf, provides tc worker success info,
   - see telegraf_workers.conf and queue2_prom.sh
   - queue2.sh: DONE
   - change config: DONE
-  - prefix and help on all scripts: TODO
+  - prefix and help on all scripts: DONE
 - telegraf_queues: in progress
   - queue.sh: DONE
     - can be replaced with queue2_prom.sh (only difference is quarantinedWorkers vs quarantined)
@@ -88,6 +95,17 @@ telegraf_worker: telegraf_workers.conf, provides tc worker success info,
   - rewrite webhooks: TODO
   - prefix and help on all scripts: TODO
   - change config: TODO
+
+#### questions
+
+- what's the difference between queue2.sh and queue.sh
+  - not much, slight key change (quarantinedWorkers vs quarantined)
+  - queue2 is line format (vs json)
+  - queue2.sh has idle and running workers
+- what's the difference between queue.sh and tc_web.sh?
+  - tc_web.sh has idle (queue2 also has idle)
+  - tc_web.sh seems broken (bad data produced, counts of -1, 0, or 1 for everything)
+
 
 ###### queue2.sh vs queue.sh
 
