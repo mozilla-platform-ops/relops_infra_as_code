@@ -69,6 +69,45 @@ telegraf_worker: telegraf_workers.conf, provides tc worker success info,
 
 ```
 
+#### what each config does
+
+```bash
+telegraf_vcs.conf-    "/etc/telegraf/treestatus2.sh"
+telegraf_vcs.conf-    "/etc/telegraf/check_vcs.sh"
+telegraf_vcs.conf-    "/etc/telegraf/google_chrome_releases.sh"
+telegraf_vcs.conf-    "/etc/telegraf/release_cal.sh"
+telegraf_workers.conf-    "/etc/telegraf/queue2.sh releng-hardware"
+telegraf_workers.conf-    "/etc/telegraf/queue2.sh aws-provisioner-v1"
+telegraf_workers.conf-    "/etc/telegraf/queue2.sh gecko-t"
+telegraf_workers.conf-    "/etc/telegraf/queue2.sh mobile-1 mobile-3 mobile-t"
+telegraf_workers.conf-    "/etc/telegraf/queue2.sh gecko-1 gecko-b gecko-2 gecko-3"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh scriptworker-prov-v1"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh proj-servo"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh gce"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh bitbar"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh proj-autophone"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh terraform-packet"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh releng-hardware"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh gecko-t"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh gecko-b"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh gecko-1 gecko-2 gecko-3"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh mobile-1 mobile-3 mobile-t"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh bitbar proj-autophone proj-servo scriptworker-prov-v1"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh scriptworker-k8s"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh gce terraform-packet"
+telegraf_queues.conf-    "/etc/telegraf/queue.sh aws-provisioner-v1"
+telegraf_queues.conf-    "/etc/telegraf/tc-web.sh releng-hardware"
+telegraf_queues.conf-    "/etc/telegraf/tc-web.sh aws-provisioner-v1"
+telegraf_queues.conf-    "/etc/telegraf/tc-web.sh gce"
+telegraf_queues.conf-    "/etc/telegraf/tc-web.sh proj-autophone terraform-packet"
+telegraf_queues.conf-    "/etc/telegraf/tc-web.sh bitbar proj-servo scriptworker-prov-v1"
+telegraf_queues.conf-    "/etc/telegraf/tc-web.sh gecko-t"
+telegraf_queues.conf-    "/etc/telegraf/tc-web.sh gecko-1 gecko-2 gecko-3"
+telegraf_queues.conf-    "/etc/telegraf/tc-web.sh gecko-b"
+telegraf_queues.conf-    "/etc/telegraf/tc-web.sh mobile-1 mobile-3 mobile-t"
+
+```
+
 ##### prom migration status
 
 - telegraf_workers: DONE
