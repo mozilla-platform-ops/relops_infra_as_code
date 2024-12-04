@@ -17,11 +17,10 @@ repos:
         - --args=-recursive
         - --args=-write=false
 
-- repo: https://github.com/koalaman/shellcheck-precommit
-  rev: v0.10.0
+- repo: https://github.com/gruntwork-io/pre-commit
+  rev: v0.1.23
   hooks:
-  - id: shellcheck
-    args: ["--external-sources"]
+    - id: shellcheck
 
 - repo: https://github.com/aerickson/tf_authoritative_scanner.git
   rev: v1.2.0

@@ -79,11 +79,13 @@ telegraf_vcs.conf-    "/etc/telegraf/treestatus2.sh"
 telegraf_vcs.conf-    "/etc/telegraf/check_vcs.sh"
 telegraf_vcs.conf-    "/etc/telegraf/google_chrome_releases.sh"
 telegraf_vcs.conf-    "/etc/telegraf/release_cal.sh"
+
 telegraf_workers.conf-    "/etc/telegraf/queue2.sh releng-hardware"
 telegraf_workers.conf-    "/etc/telegraf/queue2.sh aws-provisioner-v1"
 telegraf_workers.conf-    "/etc/telegraf/queue2.sh gecko-t"
 telegraf_workers.conf-    "/etc/telegraf/queue2.sh mobile-1 mobile-3 mobile-t"
 telegraf_workers.conf-    "/etc/telegraf/queue2.sh gecko-1 gecko-b gecko-2 gecko-3"
+
 telegraf_queues.conf-    "/etc/telegraf/queue.sh scriptworker-prov-v1"
 telegraf_queues.conf-    "/etc/telegraf/queue.sh proj-servo"
 telegraf_queues.conf-    "/etc/telegraf/queue.sh gce"
@@ -110,6 +112,9 @@ telegraf_queues.conf-    "/etc/telegraf/tc-web.sh gecko-b"
 telegraf_queues.conf-    "/etc/telegraf/tc-web.sh mobile-1 mobile-3 mobile-t"
 
 ```
+
+Theory: queue2.sh replaced tc-web.sh, but tc-web.sh was never decommissioned?
+  - TODO: to confirm, dump grafana dashboards and audit their queries.
 
 ##### prom migration status
 
