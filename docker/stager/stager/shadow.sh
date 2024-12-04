@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# shellcheck disable=all
+
 # expects environment vars:
 # TASKCLUSTER_CLIENT_ID
 # TASKCLUSTER_ACCESS_TOKEN
