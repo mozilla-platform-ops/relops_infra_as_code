@@ -67,12 +67,29 @@ telegraf_worker: telegraf_workers.conf, provides tc worker success info,
 TODO:
 - decide on prefix/namespace
 
-- telegraf_workers: DONE
+- telegraf_workers: in progress
   - see telegraf_workers.conf and queue2_prom.sh
-- telegraf_queues: TBD
-  - can be replaced with queue2_prom.sh (only difference is quarantinedWorkers vs quarantined)
-- telegraf_vcs: TBD
-- telegraf: TBD
+  - queue2.sh: DONE
+  - change config: DONE
+  - set final prefix: TODO
+- telegraf_queues: in progress
+  - queue.sh: DONE
+    - can be replaced with queue2_prom.sh (only difference is quarantinedWorkers vs quarantined)
+      - will need to adjust all queries for this though...
+  - tc_web.sh: TODO
+  - set final prefix: TODO
+  - change config: in progress
+- telegraf_vcs: in progress
+  - release_cal.sh: in progress
+  - google_chrome_releases.sh: TODO
+  - check_vcs.sh: TODO
+  - treestatus2.sh: TODO
+  - change config: TODO
+- telegraf: TODO
+  - rewrite webhooks: TODO
+  - change config: TODO
+
+###### queue2.sh vs queue.sh
 
 ```bash
 powderdry  etc git:(telegraf_work) ✗  ➜  ./queue.sh proj-autophone
