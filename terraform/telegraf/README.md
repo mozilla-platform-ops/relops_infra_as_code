@@ -130,6 +130,10 @@ exec,provisionerId=proj-autophone,workerType=gecko-t-bitbar-gw-unit-p5 idle=16,p
 # open a interactive docker container
 ./docker_build && ./docker_run
 
+# test single scripts
+./docker_run /etc/telegraf/release_cal_prom.sh
+./docker_run '/etc/telegraf/queue2_prom.sh proj-autophone'
+
 # run stuff
 TELEGRAF_CONFIG=telegraf_workers.conf ./docker_run
 

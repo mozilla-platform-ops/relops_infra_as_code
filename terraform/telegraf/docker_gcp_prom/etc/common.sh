@@ -5,4 +5,4 @@
 # shellcheck disable=SC2034
 
 # TODO: uppercase?
-metric_prefix="tc_queue2_" # Static prefix for all metrics
+metric_prefix="relsre_" # Static prefix for all metrics
