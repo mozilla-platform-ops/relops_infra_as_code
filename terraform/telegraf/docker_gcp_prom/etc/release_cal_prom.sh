@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# shellcheck disable=all
+# shellcheck disable=SC1012
+
+# TODO: add prefix
+# TODO: add header
 
 # Set the filename for the downloaded .ics file
 filename=${1:-firefox.ics}
