@@ -64,29 +64,29 @@ telegraf_worker: telegraf_workers.conf, provides tc worker success info,
 
 ##### prom migration status
 
-TODO:
-- decide on prefix/namespace
-
-- telegraf_workers: in progress
+- telegraf_workers: DONE
   - see telegraf_workers.conf and queue2_prom.sh
   - queue2.sh: DONE
   - change config: DONE
-  - set final prefix: TODO
+  - prefix and help on all scripts: TODO
 - telegraf_queues: in progress
   - queue.sh: DONE
     - can be replaced with queue2_prom.sh (only difference is quarantinedWorkers vs quarantined)
       - will need to adjust all queries for this though...
   - tc_web.sh: TODO
-  - set final prefix: TODO
+  - set final prefix: DONE
+  - prefix and help on all scripts: TODO
   - change config: in progress
 - telegraf_vcs: in progress
   - release_cal.sh: in progress
   - google_chrome_releases.sh: TODO
   - check_vcs.sh: TODO
   - treestatus2.sh: TODO
+  - prefix and help on all scripts: TODO
   - change config: TODO
 - telegraf: TODO
   - rewrite webhooks: TODO
+  - prefix and help on all scripts: TODO
   - change config: TODO
 
 ###### queue2.sh vs queue.sh
