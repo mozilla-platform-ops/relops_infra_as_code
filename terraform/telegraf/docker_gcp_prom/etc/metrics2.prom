@@ -1,0 +1,33 @@
+# HELP test_fff_worker_count taskcluster queue worker count
+# TYPE test_fff_worker_count gauge
+# HELP test_fff_quarantined_workers taskcluster queue quarantined workers
+# TYPE test_fff_quarantined_workers gauge
+# HELP test_fff_pending_tasks taskcluster queue pending tasks
+# TYPE test_fff_pending_tasks gauge
+test_fff_worker_count{provisioner="gecko-3",worker_type="b-linux-gcp"} 5775
+test_fff_quarantined_workers{provisioner="gecko-3",worker_type="b-linux-gcp"} 1
+test_fff_pending_tasks{provisioner="gecko-3",worker_type="b-linux-gcp"} 0
+test_fff_worker_count{provisioner="gecko-3",worker_type="b-linux-gcp-aarch64"} 2
+test_fff_quarantined_workers{provisioner="gecko-3",worker_type="b-linux-gcp-aarch64"} 0
+test_fff_pending_tasks{provisioner="gecko-3",worker_type="b-linux-gcp-aarch64"} 0
+test_fff_worker_count{provisioner="gecko-3",worker_type="b-linux-kvm-gcp"} 60
+test_fff_quarantined_workers{provisioner="gecko-3",worker_type="b-linux-kvm-gcp"} 0
+test_fff_pending_tasks{provisioner="gecko-3",worker_type="b-linux-kvm-gcp"} 0
+test_fff_worker_count{provisioner="gecko-3",worker_type="b-linux-large-gcp"} 54
+test_fff_quarantined_workers{provisioner="gecko-3",worker_type="b-linux-large-gcp"} 0
+test_fff_pending_tasks{provisioner="gecko-3",worker_type="b-linux-large-gcp"} 0
+test_fff_worker_count{provisioner="gecko-3",worker_type="b-linux-medium-gcp"} 1830
+test_fff_quarantined_workers{provisioner="gecko-3",worker_type="b-linux-medium-gcp"} 0
+test_fff_pending_tasks{provisioner="gecko-3",worker_type="b-linux-medium-gcp"} 0
+test_fff_worker_count{provisioner="gecko-3",worker_type="b-linux-xlarge-gcp"} 448
+test_fff_quarantined_workers{provisioner="gecko-3",worker_type="b-linux-xlarge-gcp"} 1
+test_fff_pending_tasks{provisioner="gecko-3",worker_type="b-linux-xlarge-gcp"} 0
+test_fff_worker_count{provisioner="gecko-3",worker_type="b-win2022"} 771
+test_fff_quarantined_workers{provisioner="gecko-3",worker_type="b-win2022"} 0
+test_fff_pending_tasks{provisioner="gecko-3",worker_type="b-win2022"} 0
+test_fff_worker_count{provisioner="gecko-3",worker_type="decision-gcp"} 198
+test_fff_quarantined_workers{provisioner="gecko-3",worker_type="decision-gcp"} 0
+test_fff_pending_tasks{provisioner="gecko-3",worker_type="decision-gcp"} 0
+test_fff_worker_count{provisioner="gecko-3",worker_type="images-gcp"} 8
+test_fff_quarantined_workers{provisioner="gecko-3",worker_type="images-gcp"} 0
+test_fff_pending_tasks{provisioner="gecko-3",worker_type="images-gcp"} 0

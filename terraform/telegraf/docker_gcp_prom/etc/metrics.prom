@@ -1,0 +1,5 @@
+# HELP cpu_time_idle Telegraf collected metric
+# TYPE cpu_time_idle untyped
+# cpu_time_idle{host="example.org"} 42
+
+fc_ceph_df_usage_percent{crush_type="osd"} 35.85032
