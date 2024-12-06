@@ -36,8 +36,6 @@ resource "azurerm_resource_group" "hgbundle" {
 
 resource "azurerm_storage_account" "hgbundle" {
   for_each = local.regions
-  #name                     = "mozhgazure${each.value}"
-  ## Remove Removes any non-word characters, underscores, or whitespace from the concatenated string & limit to 24 characters
   name                     = substr(replace("mozhg${each.value}", "/\\W|_|\\s/", ""), 0, 24)
   resource_group_name      = azurerm_resource_group.hgbundle[each.value].name
   account_replication_type = "LRS"
@@ -50,12 +48,30 @@ resource "azurerm_storage_account" "hgbundle" {
   }
 }
 
-resource "azurerm_storage_container" "hgbundle" {
-  for_each              = local.regions
-  name                  = "hgbundle"
-  storage_account_name  = azurerm_storage_account.hgbundle[each.value].name
-  container_access_type = "container"
+resource "azapi_resource" "hgbundlecontainer" {
+  for_each  = local.regions
+  type      = "Microsoft.Storage/storageAccounts/blobServices/containers@2023-05-01"
+  name      = "hgbundle"
+  parent_id = "${azurerm_storage_account.hgbundle[each.value].id}/blobServices/default"
+  body = {
+    properties = {
+      defaultEncryptionScope      = "$account-encryption-key"
+      denyEncryptionScopeOverride = false
+      immutableStorageWithVersioning = {
+        enabled = true
+      }
+      publicAccess = "Container"
+    }
+  }
 }
+
+# resource "azurerm_storage_container_immutability_policy" "hgbundle" {
+#   for_each                              = local.regions
+#   storage_container_resource_manager_id = azurerm_storage_container.hgbundle[each.value].resource_manager_id
+#   immutability_period_in_days           = 7
+#   protected_append_writes_all_enabled   = true
+#   protected_append_writes_enabled       = true
+# }
 
 resource "azurerm_storage_management_policy" "hgbundle" {
   for_each           = local.regions
@@ -69,7 +85,7 @@ resource "azurerm_storage_management_policy" "hgbundle" {
     }
     actions {
       base_blob {
-        delete_after_days_since_creation_greater_than = 7
+        delete_after_days_since_modification_greater_than = 7
       }
     }
   }
