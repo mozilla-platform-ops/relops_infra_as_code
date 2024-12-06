@@ -85,7 +85,7 @@ resource "azurerm_storage_management_policy" "hgbundle" {
     }
     actions {
       base_blob {
-        delete_after_days_since_modification_greater_than = 7
+        delete_after_days_since_last_access_time_greater_than = 1
       }
     }
   }
