@@ -1,7 +1,6 @@
 # application: taskcluster-worker-manager-production
 resource "azuread_application" "taskcluster-worker-manager-production" {
   display_name = "taskcluster-worker-manager-production"
-  homepage     = "https://firefox-ci-tc.services.mozilla.com/"
   required_resource_access {
     # azure management service api
     resource_app_id = "797f4846-ba00-4fd7-ba43-dac1f8f63013"
@@ -17,18 +16,40 @@ resource "azuread_application" "taskcluster-worker-manager-production" {
     resource_access {
       id   = "03e0da56-190b-40ad-a80c-ea378c433f7f"
       type = "Scope"
+    }
+  }
+  web {
+    homepage_url = "https://firefox-ci-tc.services.mozilla.com/"
+    implicit_grant {
+      access_token_issuance_enabled = false
+      id_token_issuance_enabled     = true
+    }
+  }
+  api {
+    known_client_applications      = []
+    mapped_claims_enabled          = false
+    requested_access_token_version = 1
+
+    oauth2_permission_scope {
+      admin_consent_description  = "Allow the application to access taskcluster-worker-manager-production on behalf of the signed-in user."
+      admin_consent_display_name = "Access taskcluster-worker-manager-production"
+      enabled                    = true
+      id                         = "c18c93e8-8d9c-4efe-b2d0-df6a2a1e57b6"
+      type                       = "User"
+      user_consent_description   = "Allow the application to access taskcluster-worker-manager-production on your behalf."
+      user_consent_display_name  = "Access taskcluster-worker-manager-production"
+      value                      = "user_impersonation"
     }
   }
 }
 # service principal: taskcluster-worker-manager-production
 resource "azuread_service_principal" "taskcluster-worker-manager-production" {
-  application_id = azuread_application.taskcluster-worker-manager-production.application_id
-  tags           = concat(["name:taskcluster-worker-manager-production"], local.sp_tags)
+  client_id = azuread_application.taskcluster-worker-manager-production.client_id
+  tags      = concat(["name:taskcluster-worker-manager-production"], local.sp_tags)
 }
 # application: taskcluster-worker-manager-stagging
 resource "azuread_application" "taskcluster-worker-manager-staging" {
   display_name = "taskcluster-worker-manager-staging"
-  homepage     = "https://stage.taskcluster.nonprod.cloudops.mozgcp.net/"
   required_resource_access {
     # azure management service api
     resource_app_id = "797f4846-ba00-4fd7-ba43-dac1f8f63013"
@@ -46,11 +67,34 @@ resource "azuread_application" "taskcluster-worker-manager-staging" {
       type = "Scope"
     }
   }
+  web {
+    homepage_url = "https://stage.taskcluster.nonprod.cloudops.mozgcp.net/"
+    implicit_grant {
+      access_token_issuance_enabled = false
+      id_token_issuance_enabled     = true
+    }
+  }
+  api {
+    known_client_applications      = []
+    mapped_claims_enabled          = false
+    requested_access_token_version = 1
+
+    oauth2_permission_scope {
+      admin_consent_description  = "Allow the application to access taskcluster-worker-manager-staging on behalf of the signed-in user."
+      admin_consent_display_name = "Access taskcluster-worker-manager-staging"
+      enabled                    = true
+      id                         = "3bcc80ea-8ea0-49b4-901f-8fc3b231dabb"
+      type                       = "User"
+      user_consent_description   = "Allow the application to access taskcluster-worker-manager-staging on your behalf."
+      user_consent_display_name  = "Access taskcluster-worker-manager-staging"
+      value                      = "user_impersonation"
+    }
+  }
 }
 # service principal: taskcluster-worker-manager-production
 resource "azuread_service_principal" "taskcluster-worker-manager-staging" {
-  application_id = azuread_application.taskcluster-worker-manager-staging.application_id
-  tags           = concat(["name:taskcluster-worker-manager-staging"], local.sp_tags)
+  client_id = azuread_application.taskcluster-worker-manager-staging.client_id
+  tags      = concat(["name:taskcluster-worker-manager-staging"], local.sp_tags)
 }
 # role definition: taskcluster-worker-manager-production
 resource "azurerm_role_definition" "taskcluster-worker-manager" {
@@ -136,10 +180,40 @@ resource "azuread_application" "worker_manager_tceng" {
     "a1ca5b04-b1ad-4e52-9edb-2d7b30e9198c",
     "4cdab8cc-ae18-4a1f-92ad-264e67a1cc30"
   ]
+  api {
+    known_client_applications      = []
+    mapped_claims_enabled          = false
+    requested_access_token_version = 1
+
+    oauth2_permission_scope {
+      admin_consent_description  = "Allow the application to access worker_manager_tceng on behalf of the signed-in user."
+      admin_consent_display_name = "Access worker_manager_tceng"
+      enabled                    = true
+      id                         = "5ac0ddfb-49be-45a0-bec1-38926db089a4"
+      type                       = "User"
+      user_consent_description   = "Allow the application to access worker_manager_tceng on your behalf."
+      user_consent_display_name  = "Access worker_manager_tceng"
+      value                      = "user_impersonation"
+    }
+  }
+
+  web {
+    redirect_uris = []
+
+    implicit_grant {
+      access_token_issuance_enabled = false
+      id_token_issuance_enabled     = true
+    }
+  }
 }
 
 resource "azuread_service_principal" "worker_manager_tceng" {
-  application_id = azuread_application.worker_manager_tceng.application_id
+  client_id = azuread_application.worker_manager_tceng.client_id
+  owners = [
+    "4cdab8cc-ae18-4a1f-92ad-264e67a1cc30",
+    "a1ca5b04-b1ad-4e52-9edb-2d7b30e9198c",
+    "fdb37821-4f7e-4c00-8c7e-e5344306e6f8",
+  ]
 }
 
 resource "azurerm_role_assignment" "worker_manager_tceng" {
