@@ -49,23 +49,12 @@ resource "azurerm_storage_account" "hgbundle" {
   }
 }
 
-resource "azapi_resource" "hgbundlecontainer" {
-  for_each  = local.regions
-  type      = "Microsoft.Storage/storageAccounts/blobServices/containers@2023-05-01"
-  name      = "hgbundle"
-  parent_id = "${azurerm_storage_account.hgbundle[each.value].id}/blobServices/default"
-  body = {
-    properties = {
-      defaultEncryptionScope      = "$account-encryption-key"
-      denyEncryptionScopeOverride = false
-      immutableStorageWithVersioning = {
-        enabled = true
-      }
-      publicAccess = "Container"
-    }
-  }
+resource "azurerm_storage_container" "hgbundle" {
+  for_each              = local.regions
+  name                  = "hgbundle"
+  storage_account_name  = azurerm_storage_account.hgbundle[each.value].name
+  container_access_type = "container"
 }
-
 resource "azurerm_storage_management_policy" "hgbundle" {
   for_each           = local.regions
   storage_account_id = azurerm_storage_account.hgbundle[each.value].id
