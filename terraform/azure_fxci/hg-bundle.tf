@@ -34,52 +34,41 @@ resource "azurerm_resource_group" "hgbundle" {
   tags     = local.tags
 }
 
-# resource "azurerm_storage_account" "hgbundle" {
-#   for_each = local.regions
-#   name                     = substr(replace("mozhg${each.value}", "/\\W|_|\\s/", ""), 0, 24)
-#   resource_group_name      = azurerm_resource_group.hgbundle[each.value].name
-#   account_replication_type = "LRS"
-#   location                 = each.value
-#   account_tier             = "Premium"
-#   tags                     = local.tags
-#   account_kind             = "BlockBlobStorage"
-#   last_access_time_enabled = true
-#   blob_properties {
-#     versioning_enabled = true
-#   }
-# }
+resource "azurerm_storage_account" "hgbundle" {
+  for_each                 = local.regions
+  name                     = substr(replace("mozhg${each.value}", "/\\W|_|\\s/", ""), 0, 24)
+  resource_group_name      = azurerm_resource_group.hgbundle[each.value].name
+  account_replication_type = "LRS"
+  location                 = each.value
+  account_tier             = "Premium"
+  tags                     = local.tags
+  account_kind             = "BlockBlobStorage"
+  blob_properties {
+    versioning_enabled       = true
+    last_access_time_enabled = true
+  }
+}
 
-# resource "azapi_resource" "hgbundlecontainer" {
-#   for_each  = local.regions
-#   type      = "Microsoft.Storage/storageAccounts/blobServices/containers@2023-05-01"
-#   name      = "hgbundle"
-#   parent_id = "${azurerm_storage_account.hgbundle[each.value].id}/blobServices/default"
-#   body = {
-#     properties = {
-#       defaultEncryptionScope      = "$account-encryption-key"
-#       denyEncryptionScopeOverride = false
-#       immutableStorageWithVersioning = {
-#         enabled = true
-#       }
-#       publicAccess = "Container"
-#     }
-#   }
-# }
-
-# resource "azurerm_storage_management_policy" "hgbundle" {
-#   for_each           = local.regions
-#   storage_account_id = azurerm_storage_account.hgbundle[each.value].id
-#   rule {
-#     name    = "delete-old-hgbundle"
-#     enabled = true
-#     filters {
-#       blob_types   = ["blockBlob"]
-#       prefix_match = ["hgbundle/*"]
-#     }
-#     actions {
-#       base_blob {
-#         delete_after_days_since_last_access_time_greater_than = 1
-#       }
-#     }
-#   }
-# }
+resource "azurerm_storage_container" "hgbundle" {
+  for_each              = local.regions
+  name                  = "hgbundle"
+  storage_account_name  = azurerm_storage_account.hgbundle[each.value].name
+  container_access_type = "container"
+}
+resource "azurerm_storage_management_policy" "hgbundle" {
+  for_each           = local.regions
+  storage_account_id = azurerm_storage_account.hgbundle[each.value].id
+  rule {
+    name    = "delete-old-hgbundle"
+    enabled = true
+    filters {
+      blob_types   = ["blockBlob"]
+      prefix_match = ["hgbundle/*"]
+    }
+    actions {
+      base_blob {
+        delete_after_days_since_modification_greater_than = 7
+      }
+    }
+  }
+}
