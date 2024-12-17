@@ -8,8 +8,5 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 3"
     }
-    azapi = {
-      source  = "azure/azapi"
-    }
   }
 }
