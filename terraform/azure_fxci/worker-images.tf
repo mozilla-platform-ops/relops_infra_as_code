@@ -34,7 +34,7 @@ resource "azurerm_shared_image" "win10_64_2009_alpha" {
   identifier {
     publisher = "MicrosoftWindowsDesktop"
     offer     = "Windows-10"
-    sku       = "win10-22h2-avd"
+    sku       = "win10-22h2-avd-g2"
   }
 }
 
