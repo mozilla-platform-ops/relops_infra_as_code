@@ -64,7 +64,7 @@ resource "azurerm_shared_image" "win10_64_2009" {
   identifier {
     publisher = "MicrosoftWindowsDesktop"
     offer     = "Windows-10"
-    sku       = "win10-22h2-avd"
+    sku       = "win10-22h2-avd-g2"
   }
 }
 
@@ -305,5 +305,63 @@ resource "azurerm_shared_image" "win11_64_24h2_alpha" {
     publisher = "MicrosoftWindowsDesktop"
     offer     = "Windows-11"
     sku       = "win11-24h2-avd"
+  }
+}
+
+resource "azurerm_shared_image_gallery" "win2022_64_2009_alpha" {
+  name                = "win2022_64_2009_alpha"
+  resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
+  location            = azurerm_resource_group.rg-packer-worker-images.location
+  description         = "win2022_64_2009_alpha"
+
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "rg-packer-worker-images"
+    })
+  )
+}
+
+resource "azurerm_shared_image" "win2022_64_2009_alpha" {
+  name                = "win2022_64_2009_alpha"
+  gallery_name        = azurerm_shared_image_gallery.win2022_64_2009_alpha.name
+  resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
+  location            = azurerm_resource_group.rg-packer-worker-images.location
+  os_type             = "Windows"
+  release_note_uri    = "https://github.com/mozilla-platform-ops/worker-images/releases"
+  hyper_v_generation  = "V2"
+
+  identifier {
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2022-datacenter-azure-edition"
+  }
+}
+
+resource "azurerm_shared_image_gallery" "win2022_64_2009" {
+  name                = "win2022_64_2009"
+  resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
+  location            = azurerm_resource_group.rg-packer-worker-images.location
+  description         = "win2022_64_2009"
+
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "rg-packer-worker-images"
+    })
+  )
+}
+
+resource "azurerm_shared_image" "win2022_64_2009" {
+  name                = "win2022_64_2009"
+  gallery_name        = azurerm_shared_image_gallery.win2022_64_2009.name
+  resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
+  location            = azurerm_resource_group.rg-packer-worker-images.location
+  os_type             = "Windows"
+  release_note_uri    = "https://github.com/mozilla-platform-ops/worker-images/releases"
+  hyper_v_generation  = "V2"
+
+  identifier {
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2022-datacenter-azure-edition"
   }
 }
