@@ -118,6 +118,8 @@ Theory: queue2.sh replaced tc-web.sh, but tc-web.sh was never decommissioned?
 
 ##### prom migration status
 
+status of the migration of each of the telegraf configs to prometheus.
+
 - telegraf_workers: DONE
   - see telegraf_workers.conf and queue2_prom.sh
   - queue2.sh: DONE
@@ -145,11 +147,11 @@ Theory: queue2.sh replaced tc-web.sh, but tc-web.sh was never decommissioned?
 
 #### questions
 
-- what's the difference between queue2.sh and queue.sh
+- ANSWERED: what's the difference between queue2.sh and queue.sh
   - not much, slight key change (quarantinedWorkers vs quarantined)
   - queue2 is line format (vs json)
   - queue2.sh has idle and running workers
-- what's the difference between queue.sh and tc_web.sh?
+- ANSWERED: what's the difference between queue.sh and tc_web.sh?
   - tc_web.sh has idle (queue2 also has idle)
   - tc_web.sh seems broken (bad data produced, counts of -1, 0, or 1 for everything)
 
