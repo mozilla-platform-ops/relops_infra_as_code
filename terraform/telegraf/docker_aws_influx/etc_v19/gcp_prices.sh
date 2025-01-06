@@ -11,7 +11,7 @@
 #n1-standard-16   europe-west4-b             16    60.00
 #n1-standard-16   us-west2-c                 16    60.00
 
-API_KEY="AIzaSyBwuOn94CAIG-lM30KfaLG4JuXWWTrC_O0"
+API_KEY="REDACTED"
 
 (
 since=${1:-24}

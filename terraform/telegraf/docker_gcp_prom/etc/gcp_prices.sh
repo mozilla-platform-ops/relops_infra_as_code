@@ -11,7 +11,11 @@
 #n1-standard-16   europe-west4-b             16    60.00
 #n1-standard-16   us-west2-c                 16    60.00
 
-API_KEY="AIzaSyBwuOn94CAIG-lM30KfaLG4JuXWWTrC_O0"
+# Check if API_KEY is not set or is empty
+if [ -z "${API_KEY}" ]; then
+  echo "Error: API_KEY is not defined." >&2
+  exit 1
+fi
 
 (
 since=${1:-24}
