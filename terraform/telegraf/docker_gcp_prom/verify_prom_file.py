@@ -40,13 +40,15 @@ if __name__ == "__main__":
     try:
         validate_prometheus_metrics(metrics_data, quiet=args.quiet)
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"❌ Error: File/content is invalid. Exception: {e}")
         sys.exit(1)
 
     # celebrate success
     #
     # saluting person
-    print("🫡 😁 " * 8)
-    print("    File validated successfully!")
+    # print("🫡 😁 " * 8)
     # dice time
-    print("🎲 🧨 " * 8)
+    # print("🎲 🧨 " * 8)
+    #
+    # simpler
+    print("✅ Success: File/content is valid!")
