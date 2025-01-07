@@ -30,9 +30,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Validate Prometheus metrics.")
     # add a flag for --quiet mode
     parser.add_argument("-q", "--quiet", action="store_true", help="Only output errors.")
-    parser.add_argument("metrics_file", help="The path to the file containing the Prometheus metrics.")
+    parser.add_argument("metrics_file", nargs='?', help="The path to the file containing the Prometheus metrics. If not provided, input is read from stdin.")
     args = parser.parse_args()
-    metrics_data = load_file(args.metrics_file)
+
+    metrics_data = load_file(args.metrics_file) if args.metrics_file else sys.stdin.read()
+    if metrics_data is None:
+        sys.exit(1)
+
     try:
         validate_prometheus_metrics(metrics_data, quiet=args.quiet)
     except Exception as e:
@@ -46,12 +50,3 @@ if __name__ == "__main__":
     print("    File validated successfully!")
     # dice time
     print("🎲 🧨 " * 8)
-
-
-
-
-
-
-
-
-
