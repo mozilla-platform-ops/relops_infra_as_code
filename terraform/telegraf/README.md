@@ -51,13 +51,17 @@ telegraf_queues: telegraf_queues.conf, provides tc worker pool info,
               "taskQueueId": "proj-autophone/gecko-t-bitbar-gw-perf-a55",
               "workers":73,"quarantinedWorkers":0,"pendingTasks": 0
             }
-            tc-web example output:
-                (  "workers": 2,
+            tc-web.sh example output:
+                {
+                "provisionerId": "releng-hardware",
+                "workerType": "win11-64-2009-hw-ref",
+                "taskQueueId": "releng-hardware/win11-64-2009-hw-ref",
+                "workers": 1,
                 "runningWorkers": 0,
                 "idleWorkers": 0,
-                "quarantinedWorkers": 2,
+                "quarantinedWorkers": 1,
                 "pendingTasks": 0
-                )
+                }
 telegraf_vcs: telegraf_vcs.conf, runs:
             release_cal.sh
             google_chrome_releases.sh
@@ -131,7 +135,10 @@ moved to https://mozilla-hub.atlassian.net/browse/RELOPS-1163
 - ANSWERED: what's the difference between queue.sh and tc_web.sh?
   - tc_web.sh has idle (queue2 also has idle)
   - tc_web.sh seems broken (bad data produced, counts of -1, 0, or 1 for everything)
-
+- ANSWERED: tc-web.sh vs tc-web2.sh?
+  - tc-web2 doesn't work. script in development that never got finished?
+  - tc-web2 seems older strangely
+  - both are graphql based
 
 ###### queue2.sh vs queue.sh
 
