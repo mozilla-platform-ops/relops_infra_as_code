@@ -13,6 +13,8 @@ url='https://firefox-ci-tc.services.mozilla.com/graphql'
 batch_limit=1000
 prov_filter=("$@") # Accept provisioner filters as command-line arguments
 
+
+
 # Function to fetch worker type details
 fetch_worker_data() {
   local provisioner="$1"
@@ -25,43 +27,61 @@ fetch_worker_data() {
 
   continuation='"limit":'"${batch_limit}"
   while true; do
+    # Fetch data from the API
     data=$(curl -s -X POST "${url}" \
       -H 'content-type: application/json' \
-      --data '{"operationName":"ViewWorkers","variables":{"provisionerId":"'"${provisioner}"'","workerType":"'"${workerType}"'","workersConnection":{'${continuation}'}},"query":"query ViewWorkers($provisionerId: String!, $workerType: String!, $workersConnection: PageConnection) {\n  workers(provisionerId: $provisionerId, workerType: $workerType, connection: $workersConnection) {\n    pageInfo {\n      hasNextPage\n      cursor\n    }\n    edges {\n      node {\n        quarantineUntil\n        latestTask {\n          state\n        }\n      }\n    }\n  }\n}"}'
+      --data '{"operationName":"ViewWorkers","variables":{"provisionerId":"'"${provisioner}"'","workerType":"'"${workerType}"'","workersConnection":{'${continuation}'}},"query":"query ViewWorkers($provisionerId: String!, $workerType: String!, $workersConnection: PageConnection) {\n  workers(provisionerId: $provisionerId, workerType: $workerType, connection: $workersConnection) {\n    pageInfo {\n      hasNextPage\n      cursor\n    }\n    edges {\n      node {\n        quarantineUntil\n        workerId\n        workerGroup\n      }\n    }\n  }\n}"}'
     )
+
+    # Log the raw API response for debugging
+    # echo "API Response for provisioner=${provisioner}, workerType=${workerType}: $data" >&2
 
     # Check for valid data
     if [[ -z "$data" || "$data" == "null" ]]; then
-      echo "Error: Failed to fetch data for provisioner=${provisioner}, workerType=${workerType}" >&2
+      echo "Error: No data returned for provisioner=${provisioner}, workerType=${workerType}" >&2
       break
     fi
 
     workers=$(echo "$data" | jq -c '.data.workers.edges[]?.node' 2>/dev/null)
     if [[ -z "$workers" ]]; then
+      echo "No workers found for provisioner=${provisioner}, workerType=${workerType}" >&2
       break
     fi
 
+    # Process each worker
     for worker in $workers; do
-      state=$(echo "$worker" | jq -r '.latestTask.state // "IDLE"')
-      if [[ "$state" == "RUNNING" ]]; then
+      quarantineUntil=$(echo "$worker" | jq -r '.quarantineUntil')
+      workerId=$(echo "$worker" | jq -r '.workerId')
+      workerGroup=$(echo "$worker" | jq -r '.workerGroup')
+
+      # Check if quarantineUntil is in the past
+      isQuarantined=false
+      if [[ "$quarantineUntil" != "null" ]]; then
+        quarantineTimestamp=$(date -d "$quarantineUntil" +%s 2>/dev/null)
+        currentTimestamp=$(date +%s)
+        if [[ $quarantineTimestamp -gt $currentTimestamp ]]; then
+          isQuarantined=true
+        fi
+      fi
+
+      # Calculate running, idle, and quarantined workers
+      if [[ "$isQuarantined" == true ]]; then
+        ((quarantined++))
+      elif [[ "$workerId" != "null" && "$workerGroup" != "null" ]]; then
         ((running++))
       else
         ((idle++))
       fi
-
-      quarantineUntil=$(echo "$worker" | jq -r '.quarantineUntil')
-      if [[ "$quarantineUntil" != "null" ]]; then
-        ((quarantined++))
-        ((idle--))
-      fi
       ((total++))
     done
 
+    # Check if there are more pages of data
     hasNextPage=$(echo "$data" | jq -r '.data.workers.pageInfo.hasNextPage' 2>/dev/null)
     if [[ "$hasNextPage" != "true" ]]; then
       break
     fi
 
+    # Update continuation token
     continuation='"cursor":"'"$(echo "$data" | jq -r '.data.workers.pageInfo.cursor' 2>/dev/null)"'","limit":'"${batch_limit}"
   done
 
