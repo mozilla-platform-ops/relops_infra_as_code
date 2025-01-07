@@ -70,7 +70,8 @@ fetch_worker_data() {
       quarantineUntil=$(echo "$worker" | jq -r '.quarantineUntil')
       workerId=$(echo "$worker" | jq -r '.workerId')
       workerGroup=$(echo "$worker" | jq -r '.workerGroup')
-      state=$(echo "$worker" | jq -r '.latestTask.state // "IDLE"')
+      # parsing state is not working yet, not selecting the correct element.
+      # state=$(echo "$worker" | jq -r '.latestTask.state // "IDLE"')
 
       # Debugging: Log quarantineUntil value
       # echo "quarantineUntil: $quarantineUntil, state: $state" >&2
@@ -91,7 +92,7 @@ fetch_worker_data() {
       # Calculate running, idle, and quarantined workers
       if [[ "$isQuarantined" == true ]]; then
         ((quarantined++))
-      elif [[ "$state" == "RUNNING" ]]; then
+      elif [[ "$worker" == *"RUNNING"* ]]; then
         ((running++))
       else
         ((idle++))
