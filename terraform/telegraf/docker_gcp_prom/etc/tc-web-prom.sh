@@ -67,7 +67,7 @@ fetch_worker_data() {
       workerGroup=$(echo "$worker" | jq -r '.workerGroup')
 
       # Debugging: Log quarantineUntil value
-      echo "quarantineUntil: $quarantineUntil" >&2
+      # echo "quarantineUntil: $quarantineUntil" >&2
 
       # Check if quarantineUntil is in the future
       isQuarantined=false
