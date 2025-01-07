@@ -20,7 +20,6 @@ url='https://firefox-ci-tc.services.mozilla.com/graphql'
 batch_limit=1000
 prov_filter=("$@") # Accept provisioner filters as command-line arguments
 
-
 # Function to fetch worker type details
 fetch_worker_data() {
   local provisioner="$1"
@@ -48,7 +47,7 @@ fetch_worker_data() {
     # Fetch data from the API
     data=$(curl -s -X POST "${url}" \
       -H 'content-type: application/json' \
-      --data '{"operationName":"ViewWorkers","variables":{"provisionerId":"'"${provisioner}"'","workerType":"'"${workerType}"'","workersConnection":{'${continuation}'}},"query":"query ViewWorkers($provisionerId: String!, $workerType: String!, $workersConnection: PageConnection) {\n  workers(provisionerId: $provisionerId, workerType: $workerType, connection: $workersConnection) {\n    pageInfo {\n      hasNextPage\n      cursor\n    }\n    edges {\n      node {\n        quarantineUntil\n        workerId\n        workerGroup\n      }\n    }\n  }\n}"}'
+      --data '{"operationName":"ViewWorkers","variables":{"provisionerId":"'"${provisioner}"'","workerType":"'"${workerType}"'","workersConnection":{'$continuation'}},"query":"query ViewWorkers($provisionerId: String!, $workerType: String!, $workersConnection: PageConnection, $quarantined: Boolean) {\n  workers(provisionerId: $provisionerId, workerType: $workerType, connection: $workersConnection, isQuarantined: $quarantined) {\n    pageInfo {\n      hasNextPage\n      hasPreviousPage\n      cursor\n      previousCursor\n      nextCursor\n      __typename\n    }\n    edges {\n      node {\n        latestTask {\n          run {\n            workerGroup\n            workerId\n            taskId\n            runId\n            started\n            resolved\n            state\n            __typename\n          }\n          __typename\n        }\n        workerGroup\n  workerId\n        quarantineUntil\n        }\n      }\n    }\n  }\n"}'
     )
 
     # Log the raw API response for debugging
@@ -71,9 +70,10 @@ fetch_worker_data() {
       quarantineUntil=$(echo "$worker" | jq -r '.quarantineUntil')
       workerId=$(echo "$worker" | jq -r '.workerId')
       workerGroup=$(echo "$worker" | jq -r '.workerGroup')
+      state=$(echo "$worker" | jq -r '.latestTask.state // "IDLE"')
 
       # Debugging: Log quarantineUntil value
-      # echo "quarantineUntil: $quarantineUntil" >&2
+      # echo "quarantineUntil: $quarantineUntil, state: $state" >&2
 
       # Check if quarantineUntil is in the future
       isQuarantined=false
@@ -91,7 +91,7 @@ fetch_worker_data() {
       # Calculate running, idle, and quarantined workers
       if [[ "$isQuarantined" == true ]]; then
         ((quarantined++))
-      elif [[ "$workerId" != "null" && "$workerGroup" != "null" ]]; then
+      elif [[ "$state" == "RUNNING" ]]; then
         ((running++))
       else
         ((idle++))
