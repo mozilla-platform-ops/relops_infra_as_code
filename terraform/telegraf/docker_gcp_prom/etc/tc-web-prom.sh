@@ -20,6 +20,18 @@ fetch_worker_data() {
   local provisioner="$1"
   local workerType="$2"
 
+  # Determine the appropriate date command
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    if [[ -x "/opt/homebrew/opt/coreutils/libexec/gnubin/date" ]]; then
+      date_cmd="/opt/homebrew/opt/coreutils/libexec/gnubin/date"
+    else
+      echo "Error: GNU date not found at /opt/homebrew/opt/coreutils/libexec/gnubin/date. Install coreutils via Homebrew." >&2
+      exit 1
+    fi
+  else
+    date_cmd="date"
+  fi
+
   total=0
   running=0
   idle=0
@@ -54,11 +66,17 @@ fetch_worker_data() {
       workerId=$(echo "$worker" | jq -r '.workerId')
       workerGroup=$(echo "$worker" | jq -r '.workerGroup')
 
-      # Check if quarantineUntil is in the past
+      # Debugging: Log quarantineUntil value
+      echo "quarantineUntil: $quarantineUntil" >&2
+
+      # Check if quarantineUntil is in the future
       isQuarantined=false
       if [[ "$quarantineUntil" != "null" ]]; then
-        quarantineTimestamp=$(date -d "$quarantineUntil" +%s 2>/dev/null)
-        currentTimestamp=$(date +%s)
+        # Strip fractional seconds and remove 'Z'
+        sanitizedQuarantineUntil=$(echo "$quarantineUntil" | sed -E 's/\.[0-9]+//; s/Z//')
+        quarantineTimestamp=$($date_cmd -u -d "$sanitizedQuarantineUntil" +%s 2>/dev/null)
+        currentTimestamp=$($date_cmd -u +%s)
+
         if [[ $quarantineTimestamp -gt $currentTimestamp ]]; then
           isQuarantined=true
         fi
