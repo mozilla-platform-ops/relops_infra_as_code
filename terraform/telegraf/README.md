@@ -120,30 +120,7 @@ Theory: queue2.sh replaced tc-web.sh, but tc-web.sh was never decommissioned?
 
 status of the migration of each of the telegraf configs to prometheus.
 
-- telegraf_workers: DONE
-  - see telegraf_workers.conf and queue2_prom.sh
-  - queue2.sh: DONE
-  - change config: DONE
-  - prefix and help on all scripts: DONE
-- telegraf_queues: in progress
-  - queue.sh: DONE
-    - can be replaced with queue2_prom.sh (only difference is quarantinedWorkers vs quarantined)
-      - will need to adjust all queries for this though...
-  - tc_web.sh: TODO
-  - set final prefix: DONE
-  - prefix and help on all scripts: TODO
-  - change config: in progress
-- telegraf_vcs: in progress
-  - release_cal.sh: in progress
-  - google_chrome_releases.sh: TODO
-  - check_vcs.sh: TODO
-  - treestatus2.sh: TODO
-  - prefix and help on all scripts: TODO
-  - change config: TODO
-- telegraf: TODO
-  - rewrite webhooks: TODO
-  - prefix and help on all scripts: TODO
-  - change config: TODO
+moved to https://mozilla-hub.atlassian.net/browse/RELOPS-1163
 
 #### questions
 
