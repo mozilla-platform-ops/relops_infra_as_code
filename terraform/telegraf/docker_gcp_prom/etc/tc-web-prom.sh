@@ -108,6 +108,13 @@ fi
       read -r total running idle quarantined <<< "$(fetch_worker_data "$provisioner" "$workerType")"
       pendingTasks=$(curl -s "${queue}/pending/${provisioner}/${workerType}" | jq -r '.pendingTasks // 0' 2>/dev/null)
 
+      # Ensure all metrics are printed with defaults if unset
+      total=${total:-0}
+      running=${running:-0}
+      idle=${idle:-0}
+      quarantined=${quarantined:-0}
+      pendingTasks=${pendingTasks:-0}
+
       echo "taskcluster_workers_total{provisionerId=\"${provisioner}\",workerType=\"${workerType}\"} ${total}"
       echo "taskcluster_running_workers{provisionerId=\"${provisioner}\",workerType=\"${workerType}\"} ${running}"
       echo "taskcluster_idle_workers{provisionerId=\"${provisioner}\",workerType=\"${workerType}\"} ${idle}"
