@@ -5,6 +5,9 @@
 # TODO: hack to get this green. don't do this.
 # shellcheck disable=all
 
+# source common.sh
+. "$(dirname "$0")/common.sh"
+
 PATH="$PATH:$(dirname "${BASH_SOURCE[0]}")"
 
 queue='https://firefox-ci-tc.services.mozilla.com/api/queue/v1'
@@ -12,7 +15,6 @@ url='https://firefox-ci-tc.services.mozilla.com/graphql'
 
 batch_limit=1000
 prov_filter=("$@") # Accept provisioner filters as command-line arguments
-
 
 
 # Function to fetch worker type details
@@ -122,16 +124,16 @@ fi
 
 # Generate Prometheus metrics
 {
-  echo "# HELP taskcluster_workers_total Total number of workers."
-  echo "# TYPE taskcluster_workers_total gauge"
-  echo "# HELP taskcluster_running_workers Total number of running workers."
-  echo "# TYPE taskcluster_running_workers gauge"
-  echo "# HELP taskcluster_idle_workers Total number of idle workers."
-  echo "# TYPE taskcluster_idle_workers gauge"
-  echo "# HELP taskcluster_quarantined_workers Total number of quarantined workers."
-  echo "# TYPE taskcluster_quarantined_workers gauge"
-  echo "# HELP taskcluster_pending_tasks Total number of pending tasks."
-  echo "# TYPE taskcluster_pending_tasks gauge"
+  echo "# HELP ${metric_prefix}taskcluster_workers_total Total number of workers."
+  echo "# TYPE ${metric_prefix}taskcluster_workers_total gauge"
+  echo "# HELP ${metric_prefix}taskcluster_running_workers Total number of running workers."
+  echo "# TYPE ${metric_prefix}taskcluster_running_workers gauge"
+  echo "# HELP ${metric_prefix}taskcluster_idle_workers Total number of idle workers."
+  echo "# TYPE ${metric_prefix}taskcluster_idle_workers gauge"
+  echo "# HELP ${metric_prefix}taskcluster_quarantined_workers Total number of quarantined workers."
+  echo "# TYPE ${metric_prefix}taskcluster_quarantined_workers gauge"
+  echo "# HELP ${metric_prefix}taskcluster_pending_tasks Total number of pending tasks."
+  echo "# TYPE ${metric_prefix}taskcluster_pending_tasks gauge"
 
   for provisioner in $provisioners; do
     workerTypes=$(curl -s "${queue}/provisioners/${provisioner}/worker-types" | jq -r '.workerTypes[]?.workerType' 2>/dev/null)
@@ -153,11 +155,11 @@ fi
       quarantined=${quarantined:-0}
       pendingTasks=${pendingTasks:-0}
 
-      echo "taskcluster_workers_total{provisionerId=\"${provisioner}\",workerType=\"${workerType}\"} ${total}"
-      echo "taskcluster_running_workers{provisionerId=\"${provisioner}\",workerType=\"${workerType}\"} ${running}"
-      echo "taskcluster_idle_workers{provisionerId=\"${provisioner}\",workerType=\"${workerType}\"} ${idle}"
-      echo "taskcluster_quarantined_workers{provisionerId=\"${provisioner}\",workerType=\"${workerType}\"} ${quarantined}"
-      echo "taskcluster_pending_tasks{provisionerId=\"${provisioner}\",workerType=\"${workerType}\"} ${pendingTasks}"
+      echo "${metric_prefix}taskcluster_workers_total{provisionerId=\"${provisioner}\",workerType=\"${workerType}\"} ${total}"
+      echo "${metric_prefix}taskcluster_running_workers{provisionerId=\"${provisioner}\",workerType=\"${workerType}\"} ${running}"
+      echo "${metric_prefix}taskcluster_idle_workers{provisionerId=\"${provisioner}\",workerType=\"${workerType}\"} ${idle}"
+      echo "${metric_prefix}taskcluster_quarantined_workers{provisionerId=\"${provisioner}\",workerType=\"${workerType}\"} ${quarantined}"
+      echo "${metric_prefix}taskcluster_pending_tasks{provisionerId=\"${provisioner}\",workerType=\"${workerType}\"} ${pendingTasks}"
     done
   done
 }
