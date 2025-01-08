@@ -3,6 +3,8 @@
 # Disable shellcheck for this script
 # shellcheck disable=all
 
+set -e
+
 # source common.sh
 . "$(dirname "$0")/common.sh"
 
