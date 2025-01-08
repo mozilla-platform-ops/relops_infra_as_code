@@ -40,7 +40,7 @@ mapfile -t git_commit < <(cat "$tmpfile" | grep -o '\("sha\|"message\|"\(name\|d
     | cut -d\" -f4)
 
 git_date=$(echo "${git_commit[0]}" | cut -d'"' -f 4)
-date=$(date -d"${git_date}" +%s)
+date=$(date -d"${git_date}" +%s%3N)
 message=${git_commit[1]}
 name=${git_commit[2]}
 hash=${git_commit[3]}
@@ -48,7 +48,7 @@ hash=${git_commit[3]}
 # Output in Prometheus format
 echo "# HELP ${metric_prefix}vcssync_exec_last_sync_time Timestamp of the last sync operation."
 echo "# TYPE ${metric_prefix}vcssync_exec_last_sync_time gauge"
-echo "${metric_prefix}vcssync_exec_last_sync_time{repo=\"${git_repo}\",branch=\"${git_branch}\",message=\"${message}\",name=\"${name}\",sha=\"${hash}\"} ${date}"
+echo "${metric_prefix}vcssync_exec_last_sync_time{repo=\"${git_repo}\",branch=\"${git_branch}\",message=\"${message}\",name=\"${name}\",sha=\"${hash}\"} 1 ${date}"
 
 # Fetch and process Mercurial commits
 mapfile -t hg_commit < <(curl -X GET "https://hg.mozilla.org/${hg_repo}/atom-log" 2>/dev/null \
@@ -59,12 +59,12 @@ mapfile -t hg_commit < <(curl -X GET "https://hg.mozilla.org/${hg_repo}/atom-log
 i=$(( ${#hg_commit[@]} / 4 ))
 while [[ i -gt 0 ]]; do
     hg_date=$(echo "${hg_commit[$i-1]}" | cut -d'"' -f 4)
-    date=$(date -d"${hg_date}" +%s)
+    date=$(date -d"${hg_date}" +%s%3N)
     name=$(echo "${hg_commit[$i-2]}" | sed -e 's/\\"/"/g' | cut -d\" -f4)
     hash=$(echo "${hg_commit[$i-3]}" | sed -e 's/\\"/"/g' | cut -d\" -f4)
     message=$(echo "${hg_commit[$i-4]}" | sed -e 's/\\"/"/g' | cut -d\" -f4)
 
-    echo "${metric_prefix}vcssync_exec_commit{repo=\"${hg_repo}\",message=\"${message}\",name=\"${name}\",sha=\"${hash}\"} ${date}"
+    echo "${metric_prefix}vcssync_exec_commit{repo=\"${hg_repo}\",message=\"${message}\",name=\"${name}\",sha=\"${hash}\"} 1 ${date}"
     i=$(( i - 4 ))
 done
 
@@ -77,5 +77,5 @@ else
     matching=1
 fi
 
-now=$(date -u +%s)
-echo "${metric_prefix}vcssync_exec_status{repo=\"${git_repo}\",branch=\"${git_branch}\",matching=\"${matching}\"} ${now}"
+now=$(($(date -u +%s%N) / 1000000))
+echo "${metric_prefix}vcssync_exec_status{repo=\"${git_repo}\",branch=\"${git_branch}\",matching=\"${matching}\"} 1 ${now}"
