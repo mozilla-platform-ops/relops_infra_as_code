@@ -18,8 +18,8 @@ def load_file(file_path):
 def validate_prometheus_metrics(metrics_data, quiet=False):
     # Attempt to parse the metrics using the Prometheus client parser
     for metric_family in text_string_to_metric_families(metrics_data):
-        if not quiet:
-            print(f"Metric Family: {metric_family.name}")
+        # if not quiet:
+        #     print(f"Metric Family: {metric_family.name}")
         for sample in metric_family.samples:
             if not quiet:
                 print(f"  Sample: {sample}")
