@@ -134,7 +134,7 @@ moved to https://mozilla-hub.atlassian.net/browse/RELOPS-1163
   - queue2.sh has idle and running workers
 - ANSWERED: what's the difference between queue.sh and tc_web.sh?
   - tc_web.sh has idle (queue2 also has idle)
-  - tc_web.sh uses GraphQL (vs REST API)
+  - tc_web.sh uses GraphQL for most data (also REST API, like rest)
   - tc_web.sh seems broken (bad data produced, counts of -1, 0, or 1 for everything)
     - fixed in tc-web-prom.sh
 - ANSWERED: tc-web.sh vs tc-web2.sh?
