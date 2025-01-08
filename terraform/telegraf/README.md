@@ -4,6 +4,8 @@
 
 most of the work is done via `aws_ecs_service` and `aws_ecs_task_definition` instances. search for those.
 
+this data is used in grafana dashboard. see https://github.com/mozilla-platform-ops/dashboards/tree/master/dashboards_2.
+
 ### details
 
 
@@ -117,6 +119,25 @@ telegraf_queues.conf-    "/etc/telegraf/tc-web.sh mobile-1 mobile-3 mobile-t"
 
 ```
 
+The scripts used across all docker image versions.
+
+NOTES: Not all need to be migrated?
+
+```bash
+$ cd git/relops_infra_as_code/terraform/telegraf/docker_aws_influx
+$ rg -A 1 commands | grep /etc/telegraf | cut -d ' ' -f 5 | sort | uniq | 's/\"//g'
+/etc/telegraf/check_vcs.sh
+/etc/telegraf/google_chrome_releases.sh
+/etc/telegraf/quarantined.sh
+/etc/telegraf/queue.sh
+/etc/telegraf/queue2.sh
+/etc/telegraf/release_cal.sh
+/etc/telegraf/tc-web.sh
+/etc/telegraf/treestatus.sh
+/etc/telegraf/treestatus2.sh
+
+```
+
 Theory: queue2.sh replaced tc-web.sh, but tc-web.sh was never decommissioned?
   - TODO: to confirm, dump grafana dashboards and audit their queries.
 
@@ -141,6 +162,9 @@ moved to https://mozilla-hub.atlassian.net/browse/RELOPS-1163
   - tc-web2 doesn't work. script in development that never got finished?
   - tc-web2 seems older strangely
   - both are graphql based
+- treestatus.sh vs treestatus2.sh
+  - treestatus2 is the only one used in prod.
+  -
 
 ###### queue2.sh vs queue.sh
 
