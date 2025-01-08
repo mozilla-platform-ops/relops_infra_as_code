@@ -51,6 +51,8 @@ echo "# TYPE ${metric_prefix}vcssync_exec_last_sync_time gauge"
 echo "${metric_prefix}vcssync_exec_last_sync_time{repo=\"${git_repo}\",branch=\"${git_branch}\",message=\"${message}\",name=\"${name}\",sha=\"${hash}\"} 1 ${date}"
 
 # Fetch and process Mercurial commits
+echo "# HELP ${metric_prefix}vcssync_exec_commit Commit information from Mercurial."
+echo "# TYPE ${metric_prefix}vcssync_exec_commit gauge"
 mapfile -t hg_commit < <(curl -X GET "https://hg.mozilla.org/${hg_repo}/atom-log" 2>/dev/null \
     | grep '  \(<title>\(\[default\]\)\?\|<name>\|<updated>\|<id>\)' \
     | sed -e 's/<\/\(title\|name\|updated\|id\)>/"/' -e 's/.*#changeset-/"sha": "/' \
@@ -78,4 +80,6 @@ else
 fi
 
 now=$(($(date -u +%s%N) / 1000000))
+echo "# HELP ${metric_prefix}vcssync_exec_status Status of the VCS sync operation."
+echo "# TYPE ${metric_prefix}vcssync_exec_status gauge"
 echo "${metric_prefix}vcssync_exec_status{repo=\"${git_repo}\",branch=\"${git_branch}\",matching=\"${matching}\"} 1 ${now}"
