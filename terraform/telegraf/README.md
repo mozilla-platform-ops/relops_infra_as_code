@@ -128,12 +128,12 @@ $ cd git/relops_infra_as_code/terraform/telegraf/docker_aws_influx
 $ rg -A 1 commands | grep /etc/telegraf | cut -d ' ' -f 5 | sort | uniq | 's/\"//g'
 /etc/telegraf/check_vcs.sh
 /etc/telegraf/google_chrome_releases.sh
-/etc/telegraf/quarantined.sh
+/etc/telegraf/quarantined.sh  # not run
 /etc/telegraf/queue.sh
 /etc/telegraf/queue2.sh
 /etc/telegraf/release_cal.sh
 /etc/telegraf/tc-web.sh
-/etc/telegraf/treestatus.sh
+/etc/telegraf/treestatus.sh # not run
 /etc/telegraf/treestatus2.sh
 
 ```

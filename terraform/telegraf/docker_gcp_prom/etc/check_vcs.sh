@@ -41,11 +41,9 @@
 hg_repo=${1:-mozilla-central}
 git_branch=${2:-master}
 
-#
-echo "aerickson: make this read from a file before using"
-exit 1
-
-github_auth="-u user_abc:key_123 "
+# disable auth for now, doesn't seem to be required'
+# github_auth="-u user_abc:key_123 "
+github_auth=" "
 git_repo=gecko-dev
 #git_branch=master
 git_output=false
