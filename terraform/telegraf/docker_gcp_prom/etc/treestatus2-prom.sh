@@ -78,8 +78,8 @@ handle_event() {
   esac
 
   # Output metrics in Prometheus exposition format
-  start_time=$(local_date DTSTART)
-  echo "${metric_prefix}{type=\"$rel_type\",version=\"$version\",summary=\"$summary\"} $start_time"
+  start_time=$(($(local_date DTSTART) * 1000))
+  echo "${metric_prefix}{type=\"$rel_type\",version=\"$version\",summary=\"$summary\"} 1 $start_time"
 }
 
 # Parse the .ics file
