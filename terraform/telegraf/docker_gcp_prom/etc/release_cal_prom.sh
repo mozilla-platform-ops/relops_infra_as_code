@@ -77,7 +77,7 @@ handle_event() {
 
   # Output metrics in Prometheus exposition format
   start_time=$(local_date DTSTART)
-  echo "${metric_prefix}release_cal_event{type=\"$rel_type\",version=\"$version\",summary=\"$summary\"} $start_time"
+  echo "${metric_prefix}release_cal_event{type=\"$rel_type\",version=\"$version\",summary=\"$summary\"} 1 $start_time"
 }
 
 # Parse the .ics file
