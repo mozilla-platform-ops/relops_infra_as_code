@@ -17,7 +17,7 @@ url='https://www.google.com/calendar/ical/mozilla.com_2d37383433353432352d3939%4
 # Download the .ics file
 ics=$(curl -L -s -o - "${url}" | tee "${filename}")
 
-# Function to convert a date to a UNIX timestamp
+# Function to convert a date to a UNIX timestamp in milliseconds
 function local_date() {
   local tz=${tzid[$1]}
   local dt=${content[$1]}
@@ -35,11 +35,11 @@ function local_date() {
   # Detect the operating system
   if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     # Use GNU date
-    date --date="TZ=\"$tz\" $dt" +%s
+    date --date="TZ=\"$tz\" $dt" +%s%3N
   elif [[ "$OSTYPE" == "darwin"* ]]; then
     # Use BSD/macOS date
-    TZ="$tz" date -j -f "%Y-%m-%dT%H:%M" "$dt" +%s 2>/dev/null || \
-    TZ="$tz" date -j -f "%Y-%m-%d" "$dt" +%s
+    TZ="$tz" date -j -f "%Y-%m-%dT%H:%M" "$dt" +%s%3N 2>/dev/null || \
+    TZ="$tz" date -j -f "%Y-%m-%d" "$dt" +%s%3N
   else
     echo "Unsupported OS: $OSTYPE" >&2
     exit 1
