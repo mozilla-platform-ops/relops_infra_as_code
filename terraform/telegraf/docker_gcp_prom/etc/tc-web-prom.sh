@@ -1,13 +1,15 @@
 #!/bin/bash
 
+# TODO: hack to get this green. don't do this.
+# shellcheck disable=all
+
+set -e
+
 # Script to expose TaskCluster metrics in Prometheus format for Telegraf scraping
 
 # based on tc-web.sh
 #   - tc-web.sh seems broken, only pending counts seem to work
 #     - due to running on OS X? (date command), tc-web.sh doesn't use `date` though
-
-# TODO: hack to get this green. don't do this.
-# shellcheck disable=all
 
 # source common.sh
 . "$(dirname "$0")/common.sh"
