@@ -24,7 +24,7 @@ function get_state()
 
   while read -r line ; do
     eval "$line"
-    timestamp=${time}000000000
+    timestamp=$((time * 1000))
 
     # Output the Prometheus metric line with the version as a label
     printf "${metric_prefix}chrome_release_version{channel=\"%s\",platform=\"%s\",version=\"%s\"} 1 %s\n" \
