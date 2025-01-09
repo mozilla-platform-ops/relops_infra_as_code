@@ -23,6 +23,10 @@ def validate_prometheus_metrics(metrics_data, quiet=False):
         for sample in metric_family.samples:
             if not quiet:
                 print(f"  Sample: {sample}")
+            if args.check_for_decimal_timestamps:
+                # check that the timestamp isn't a non-zero decimal
+                if any("." in str(sample.timestamp) and not str(sample.timestamp).endswith(".0") for sample in metric_family.samples):
+                    raise ValueError("Timestamps must be specified as epoch seconds, non-zero decimals are not allowed.")
 
 if __name__ == "__main__":
     # use agparse to parse the arguments
@@ -31,6 +35,8 @@ if __name__ == "__main__":
     # add a flag for --quiet mode
     parser.add_argument("-q", "--quiet", action="store_true", help="Only output errors.")
     parser.add_argument("metrics_file", nargs='?', help="The path to the file containing the Prometheus metrics. If not provided, input is read from stdin.")
+    # add a flag for disabling decimal timestamp checking, store it in args.check_for_decimal_timestamps
+    parser.add_argument("-d", "--no-decimal-timestamp-checking", dest="check_for_decimal_timestamps", action="store_false", help="Do not check for non-zero decimal timestamps.")
     args = parser.parse_args()
 
     metrics_data = load_file(args.metrics_file) if args.metrics_file else sys.stdin.read()
