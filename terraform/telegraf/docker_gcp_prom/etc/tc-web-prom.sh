@@ -14,6 +14,9 @@ set -e
 # source common.sh
 . "$(dirname "$0")/common.sh"
 
+# ensure jq is present
+ensure_jq
+
 PATH="$PATH:$(dirname "${BASH_SOURCE[0]}")"
 
 queue='https://firefox-ci-tc.services.mozilla.com/api/queue/v1'

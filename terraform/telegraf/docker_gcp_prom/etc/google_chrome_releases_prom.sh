@@ -7,6 +7,8 @@ set -e
 
 # source common.sh
 . "$(dirname "$0")/common.sh"
+# ensure jq is present
+ensure_jq
 
 # Print the Prometheus HELP and TYPE information once
 cat <<EOF

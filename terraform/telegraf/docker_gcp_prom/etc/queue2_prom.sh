@@ -7,6 +7,8 @@ set -e
 
 # source common.sh
 . "$(dirname "$0")/common.sh"
+# ensure jq is present
+ensure_jq
 
 # Script to pull taskcluster worker stats and output in Prometheus format for Telegraf
 
