@@ -79,7 +79,7 @@ else
     matching=1
 fi
 
-now=$(($(date -u +%s%N) / 1000000))
+now=$(($(date -u +%s) * 1000))
 echo "# HELP ${metric_prefix}vcssync_exec_status Status of the VCS sync operation."
 echo "# TYPE ${metric_prefix}vcssync_exec_status gauge"
 echo "${metric_prefix}vcssync_exec_status{repo=\"${git_repo}\",branch=\"${git_branch}\",matching=\"${matching}\"} 1 ${now}"
