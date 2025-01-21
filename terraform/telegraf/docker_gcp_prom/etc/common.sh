@@ -14,18 +14,6 @@
 # prod, nothing
 metric_prefix="" # Static prefix for all metrics
 
-# Determine the appropriate date command
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  if [[ -x "/opt/homebrew/opt/coreutils/libexec/gnubin/date" ]]; then
-    date_cmd="/opt/homebrew/opt/coreutils/libexec/gnubin/date"
-  else
-    echo "Error: GNU date not found at /opt/homebrew/opt/coreutils/libexec/gnubin/date. Install coreutils via Homebrew." >&2
-    exit 1
-  fi
-else
-  date_cmd="date"
-fi
-
 
 #
 # shared functions
@@ -38,3 +26,15 @@ function ensure_jq() {
         exit 1
     fi
 }
+
+# Determine the appropriate date command
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  if [[ -x "/opt/homebrew/opt/coreutils/libexec/gnubin/date" ]]; then
+    date_cmd="/opt/homebrew/opt/coreutils/libexec/gnubin/date"
+  else
+    echo "Error: GNU date not found at /opt/homebrew/opt/coreutils/libexec/gnubin/date. Install coreutils via Homebrew." >&2
+    exit 1
+  fi
+else
+  date_cmd="date"
+fi
