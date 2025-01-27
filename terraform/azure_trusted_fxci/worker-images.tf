@@ -128,7 +128,7 @@ resource "azurerm_shared_image" "win11_64_2009" {
   }
 }
 
-resource "azurerm_shared_image_gallery" "win11_a64_24h2_builder" {
+resource "azurerm_shared_image_gallery" "trusted_win11_a64_24h2_builder" {
   name                = "trusted_win11_a64_24h2_builder"
   resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
   location            = azurerm_resource_group.rg-packer-worker-images.location
@@ -141,9 +141,9 @@ resource "azurerm_shared_image_gallery" "win11_a64_24h2_builder" {
   )
 }
 
-resource "azurerm_shared_image" "win11_a64_24h2_builder" {
+resource "azurerm_shared_image" "trusted_win11_a64_24h2_builder" {
   name                = "trusted_win11_a64_24h2_builder"
-  gallery_name        = azurerm_shared_image_gallery.win11_a64_24h2_builder.name
+  gallery_name        = azurerm_shared_image_gallery.trusted_win11_a64_24h2_builder.name
   resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
   location            = azurerm_resource_group.rg-packer-worker-images.location
   os_type             = "Windows"
@@ -173,7 +173,7 @@ resource "azurerm_shared_image_gallery" "trusted_win2022_64_2009" {
 
 resource "azurerm_shared_image" "trusted_win2022_64_2009" {
   name                = "trusted_win2022_64_2009"
-  gallery_name        = azurerm_shared_image_gallery.win11_a64_24h2_builder.name
+  gallery_name        = azurerm_shared_image_gallery.trusted_win2022_64_2009.name
   resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
   location            = azurerm_resource_group.rg-packer-worker-images.location
   os_type             = "Windows"
