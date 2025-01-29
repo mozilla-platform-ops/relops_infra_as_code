@@ -41,7 +41,9 @@ EXPOSE 9273
 
 # Copy the entrypoint script and configuration directory
 COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 COPY ./etc /etc/telegraf
+RUN chmod +x /etc/telegraf/startup.sh
 
 # Set default command
 CMD ["/bin/bash", "/etc/telegraf/startup.sh"]
