@@ -3,7 +3,7 @@
 # TODO: hack to get this green. don't do this.
 # shellcheck disable=all
 
-set -x
+# set -x
 
 date
 
