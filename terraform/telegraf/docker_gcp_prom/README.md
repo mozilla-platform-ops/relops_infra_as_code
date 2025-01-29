@@ -5,7 +5,9 @@
 ### build image and push to artifact registry
 
 ```shell
-./docker_build
+# ./docker_build
+docker buildx build --platform linux/amd64 -t relsre-metrics .
+# not the resulting image sha1, use it below in the `docker tag` command
 
 # works
 docker tag 931f921e988c us-docker.pkg.dev/moz-fx-relsre-metrics-prod/relsre-metrics-prod/relsre-metrics:1.0.0
@@ -34,12 +36,13 @@ gcloud container clusters get-credentials webservices-high-prod --region=us-west
 # set the context (can use kubectx also)
 #   from ntade:
 #     so webservices-high-nonprod would be for i.e. dev and stage, and webservices-high-prod would be for prod
-kubectl config use-context gke_moz-fx-webservices-high-prod_us-west1_webservices-high-prod
+kubectl config use-context webservices-low-prod_us-west1
 
 # set the namespace (can use kubens also)
 # kubectl config set-context --namespace=relsre-metrics????
 #
 # https://stackoverflow.com/questions/61171487/what-is-the-difference-between-namespaces-and-contexts-in-kubernetes
+kubens relsre-metrics-prod
 
 # start the tunnel (will use current context to infer details)
 gcp-bastion-tunnel
@@ -48,6 +51,10 @@ cd ~/git/webservices-infra/relsre-metrics/k8s/relsre-metrics
 
 # helm diff upgrade --install -f <values-env>.yaml <chart name> .
 # helm diff upgrade --install -f values-prod.yaml relsre-metrics .
-helm diff upgrade --install relsre-metrics . -f values-prod.yaml --namespace=relsre-metrics
+helm diff upgrade --install relsre-metrics . -f values-prod.yaml --namespace=relsre-metrics-prod
+
+
+# view deployments
+helm list --namespace relsre-metrics-prod
 
 ```
