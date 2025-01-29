@@ -6,11 +6,12 @@
 set -x
 
 date
-echo "ECS_CONTAINER_METADATA_URI: ${ECS_CONTAINER_METADATA_URI}"
-curl "${ECS_CONTAINER_METADATA_URI}"
 
-container_name=$(curl "${ECS_CONTAINER_METADATA_URI}" | grep "container-name")
-echo "container_name: ${container_name}"
+# aws specific stuff, disabling for now
+# echo "ECS_CONTAINER_METADATA_URI: ${ECS_CONTAINER_METADATA_URI}"
+# curl "${ECS_CONTAINER_METADATA_URI}"
+# container_name=$(curl "${ECS_CONTAINER_METADATA_URI}" | grep "container-name")
+# echo "container_name: ${container_name}"
 
 # previous hack, to time-spread the reports from multiple cloned collectors
 #sleep_time=$(( RANDOM % 300 ))
