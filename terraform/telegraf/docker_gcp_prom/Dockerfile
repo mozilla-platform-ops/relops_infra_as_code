@@ -37,6 +37,7 @@ RUN apt-get update && \
 # Expose necessary ports for Telegraf
 EXPOSE 8092/udp 8094 8125/udp
 # Expose for Prometheus
+EXPOSE 8000
 EXPOSE 9273
 
 # Copy the entrypoint script and configuration directory
