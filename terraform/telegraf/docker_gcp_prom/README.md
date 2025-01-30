@@ -62,4 +62,18 @@ helm list --namespace relsre-metrics-prod
 # inspect pod for errors
 kubectl describe pod relsre-metrics-telegraf-queues  -n relsre-metrics-prod
 
+# view quotas
+kubectl get resourcequota -n relsre-metrics-prod
+
+# view cpu/ram usage for running pods
+kubectl top pod
+
+# misc
+kubectl get pods
+kubectl get services
+
+# tunneling to a pod to check a web page
+kubectl port-forward relsre-metrics-telegraf-queues-5c5647dfd5-hpwvp 8000
+# then surf to http://localhost:8000/metrics
+
 ```
