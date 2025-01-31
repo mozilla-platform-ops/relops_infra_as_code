@@ -8,7 +8,7 @@ This runs in a GCP GKE v2 cluster (https://console.cloud.google.com/kubernetes/d
 
 Helm charts and terraform are located at https://github.com/mozilla-it/webservices-infra/tree/main/relsre-metrics.
 
-Tenant configuration is done in the global-platform-admin repo. This tenant's config is at https://github.com/mozilla-it/global-platform-admin/blob/main/tenants/relsre-metrics.yaml.
+Tenant (https://mozilla-hub.atlassian.net/wiki/spaces/SRE/pages/588742735/Tenant+Definition#Definitions) configuration is done in the global-platform-admin repo. This tenant's config is at https://github.com/mozilla-it/global-platform-admin/blob/main/tenants/relsre-metrics.yaml.
 
 ## development
 
