@@ -7,11 +7,12 @@
 ```shell
 # ./docker_build
 docker buildx build --no-cache --platform linux/amd64 -t relsre-metrics .
-# not the resulting image sha1, use it below in the `docker tag` command
+# note the resulting image sha1 (`docker images`), use it below in the `docker tag` command
 
-# works
-docker tag SHA1 us-docker.pkg.dev/moz-fx-relsre-metrics-prod/relsre-metrics-prod/relsre-metrics:1.0.0
-docker push us-docker.pkg.dev/moz-fx-relsre-metrics-prod/relsre-metrics-prod/relsre-metrics:1.0.0
+# replace VERSION with next version (check artifact registry, link below)
+#   - https://console.cloud.google.com/artifacts/docker/moz-fx-relsre-metrics-prod/us/relsre-metrics-prod/relsre-metrics?authuser=1&invt=AboNNQ&project=moz-fx-relsre-metrics-prod)
+docker tag SHA1 us-docker.pkg.dev/moz-fx-relsre-metrics-prod/relsre-metrics-prod/relsre-metrics:VERSION
+docker push us-docker.pkg.dev/moz-fx-relsre-metrics-prod/relsre-metrics-prod/relsre-metrics:VERSION
 ```
 
 ### helm deploy
