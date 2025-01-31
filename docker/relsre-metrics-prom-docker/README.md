@@ -135,3 +135,10 @@ kubectl port-forward relsre-metrics-telegraf-queues-5c5647dfd5-hpwvp 8000
 ```
   rewrite this script to work with the prometheus telegraf plugin (vs influx). critical fields to keep are: BLAH. the script:
 ```
+
+### analyzing our coverage on provisioners
+
+```shell
+rg queue2_prom.sh ./etc/telegraf_queues.conf | sed 's/^ *//' | sort
+rg tc_web_prom.sh ./etc/telegraf_workers.conf | sed 's/^ *//' | sort
+```
