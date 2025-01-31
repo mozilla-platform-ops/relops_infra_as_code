@@ -24,6 +24,12 @@ Metrics are displayed on Yardstick (our grafana instance, https://mozilla-hub.at
 ./docker_run /etc/telegraf/release_cal_prom.sh
 ./docker_run '/etc/telegraf/queue2_prom.sh proj-autophone'
 
+# testing entire configs
+./docker_run /bin/bash
+# run one of the next two lines
+TELEGRAF_CONFIG=telegraf_workers.conf /etc/telegraf/startup.sh --debug &
+TELEGRAF_CONFIG=telegraf_queues.conf /etc/telegraf/startup.sh --debug &
+
 # run stuff
 TELEGRAF_CONFIG=telegraf_workers.conf ./docker_run
 
@@ -35,7 +41,7 @@ docker_run /bin/bash
 TELEGRAF_CONFIG=telegraf-aerickson-testing-2.conf /etc/telegraf/startup.sh --test
 
 # test
-curl http://localhost:9273/metrics
+curl http://localhost:8000/metrics
 ./test.sh
 
 # kill leftover containers
@@ -120,4 +126,12 @@ kubectl get services
 kubectl port-forward relsre-metrics-telegraf-queues-5c5647dfd5-hpwvp 8000
 # then surf to http://localhost:8000/metrics
 
+```
+
+## notes
+
+### chatgpt prompts used for rewriting oringal influx scripts
+
+```
+  rewrite this script to work with the prometheus telegraf plugin (vs influx). critical fields to keep are: BLAH. the script:
 ```
