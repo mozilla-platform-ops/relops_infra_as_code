@@ -1,10 +1,16 @@
-# relsre-metrics docker_gcp_prom (telegraf tc data collection)
+# relsre-metrics-prom-docker
+
+relsre-metrics docker_gcp_prom (telegraf tc data collection)
 
 This image was ported from `relops_infra_as_code/terraform/telegraf/docker_aws_influx/` (telegraf pushing to influx).
 
-It is used to collect data from taskcluster and push it to a prometheus server.
+It is used to collect data from taskcluster and push it to prometheus (GMP in this case).
 
 This runs in a GCP GKE v2 cluster (https://console.cloud.google.com/kubernetes/deployment/us-west1/webservices-low-prod/relsre-metrics-prod/relsre-metrics-telegraf-queues/overview?authuser=1&inv=1&invt=AboWTA&project=moz-fx-webservices-low-prod).
+
+Helm charts and terraform are located at https://github.com/mozilla-it/webservices-infra/tree/main/relsre-metrics.
+
+Tenant configuration is done in the global-platform-admin repo. This tenant's config is at https://github.com/mozilla-it/global-platform-admin/blob/main/tenants/relsre-metrics.yaml.
 
 ## development
 
