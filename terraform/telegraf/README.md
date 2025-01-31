@@ -201,35 +201,6 @@ exec,provisionerId=proj-autophone,workerType=gecko-t-bitbar-gw-unit-p5 idle=16,p
 
 ```
 
-#### running locally (gcp)
-
-```bash
-# open a interactive docker container
-./docker_build && ./docker_run
-
-# test single scripts
-./docker_run /etc/telegraf/release_cal_prom.sh
-./docker_run '/etc/telegraf/queue2_prom.sh proj-autophone'
-
-# run stuff
-TELEGRAF_CONFIG=telegraf_workers.conf ./docker_run
-
-# another example
-TELEGRAF_CONFIG=telegraf-aerickson-testing.conf ./docker_run
-
-# lower level test, collects data, prints data, exits
-docker_run /bin/bash
-TELEGRAF_CONFIG=telegraf-aerickson-testing-2.conf /etc/telegraf/startup.sh --test
-
-# test
-curl http://localhost:9273/metrics
-./test.sh
-
-# kill leftover containers
-docker stop $(docker ps | grep moz_telegraf_gcp | cut -f 1 -d ' ')
-
-```
-
 ## reverse engineering the dockerfile
 
 The dockerfile was missing. Recreated from the image running in AWS.

@@ -1,4 +1,41 @@
-# telegraf: docker_gcp_prom
+# relsre-metrics docker_gcp_prom (telegraf tc data collection)
+
+This image was ported from `relops_infra_as_code/terraform/telegraf/docker_aws_influx/` (telegraf pushing to influx).
+
+It is used to collect data from taskcluster and push it to a prometheus server.
+
+This runs in a GCP GKE v2 cluster (https://console.cloud.google.com/kubernetes/deployment/us-west1/webservices-low-prod/relsre-metrics-prod/relsre-metrics-telegraf-queues/overview?authuser=1&inv=1&invt=AboWTA&project=moz-fx-webservices-low-prod).
+
+## development
+
+#### running locally (gcp)
+
+```bash
+# open a interactive docker container
+./docker_build && ./docker_run
+
+# test single scripts
+./docker_run /etc/telegraf/release_cal_prom.sh
+./docker_run '/etc/telegraf/queue2_prom.sh proj-autophone'
+
+# run stuff
+TELEGRAF_CONFIG=telegraf_workers.conf ./docker_run
+
+# another example
+TELEGRAF_CONFIG=telegraf-aerickson-testing.conf ./docker_run
+
+# lower level test, collects data, prints data, exits
+docker_run /bin/bash
+TELEGRAF_CONFIG=telegraf-aerickson-testing-2.conf /etc/telegraf/startup.sh --test
+
+# test
+curl http://localhost:9273/metrics
+./test.sh
+
+# kill leftover containers
+docker stop $(docker ps | grep moz_telegraf_gcp | cut -f 1 -d ' ')
+
+```
 
 ## deployment
 
