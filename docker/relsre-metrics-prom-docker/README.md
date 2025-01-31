@@ -1,7 +1,5 @@
 # relsre-metrics-prom-docker
 
-relsre-metrics docker_gcp_prom (telegraf tc data collection)
-
 This image was ported from `relops_infra_as_code/terraform/telegraf/docker_aws_influx/` (telegraf pushing to influx).
 
 It is used to collect data from taskcluster and push it to prometheus (GMP in this case).
