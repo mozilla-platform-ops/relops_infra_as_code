@@ -10,6 +10,8 @@ Helm charts and terraform are located at https://github.com/mozilla-it/webservic
 
 Tenant (https://mozilla-hub.atlassian.net/wiki/spaces/SRE/pages/588742735/Tenant+Definition#Definitions) configuration is done in the global-platform-admin repo. This tenant's config is at https://github.com/mozilla-it/global-platform-admin/blob/main/tenants/relsre-metrics.yaml.
 
+Metrics are displayed on Yardstick (our grafana instance, https://mozilla-hub.atlassian.net/wiki/spaces/CS1/pages/886866077/Prometheus+and+Grafana+Yardstick).
+
 ## development
 
 #### running locally (gcp)
