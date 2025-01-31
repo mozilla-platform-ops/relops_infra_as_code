@@ -2,9 +2,11 @@
 
 ## overview
 
-most of the work is done via `aws_ecs_service` and `aws_ecs_task_definition` instances. search for those.
+This terraform code configure AWS ECS containers that log TC data to InfluxDB.
 
-this data is used in grafana dashboard. see https://github.com/mozilla-platform-ops/dashboards/tree/master/dashboards_2.
+Most of the work is done via `aws_ecs_service` and `aws_ecs_task_definition` instances. search for those.
+
+This data is used in grafana dashboard. see https://github.com/mozilla-platform-ops/dashboards/tree/master/dashboards_2.
 
 ### details
 
