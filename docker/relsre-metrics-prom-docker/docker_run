@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -e
+set -x
+
+# IMG_NAME="moz_telegraf"
+IMG_NAME="moz_telegraf_gcp"
+IMG_VERSION="0.1.0"
+
+
+# docker run -it "$IMG_NAME"
+# docker run -it "$IMG_NAME" /bin/bash
+
+# avoid quotes if $1 is undefined
+# shellcheck disable=SC2086
+docker run --init \
+  -p 8000:8000 \
+  -e TELEGRAF_CONFIG="$TELEGRAF_CONFIG" \
+  -e INTERVAL="300s" \
+  -it "$IMG_NAME:$IMG_VERSION" \
+  $1
