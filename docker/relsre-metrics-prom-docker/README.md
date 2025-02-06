@@ -88,20 +88,19 @@ gcloud container clusters get-credentials webservices-high-prod --region=us-west
 #     so webservices-high-nonprod would be for i.e. dev and stage, and webservices-high-prod would be for prod
 kubectl config use-context webservices-low-prod_us-west1
 
+# start the tunnel (will use current context to infer details)
+gcp-bastion-tunnel
+
 # set the namespace (can use kubens also)
 # kubectl config set-context --namespace=relsre-metrics????
 #
 # https://stackoverflow.com/questions/61171487/what-is-the-difference-between-namespaces-and-contexts-in-kubernetes
 kubens relsre-metrics-prod
 
-# start the tunnel (will use current context to infer details)
-gcp-bastion-tunnel
-
 cd ~/git/webservices-infra/relsre-metrics/k8s/relsre-metrics
 
 # view diff between running and local
 helm diff upgrade --install relsre-metrics . -f values-prod.yaml --namespace=relsre-metrics-prod
-# TODO: why isn't this applying when run?
 
 # apply it if it looks good
 helm upgrade --install relsre-metrics . -f values-prod.yaml --namespace=relsre-metrics-prod --debug
