@@ -101,7 +101,6 @@ cd ~/git/webservices-infra/relsre-metrics/k8s/relsre-metrics
 
 # view diff between running and local
 helm diff upgrade --install relsre-metrics . -f values-prod.yaml --namespace=relsre-metrics-prod
-# TODO: why isn't this applying when run?
 
 # apply it if it looks good
 helm upgrade --install relsre-metrics . -f values-prod.yaml --namespace=relsre-metrics-prod --debug
