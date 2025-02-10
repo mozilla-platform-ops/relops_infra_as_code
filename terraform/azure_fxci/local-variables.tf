@@ -30,6 +30,10 @@ variable "gecko1" {
       rgname     = "west-us-2-gecko-1"
       rglocation = "westus2"
     }
+    "rg-west-us-3-gecko-1" = {
+      rgname     = "west-us-3-gecko-1"
+      rglocation = "westus3"
+    }
   }
 }
 
