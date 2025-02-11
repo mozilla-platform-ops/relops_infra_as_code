@@ -221,3 +221,9 @@ resource "azurerm_role_assignment" "worker_manager_tceng" {
   principal_id         = azuread_service_principal.worker_manager_tceng.object_id
   scope                = "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9"
 }
+
+resource "azurerm_role_assignment" "sig_workerimages" {
+  role_definition_name = "reader"
+  principal_id         = azuread_service_principal.worker_manager_tceng.object_id
+  scope                = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/resourceGroups/rg-packer-worker-images"
+}
