@@ -119,3 +119,48 @@ kubectl port-forward relsre-metrics-telegraf-queues-5c5647dfd5-hpwvp 8000
 # then surf to http://localhost:8000/metrics
 
 ```
+
+#### secrets
+
+See .https://mozilla-hub.atlassian.net/wiki/spaces/SRE/pages/27919985/GKE+Cluster+Secrets+Management.
+
+```bash
+
+cd ~/git/
+git clone https://github.com/mozilla-it/gsm-editor
+```
+
+```bash
+# authenticate
+gcloud container clusters get-credentials webservices-high-prod --region=us-west1 --project moz-fx-webservices-high-prod
+
+# set the context (can use kubectx also)
+#   from ntade:
+#     so webservices-high-nonprod would be for i.e. dev and stage, and webservices-high-prod would be for prod
+kubectl config use-context webservices-low-prod_us-west1
+
+# start the tunnel (will use current context to infer details)
+gcp-bastion-tunnel
+
+# set the namespace (can use kubens also)
+# kubectl config set-context --namespace=relsre-metrics????
+#
+# https://stackoverflow.com/questions/61171487/what-is-the-difference-between-namespaces-and-contexts-in-kubernetes
+kubens relsre-metrics-prod
+
+#
+cd ~/git/gsm-editor
+./gsm.py
+
+# GCP Console for this:
+#   https://console.cloud.google.com/security/secret-manager?referrer=search&authuser=1&project=moz-fx-relsre-metrics-prod
+
+# list secret names (`app` is default)
+./gsm.py names -p moz-fx-relsre-metrics-prod -e prod
+
+# show versions of the secret
+./gsm.py list -p moz-fx-relsre-metrics-prod -e prod
+
+# edit default secret
+./gsm.py edit -p moz-fx-relsre-metrics-prod -e prod
+```
