@@ -40,8 +40,11 @@ docker stop $(docker ps | grep moz_telegraf_gcp_android | cut -f 1 -d ' ')
 ### build image and push to artifact registry
 
 ```shell
-# ./docker_build
-docker buildx build --no-cache --platform linux/amd64 -t relsre-metrics-android .
+# build the image
+docker buildx build --platform linux/amd64 -t relsre-metrics-android .
+# if things aren't getting pulled in, run with `--no-cache`:
+#   docker buildx build --no-cache --platform linux/amd64 -t relsre-metrics-android .
+
 # note the resulting image sha1 (`docker images`), use it below in the `docker tag` command
 
 # replace VERSION with next version (check artifact registry, link below)

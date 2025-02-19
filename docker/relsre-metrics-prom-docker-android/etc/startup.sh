@@ -34,9 +34,18 @@ export INTERVAL=${INTERVAL:-5m}
 export MEDIUM_INTERVAL=${MEDIUM_INTERVAL:-10m}
 export LONG_INTERVAL=${LONG_INTERVAL:-20m}
 
-# source bitbar secrets
+# source bitbar secrets (used only in dev)
 if [ -f /etc/bitbar_secrets.sh ]; then
   source /etc/bitbar_secrets.sh
+fi
+
+# if TESTDROID_APIKEY is not defined, warn
+if [ -z "$TESTDROID_APIKEY" ]; then
+    echo "TESTDROID_APIKEY is not defined"
+fi
+# if TESTDROID_URL is not defined, warn
+if [ -z "$TESTDROID_URL" ]; then
+    echo "TESTDROID_URL is not defined"
 fi
 
 set -x
