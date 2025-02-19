@@ -37,5 +37,7 @@ RUN cd /etc; \
     cd android-tools/worker_health; \
     pipenv install --system --deploy --ignore-pipfile
 
+RUN chown -R 10001:10001 /opt/venv /etc/android-tools
+
 # Set default command
 CMD ["/bin/bash", "/etc/telegraf/startup.sh"]

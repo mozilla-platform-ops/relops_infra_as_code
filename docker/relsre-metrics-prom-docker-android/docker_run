@@ -20,5 +20,6 @@ docker run --init \
   -v "$local_bitbar_env_file:/etc/bitbar_secrets.sh" \
   -e TELEGRAF_CONFIG="$TELEGRAF_CONFIG" \
   -e INTERVAL="300s" \
+   --user 10001:10001 \
   -it "$IMG_NAME:$IMG_VERSION" \
   $1
