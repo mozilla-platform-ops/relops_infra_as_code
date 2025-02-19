@@ -17,10 +17,12 @@ For Bitbar hardware Android devices this includes:
 
 ```bash
 # open a interactive docker container
-./docker_build && ./docker_run
+./docker_build
+./docker_run
+# view `http://localhost:8000/metrics` in a browser
 ```
 
-# testing entire configs
+# testing scripts
 ```bash
 ./docker_run /bin/bash
 $ /opt/venv/bin/python3 /etc/android-tools/worker_health/prom_report.py

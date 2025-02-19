@@ -1,4 +1,4 @@
-FROM telegraf:1.33.1
+FROM telegraf:1.33.2
 
 # Install essential packages and dependencies in a single layer
 RUN apt-get update && \
