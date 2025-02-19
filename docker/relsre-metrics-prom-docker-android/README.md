@@ -18,6 +18,7 @@ For Bitbar hardware Android devices this includes:
 ```bash
 # open a interactive docker container
 ./docker_build && ./docker_run
+```
 
 # testing entire configs
 ```bash
