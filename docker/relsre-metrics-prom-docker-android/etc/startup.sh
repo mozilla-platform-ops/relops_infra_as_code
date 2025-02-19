@@ -34,6 +34,11 @@ export INTERVAL=${INTERVAL:-5m}
 export MEDIUM_INTERVAL=${MEDIUM_INTERVAL:-10m}
 export LONG_INTERVAL=${LONG_INTERVAL:-20m}
 
+# source bitbar secrets
+if [ -f /etc/bitbar_secrets.sh ]; then
+  source /etc/bitbar_secrets.sh
+fi
+
 set -x
 
 # basic

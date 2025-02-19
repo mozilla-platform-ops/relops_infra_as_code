@@ -7,4 +7,4 @@ set -x
 IMG_NAME="moz_telegraf_gcp_android"
 IMG_VERSION="0.1.0"
 
-docker build . -f "./Dockerfile" -t "$IMG_NAME:$IMG_VERSION"
+docker build . -f "./Dockerfile" -t "$IMG_NAME:$IMG_VERSION" --no-cache

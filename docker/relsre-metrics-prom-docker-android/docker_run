@@ -11,10 +11,13 @@ IMG_VERSION="0.1.0"
 # docker run -it "$IMG_NAME"
 # docker run -it "$IMG_NAME" /bin/bash
 
+local_bitbar_env_file="${HOME}/git/mozilla-bitbar-devicepool/bitbar_env.sh"
+
 # avoid quotes if $1 is undefined
 # shellcheck disable=SC2086
 docker run --init \
   -p 8000:8000 \
+  -v "$local_bitbar_env_file:/etc/bitbar_secrets.sh" \
   -e TELEGRAF_CONFIG="$TELEGRAF_CONFIG" \
   -e INTERVAL="300s" \
   -it "$IMG_NAME:$IMG_VERSION" \
