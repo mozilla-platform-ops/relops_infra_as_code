@@ -45,7 +45,7 @@ docker buildx build --platform linux/amd64 -t relsre-metrics-android .
 # if things aren't getting pulled in, run with `--no-cache`:
 #   docker buildx build --no-cache --platform linux/amd64 -t relsre-metrics-android .
 
-# note the resulting image sha1 (`docker images`), use it below in the `docker tag` command
+# note the resulting image sha1 (`docker images | head`), use it below in the `docker tag` command
 
 # replace VERSION with next version (check artifact registry, link below)
 #   - https://console.cloud.google.com/artifacts/docker/moz-fx-relsre-metrics-prod/us/relsre-metrics-prod/relsre-metrics-android?authuser=1&invt=AboNNQ&project=moz-fx-relsre-metrics-prod)

@@ -41,11 +41,17 @@ fi
 
 # if TESTDROID_APIKEY is not defined, warn
 if [ -z "$TESTDROID_APIKEY" ]; then
-    echo "TESTDROID_APIKEY is not defined"
+    echo "FATAL: TESTDROID_APIKEY is not defined"
+    exit 1
 fi
 # if TESTDROID_URL is not defined, warn
 if [ -z "$TESTDROID_URL" ]; then
-    echo "TESTDROID_URL is not defined"
+    echo "FATAL: TESTDROID_URL is not defined"
+    exit 1
+fi
+# if both are defined, print a message
+if [ -n "$TESTDROID_APIKEY" ] && [ -n "$TESTDROID_URL" ]; then
+    echo "OK: TESTDROID_APIKEY and TESTDROID_URL are defined"
 fi
 
 set -x
