@@ -10,6 +10,7 @@ For Bitbar hardware Android devices this includes:
 - configured device counts per workerType (based on mozilla-bitbar-devicepool's config/config.yaml).
 - information from the Bitbar API about offline status per workerType.
 
+Bitbar information is currently provided by `prom_report.py` script in `android-tools/worker_health` (https://github.com/mozilla-platform-ops/android-tools/tree/master/worker_health). This data was previously provided by `influx_logger.py`.
 
 ## development
 
