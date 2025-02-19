@@ -47,10 +47,12 @@ docker buildx build --platform linux/amd64 -t relsre-metrics-android .
 
 # note the resulting image sha1 (`docker images | head`), use it below in the `docker tag` command
 
+export D_VERSION="1.0.2"
+export D_SHA=""
 # replace VERSION with next version (check artifact registry, link below)
 #   - https://console.cloud.google.com/artifacts/docker/moz-fx-relsre-metrics-prod/us/relsre-metrics-prod/relsre-metrics-android?authuser=1&invt=AboNNQ&project=moz-fx-relsre-metrics-prod)
-docker tag SHA1 us-docker.pkg.dev/moz-fx-relsre-metrics-prod/relsre-metrics-prod/relsre-metrics-android:VERSION
-docker push us-docker.pkg.dev/moz-fx-relsre-metrics-prod/relsre-metrics-prod/relsre-metrics-android:VERSION
+docker tag $D_SHA us-docker.pkg.dev/moz-fx-relsre-metrics-prod/relsre-metrics-prod/relsre-metrics-android:$D_VERSION
+docker push us-docker.pkg.dev/moz-fx-relsre-metrics-prod/relsre-metrics-prod/relsre-metrics-android:$D_VERSION
 ```
 
 ### helm deploy

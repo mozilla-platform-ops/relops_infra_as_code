@@ -54,6 +54,13 @@ if [ -n "$TESTDROID_APIKEY" ] && [ -n "$TESTDROID_URL" ]; then
     echo "OK: TESTDROID_APIKEY and TESTDROID_URL are defined"
 fi
 
+# mention if SENTRY_DSN is defined or not
+if [ -z "$SENTRY_DSN" ]; then
+    echo "WARNING: SENTRY_DSN is not defined"
+else
+    echo "OK: SENTRY_DSN is defined"
+fi
+
 set -x
 
 # basic
