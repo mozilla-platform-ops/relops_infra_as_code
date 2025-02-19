@@ -26,7 +26,7 @@ if ! [[ "x${filter}" = "x" ]]; then
 fi
 
 # if TELEGRAF_CONFIG is not set, default to telegraf.conf
-TELEGRAF_CONFIG=${TELEGRAF_CONFIG:-telegraf.conf}
+TELEGRAF_CONFIG=${TELEGRAF_CONFIG:-telegraf_android.conf}
 
 # TODO: not working for some reason. need to debug.
 # set defaults for INTERVAL="300s", MEDIUM_INTERVAL="600s", LONG_INTERVAL="1200s"
