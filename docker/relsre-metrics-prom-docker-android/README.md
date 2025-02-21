@@ -11,6 +11,7 @@ For Bitbar hardware Android devices this includes:
 - information from the Bitbar API about offline status per workerType.
 
 Bitbar information is currently provided by `prom_report.py` script in `android-tools/worker_health` (https://github.com/mozilla-platform-ops/android-tools/tree/master/worker_health). This data was previously provided by `influx_logger.py`.
+- Sentry project: https://mozilla.sentry.io/settings/projects/relsre-metrics-prom-docker-android/
 
 ## development
 
