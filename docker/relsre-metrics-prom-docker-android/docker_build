@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -e
+set -x
+
+# IMG_NAME="moz_telegraf"
+IMG_NAME="moz_telegraf_gcp_android"
+IMG_VERSION="0.1.0"
+
+# if below isn't pulling in the latest github changes:
+# pass in --no-cache
+
+docker build . -f "./Dockerfile" -t "$IMG_NAME:$IMG_VERSION" "$@"
