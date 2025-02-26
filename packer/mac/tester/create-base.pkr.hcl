@@ -98,7 +98,7 @@ build {
 
       "echo 'Enabling passwordless sudo for admin...'",
       "echo admin | sudo -S sh -c 'mkdir -p /etc/sudoers.d/ && echo \"admin ALL=(ALL) NOPASSWD: ALL\" | tee /etc/sudoers.d/admin-nopasswd'",
-      
+
       # Install command-line tools
       "touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress",
       "softwareupdate --list | sed -n 's/.*Label: \\(Command Line Tools for Xcode-.*\\)/\\1/p' | xargs -I {} softwareupdate --install '{}'",

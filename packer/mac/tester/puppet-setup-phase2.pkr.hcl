@@ -92,7 +92,7 @@ build {
       "sudo sed -i '.bak' '/#.*safaridriver/s/^#//' /Users/admin/Desktop/puppet/ronin_puppet/modules/roles_profiles/manifests/roles/gecko_t_osx_1400_m_vms.pp",
       "sudo sed -i '.bak' '/#.*macos_directory_cleaner/s/^#//' /Users/admin/Desktop/puppet/ronin_puppet/modules/roles_profiles/manifests/roles/gecko_t_osx_1400_m_vms.pp",
       "sudo sed -i '.bak' '/#.*pipconf/s/^#//' /Users/admin/Desktop/puppet/ronin_puppet/modules/roles_profiles/manifests/roles/gecko_t_osx_1400_m_vms.pp",
-      
+
       "echo 'Re-running bootstrap_mojave_tester.sh (second attempt after reboot)...'",
       "echo admin | sudo -S /tmp/bootstrap_mojave_tester.sh || echo 'Puppet run completed with errors, but continuing...'",
 

@@ -8,12 +8,12 @@ Since Puppet determines role assignments based on the value in /etc/puppet_role,
 The next goal is to extend this setup to provision a working macOS 14 image for testers.
 
 ## **🚀 Features**
-✅ **Uses Packer + Tart to create macOS VM images**  
-✅ **Automates macOS Setup Assistant screens**  
-✅ **Installs Xcode, Puppet, and SignerBootstrap from S3**  
-✅ **Clones the `ronin_puppet` repository from the `macos-signer-latest` branch**  
-✅ **Supports Rosetta 2 for Apple Silicon compatibility**  
-✅ **Runs `bootstrap_mojave.sh` to finalize system configuration**  
+✅ **Uses Packer + Tart to create macOS VM images**
+✅ **Automates macOS Setup Assistant screens**
+✅ **Installs Xcode, Puppet, and SignerBootstrap from S3**
+✅ **Clones the `ronin_puppet` repository from the `macos-signer-latest` branch**
+✅ **Supports Rosetta 2 for Apple Silicon compatibility**
+✅ **Runs `bootstrap_mojave.sh` to finalize system configuration**
 
 ---
 
@@ -121,8 +121,8 @@ puppet --version
 ---
 
 ## **🎯 Next Steps**
-- ✅ Automate VM instance creation using **Cilicon**  
-- ✅ Integrate the VM into **Taskcluster** for CI/CD workflows  
-- ✅ Explore moving to **QEMU or another virtualization platform**  
+- ✅ Automate VM instance creation using **Cilicon**
+- ✅ Integrate the VM into **Taskcluster** for CI/CD workflows
+- ✅ Explore moving to **QEMU or another virtualization platform**
 
 ---

@@ -111,9 +111,9 @@ sudo /opt/puppetlabs/bin/puppet agent --test --debug
 
 ## **🎯 Expected Final State After a Successful Build**
 Once all phases complete, the macOS VM should:
-✅ Have **Puppet fully applied**, with **correct worker configs**.  
-✅ Allow devs to **launch pre-configured VMs instantly** using Tart.  
-✅ Run CI **automatically**, skipping tests requiring **bare metal**.  
+✅ Have **Puppet fully applied**, with **correct worker configs**.
+✅ Allow devs to **launch pre-configured VMs instantly** using Tart.
+✅ Run CI **automatically**, skipping tests requiring **bare metal**.
 
 ---
 
