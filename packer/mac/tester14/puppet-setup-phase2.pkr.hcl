@@ -96,6 +96,8 @@ build {
       "echo 'Re-running bootstrap_mojave_tester.sh (second attempt after reboot)...'",
       "echo admin | sudo -S /tmp/bootstrap_mojave_tester.sh || echo 'Puppet run completed with errors, but continuing...'",
 
+      "sudo rm /var/root/vault.yaml",
+
       "echo 'Finalizing setup. Ensuring clean exit...'",
       "exit 0"
     ]
