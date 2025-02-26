@@ -61,18 +61,63 @@ packer build -force -var="vm_name=sonoma-base" puppet-setup-phase2.pkr.hcl;
 - Runs Puppet **again** to apply full configurations.
 - Ensures a **clean exit**.
 
-## 🔥 Key Workarounds & Fixes
+---
 
-### 🛑 Fixing TCC Permissions & SafariDriver
-- These modules **must be disabled** on the first Puppet run.
-- They are **re-enabled after reboot** in Phase 2.
+## **🔹 Automatic Hostname & Worker Config Updates**
+- The **hostname is set dynamically** based on the **serial number**.
+- Both **`workerID`** and **`workerId`** in `/opt/worker/worker-runner-config.yaml` are **updated automatically** to match.
+
+### **Check Current Hostname**
+```sh
+scutil --get HostName
+```
+
+### **Verify `/opt/worker/worker-runner-config.yaml` Updated**
+```sh
+cat /opt/worker/worker-runner-config.yaml | grep "workerID\|workerId"
+```
+
+---
+
+## 🔥 **Key Workarounds & Fixes**
+
+### 🛑 Fixing Puppet Role Assignment
+🔹 The system must have `puppet_role` correctly set for **Hiera to apply the right configuration**.
+
+#### **Check if Puppet Role is Set**
+```sh
+sudo /opt/puppetlabs/bin/facter puppet_role
+```
+
+#### **If Missing, Manually Set It**
+```sh
+echo "puppet_role=gecko_t_osx_1400_m_vms" | sudo tee /etc/facter/facts.d/puppet_role.txt
+sudo chmod 644 /etc/facter/facts.d/puppet_role.txt
+```
+
+🔹 After setting the role, **run Puppet again**:
+```sh
+sudo /opt/puppetlabs/bin/puppet agent --test --debug
+```
+
+---
 
 ### 🔄 Ensuring Clean Reboots
 - The **first Puppet run fails** (expected) due to missing users (`cltbld`).
 - **We catch the failure and trigger a reboot**.
 - The **second run finalizes** all remaining configs.
 
-## ❌ Troubleshooting
+---
+
+## **🎯 Expected Final State After a Successful Build**
+Once all phases complete, the macOS VM should:
+✅ Have **Puppet fully applied**, with **correct worker configs**.  
+✅ Allow devs to **launch pre-configured VMs instantly** using Tart.  
+✅ Run CI **automatically**, skipping tests requiring **bare metal**.  
+
+---
+
+### **❌ Troubleshooting**
 
 ### 1️⃣ Stuck on Accessibility or Welcome Screens
 - Ensure `Disable Setup Assistant` step is applied in Puppet.
@@ -86,6 +131,8 @@ sudo /opt/puppetlabs/bin/puppet agent --test --debug
 ```sh
 csrutil status
 ```
+
+---
 
 ## 🎉 Next Steps
 - Validate builds in the CI pipeline.
