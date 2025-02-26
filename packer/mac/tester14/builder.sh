@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define default values (modify as needed)
-DEFAULT_VM_NAME="sequoia-base"
+DEFAULT_VM_NAME="sonoma-base"
 DEFAULT_VAULT_PATH="$HOME/Downloads/vault.yaml"
 
 # Allow user to override via environment variables

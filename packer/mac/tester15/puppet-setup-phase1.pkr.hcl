@@ -13,6 +13,12 @@ variable "vm_name" {
   default = "sequoia-base"
 }
 
+# Define a variable for the Vault file path
+variable "vault_file" {
+  type    = string
+  default = "/Users/admin/Downloads/vault.yaml" # Default path
+}
+
 source "tart-cli" "puppet-setup-phase1" {
   vm_name   = "${var.vm_name}"  # Use dynamic variable
   cpu_count = 4
@@ -27,8 +33,9 @@ build {
   name    = "puppet-setup-phase1"
   sources = ["source.tart-cli.puppet-setup-phase1"]
 
+  # Copy Vault file dynamically
   provisioner "file" {
-    source      = "/Users/admin/Downloads/vault.yaml"
+    source      = "${var.vault_file}" # Uses the variable
     destination = "/tmp/vault.yaml"
   }
 
