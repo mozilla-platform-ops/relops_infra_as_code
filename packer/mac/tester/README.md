@@ -137,4 +137,3 @@ csrutil status
 ## 🎉 Next Steps
 - Validate builds in the CI pipeline.
 - Expand support for **multiple macOS versions**.
-- Automate VM name assignment dynamically.
