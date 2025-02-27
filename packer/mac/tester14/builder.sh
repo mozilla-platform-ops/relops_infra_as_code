@@ -8,7 +8,7 @@ VM_NAME="${VM_NAME:-$DEFAULT_VM_NAME}"
 
 # Prompt user for vault file path
 if [[ -z "$VAULT_FILE" ]]; then
-    read -p "🔑 Enter the path to the Vault file: " VAULT_FILE
+    read -r -p "🔑 Enter the path to the Vault file: " VAULT_FILE
 fi
 
 # Ensure vault file exists
