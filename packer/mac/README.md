@@ -54,7 +54,7 @@ packer build -force -var="vm_name=sequoia-base" puppet-setup-phase2.pkr.hcl;
 
 ## 📜 Using the Fake Vault File
 
-A **fake `fake-vault.yaml` file** is already included in the same directory as `builder.sh`.  
+A **fake `fake-vault.yaml` file** is already included in the same directory as `builder.sh`.
 To use it, simply **run the build script as usual**:
 
 ```sh
