@@ -1,0 +1,27 @@
+---
+cltbld_user:
+    iterations: "40000"
+    kcpassword: "gQuCSFO0nwdlrwbRdyZwig"
+    password: "lskfdjflksdjfkl2938409238490238042sdklfjklsdjfklsdjfkljskl"
+    salt: "490238490238ijfklsdjfkljsdkljf9238490324809238490324023840923849823084092384920klsjdflkdsjfkl"
+
+generic_worker:
+    gecko-t-osx-1400-m-vms:
+        bugzilla_api_key: "sfjlksdjfdksj2949382402394820"
+        livelog_secret: "lfjdslkjflksjlskfjlksj2390849032894239402"
+        quarantine_access_token: "sjdflsdkjflksdj9203840923849032"
+        quarantine_client_id: "project/releng/quarantine-worker"
+        taskcluster_access_token: "kldsjflksdjfkl29038490328490238"
+        taskcluster_client_id: "project/releng/generic-worker/datacenter-gecko-t-osx-1400-m-vms"
+
+worker:
+    taskcluster_version: "60.3.4"
+    provider_type: "standalone"
+    root_url: "https://firefox-ci-tc.services.mozilla.com"
+    client_id: "project/releng/generic-worker/datacenter-gecko-t-osx-1400-m-vms"
+    access_token: "ksldjflksdjfskldjklsdjf902384903248238423"
+    worker_id: "%{facts.networking.hostname}"
+    worker_pool_id: "releng-hardware/gecko-t-osx-1400-m-vms"
+    worker_group: "mdc1"
+    generic_worker_engine: "simple"
+    idle_timeout_secs: 21600

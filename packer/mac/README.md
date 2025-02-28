@@ -3,12 +3,16 @@
 This project automates the provisioning of macOS virtual machines for CI using **Packer**, **Tart**, and **Ansible**.
 The process consists of **four phases**, ensuring a fully configured system with Puppet.
 
+---
+
 ## 🚀 Overview of the Build Process
 
 1. **Create Base Image** - Installs macOS from IPSW and configures the initial admin account.
 2. **Disable SIP** - Boots into macOS recovery and disables System Integrity Protection (SIP).
 3. **Puppet Setup Phase 1** - Runs Puppet with a subset of configurations (TCC/SafariDriver excluded).
 4. **Puppet Setup Phase 2** - Re-runs Puppet after a reboot to apply TCC and SafariDriver settings.
+
+---
 
 ## 🔧 Prerequisites
 
@@ -24,7 +28,9 @@ The process consists of **four phases**, ensuring a fully configured system with
    brew install ansible
    ```
 5. **Ensure AWS S3 access** (for downloading Puppet and scripts).
-6. **Provide a `vault.yaml` file** with secrets.
+6. **Use the provided `fake-vault.yaml` file** for testing.
+
+---
 
 ## 🛠 Running the Full Build
 
@@ -43,6 +49,28 @@ packer build -force -var="vm_name=sequoia-base" disable-sip.pkr.hcl;
 packer build -force -var="vm_name=sequoia-base" puppet-setup-phase1.pkr.hcl;
 packer build -force -var="vm_name=sequoia-base" puppet-setup-phase2.pkr.hcl;
 ```
+
+---
+
+## 📜 Using the Fake Vault File
+
+A **fake `fake-vault.yaml` file** is already included in the same directory as `builder.sh`.
+To use it, simply **run the build script as usual**:
+
+```sh
+./builder.sh
+```
+
+If needed, you can explicitly set the vault file path before running the script:
+
+```sh
+export VAULT_FILE="$(pwd)/vault.yaml"
+./builder.sh
+```
+
+This ensures the build process completes **successfully** without requiring real secrets.
+
+---
 
 ## 📜 Phase Breakdown
 
@@ -67,18 +95,7 @@ packer build -force -var="vm_name=sequoia-base" puppet-setup-phase2.pkr.hcl;
 - Runs Puppet **again** to apply full configurations.
 - Ensures a **clean exit**.
 
-## 🔥 Key Enhancements
-
-### 🔄 Dynamic Vault File Handling
-- The `vault.yaml` file is now passed as a **variable**:
-  ```sh
-  -var="vault_file=/path/to/custom/vault.yaml"
-  ```
-- Users can **specify their own vault files** for different environments.
-
-### ✅ Support for macOS 14 & 15 Testers
-- This system **supports creating testers for macOS 14 & 15**.
-- The **builder script** dynamically selects the appropriate environment.
+---
 
 ## ❌ Troubleshooting
 
@@ -94,6 +111,8 @@ sudo /opt/puppetlabs/bin/puppet agent --test --debug
 ```sh
 csrutil status
 ```
+
+---
 
 ## 🎉 Next Steps
 - Validate builds in the CI pipeline.

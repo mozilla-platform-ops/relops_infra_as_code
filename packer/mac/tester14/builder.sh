@@ -2,18 +2,19 @@
 
 # Define default values (modify as needed)
 DEFAULT_VM_NAME="sonoma-base"
-DEFAULT_VAULT_PATH="$HOME/Downloads/vault.yaml"
 
 # Allow user to override via environment variables
 VM_NAME="${VM_NAME:-$DEFAULT_VM_NAME}"
-VAULT_FILE="${VAULT_FILE:-$DEFAULT_VAULT_PATH}"
 
-# Prompt user for missing input
+# Prompt user for vault file path
+if [[ -z "$VAULT_FILE" ]]; then
+    read -r -p "🔑 Enter the path to the Vault file: " VAULT_FILE
+fi
+
+# Ensure vault file exists
 if [[ ! -f "$VAULT_FILE" ]]; then
     echo "❌ Vault file not found at '$VAULT_FILE'"
-    echo "Please specify the correct path using:"
-    echo "    export VAULT_FILE=/path/to/vault.yaml"
-    echo "Then re-run this script."
+    echo "Please specify the correct path and try again."
     exit 1
 fi
 
