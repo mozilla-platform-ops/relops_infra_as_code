@@ -13,7 +13,7 @@ packer {
 
 source "tart-cli" "create-base" {
   from_ipsw    = "https://updates.cdn-apple.com/2025WinterFCS/fullrestores/072-08269/7CAAB9F7-E970-428D-8764-4CD7BCD105CD/UniversalMac_15.3_24D60_Restore.ipsw"
-  vm_name      = "sequoia-base"
+  vm_name      = "sequoia-tester"
   cpu_count    = 4
   memory_gb    = 8
   disk_size_gb = 100

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define default values (modify as needed)
-DEFAULT_VM_NAME="sequoia-base"
+DEFAULT_VM_NAME="sequoia-tester"
 
 # Allow user to override via environment variables
 VM_NAME="${VM_NAME:-$DEFAULT_VM_NAME}"
