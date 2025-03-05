@@ -9,7 +9,7 @@ packer {
 
 variable "vm_name" {
   type    = string
-  default = "seqoia-base"
+  default = "seqoia-tester"
 }
 
 source "tart-cli" "puppet-setup-phase2" {
@@ -38,6 +38,13 @@ build {
 
   provisioner "shell" {
     inline = [
+
+      // Disable screensaver at login screen
+      "sudo defaults write /Library/Preferences/com.apple.screensaver loginWindowIdleTime 0",
+      // Disable screensaver for admin user
+      "defaults -currentHost write com.apple.screensaver idleTime 0",
+      // Prevent the VM from sleeping
+      "sudo systemsetup -setsleep Off 2>/dev/null",
 
       "echo 'Setting up hostname auto-config at startup...'",
 

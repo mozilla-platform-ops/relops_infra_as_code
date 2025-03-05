@@ -16,8 +16,15 @@ The process consists of **four phases**, ensuring a fully configured system with
 
 ## 🔧 Prerequisites
 
-1. **Install Packer**: [Download Packer](https://developer.hashicorp.com/packer/downloads)
-2. **Install Tart**: [Download Tart](https://github.com/cirruslabs/tart)
+1. **Install Packer**:
+   ```sh
+   brew tap hashicorp/tap
+   brew install hashicorp/tap/packer
+   ```
+2. **Install Tart**:
+   ```sh
+   brew install cirruslabs/cli/tart
+   ```
 3. **Install Packer Plugins** (Tart & Ansible):
    ```sh
    packer plugins install github.com/cirruslabs/tart
@@ -27,8 +34,7 @@ The process consists of **four phases**, ensuring a fully configured system with
    ```sh
    brew install ansible
    ```
-5. **Ensure AWS S3 access** (for downloading Puppet and scripts).
-6. **Use the provided `fake-vault.yaml` file** for testing.
+5. **Use the provided `fake-vault.yaml` file** for testing.
 
 ---
 
@@ -40,14 +46,6 @@ To execute all steps automatically, **run the `builder.sh` script**:
 cd tester15/
 chmod +x builder.sh
 ./builder.sh
-```
-
-This script will execute:
-```sh
-packer build -force create-base.pkr.hcl;
-packer build -force -var="vm_name=sequoia-base" disable-sip.pkr.hcl;
-packer build -force -var="vm_name=sequoia-base" puppet-setup-phase1.pkr.hcl;
-packer build -force -var="vm_name=sequoia-base" puppet-setup-phase2.pkr.hcl;
 ```
 
 ---
@@ -94,23 +92,6 @@ This ensures the build process completes **successfully** without requiring real
 - **Restores TCC & SafariDriver modules**.
 - Runs Puppet **again** to apply full configurations.
 - Ensures a **clean exit**.
-
----
-
-## ❌ Troubleshooting
-
-### 1️⃣ Stuck on Accessibility or Welcome Screens
-- Ensure `Disable Setup Assistant` step is applied in Puppet.
-
-### 2️⃣ Puppet Not Applying Correctly?
-```sh
-sudo /opt/puppetlabs/bin/puppet agent --test --debug
-```
-
-### 3️⃣ Verifying SIP Status
-```sh
-csrutil status
-```
 
 ---
 

@@ -10,7 +10,7 @@ packer {
 # Define a variable for VM name (allows dynamic selection)
 variable "vm_name" {
   type    = string
-  default = "sequoia-base"
+  default = "sequoia-tester"
 }
 
 # Define a variable for the Vault file path
