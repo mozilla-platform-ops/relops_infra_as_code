@@ -1,15 +1,9 @@
 #!/bin/bash
 
-# Experimental script to automate vm roll out on macOS hosts
+# Experimental script to automate VM roll out on macOS hosts
 
 # Requires ci-tart-puller-key.json GCP key to be set in the environment
-# Requires Tart to be installed on the host
-
-# Idea is to pull from authenticated GCP registry using Tart, then run
-# vms in Cilicon.app
-
-# Lots of opportunity for improvement here, but this is a start
-
+# Requires Tart to be installed on the host, but it will be downloaded if missing.
 
 set -e  # Exit on error
 set -o pipefail  # Fail if any command in a pipeline fails
@@ -34,7 +28,6 @@ if ! command -v gcloud &> /dev/null; then
     rm gcloud-sdk.tar.gz
 
     "$CLOUD_SDK_DIR"/install.sh --quiet
-
     export PATH=$CLOUD_SDK_DIR/bin:$PATH
     echo "export PATH=$CLOUD_SDK_DIR/bin:\$PATH" >> ~/.bashrc
     echo "export PATH=$CLOUD_SDK_DIR/bin:\$PATH" >> ~/.zshrc
@@ -63,10 +56,16 @@ gcloud auth list
 echo "🔑 Configuring authentication for Artifact Registry..."
 gcloud auth configure-docker us-west1-docker.pkg.dev --quiet
 
-# 🔹 6. Verify Tart is installed
+# 🔹 6. Install Tart if missing
 if ! command -v tart &> /dev/null; then
-    echo "❌ ERROR: Tart is not installed!"
-    exit 1
+    echo "📦 Tart not found, downloading..."
+    curl -LO https://github.com/cirruslabs/tart/releases/latest/download/tart.tar.gz
+    tar -xzvf tart.tar.gz
+    mv tart.app /Applications/
+    rm tart.tar.gz
+    echo "✅ Tart installed successfully!"
+else
+    echo "✅ Tart is already installed."
 fi
 
 # 🔹 7. Pull the latest Tart image from GCP
@@ -78,7 +77,7 @@ if tart list | grep -q "$LOCAL_NAME"; then
     echo "✅ Tart image '$LOCAL_NAME' already exists. Skipping pull."
 else
     echo "📦 Pulling Tart image from GCP: $TART_IMAGE"
-    tart clone "$TART_IMAGE" "$LOCAL_NAME"
+    /Applications/tart.app/Contents/MacOS/tart pull "$TART_IMAGE"
     echo "✅ Tart image successfully pulled."
 fi
 
