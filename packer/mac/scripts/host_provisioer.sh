@@ -57,12 +57,20 @@ echo "🔑 Configuring authentication for Artifact Registry..."
 gcloud auth configure-docker us-west1-docker.pkg.dev --quiet
 
 # 🔹 6. Install Tart if missing
-if ! command -v tart &> /dev/null; then
+TART_BIN="/Applications/tart.app/Contents/MacOS/tart"
+
+if ! command -v "$TART_BIN" &> /dev/null; then
     echo "📦 Tart not found, downloading..."
     curl -LO https://github.com/cirruslabs/tart/releases/latest/download/tart.tar.gz
     tar -xzvf tart.tar.gz
-    mv tart.app /Applications/
-    rm tart.tar.gz
+
+    if [ -d "/Applications/tart.app" ]; then
+        echo "⚠️  /Applications/tart.app already exists. Skipping move."
+    else
+        mv tart.app /Applications/
+    fi
+
+    rm -rf tart.tar.gz tart.app
     echo "✅ Tart installed successfully!"
 else
     echo "✅ Tart is already installed."
@@ -73,17 +81,17 @@ TART_IMAGE="us-west1-docker.pkg.dev/taskcluster-imaging/mac-images/sequoia-teste
 LOCAL_NAME="sequoia-tester"
 
 echo "⬇️  Checking if Tart image already exists locally..."
-if tart list | grep -q "$LOCAL_NAME"; then
+if "$TART_BIN" list | grep -q "$LOCAL_NAME"; then
     echo "✅ Tart image '$LOCAL_NAME' already exists. Skipping pull."
 else
     echo "📦 Pulling Tart image from GCP: $TART_IMAGE"
-    /Applications/tart.app/Contents/MacOS/tart pull "$TART_IMAGE"
+    "$TART_BIN" pull "$TART_IMAGE"
     echo "✅ Tart image successfully pulled."
 fi
 
 # 🔹 8. Verify Tart image is available
 echo "📂 Listing available Tart images..."
-tart list
+"$TART_BIN" list
 
 echo "🚀 Installing Cilicon..."
 
@@ -94,9 +102,9 @@ CILICON_ZIP="/tmp/Cilicon-3.zip"
 echo "📥 Downloading Cilicon from $CILICON_URL..."
 curl -sSL "$CILICON_URL" -o "$CILICON_ZIP"
 
-# 🔹 10. Extract Cilicon into /Applications
+# 🔹 10. Extract Cilicon into /Applications, force overwrite if exists
 echo "📂 Extracting Cilicon to /Applications..."
-unzip -q "$CILICON_ZIP" -d /Applications
+unzip -o -q "$CILICON_ZIP" -d /Applications
 rm "$CILICON_ZIP"
 
 echo "✅ Cilicon installed successfully!"
