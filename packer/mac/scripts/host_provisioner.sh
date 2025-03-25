@@ -10,6 +10,13 @@ set -o pipefail  # Fail if any command in a pipeline fails
 
 echo "🚀 Starting Tart CI Setup..."
 
+# 🔹 0. Ensure GOOGLE_APPLICATION_CREDENTIALS is set early
+if [[ -z "$GOOGLE_APPLICATION_CREDENTIALS" ]]; then
+    echo "❌ ERROR: GOOGLE_APPLICATION_CREDENTIALS is not set!"
+    echo "➡️  Set it using: export GOOGLE_APPLICATION_CREDENTIALS='/path/to/ci-tart-puller-key.json'"
+    exit 1
+fi
+
 # 🔹 1. Install Google Cloud SDK (gcloud) if missing
 if ! command -v gcloud &> /dev/null; then
     echo "🚀 Installing Google Cloud SDK (gcloud) non-interactively..."
@@ -37,26 +44,19 @@ else
     echo "✅ gcloud is already installed."
 fi
 
-# 🔹 2. Ensure GOOGLE_APPLICATION_CREDENTIALS is set
-if [[ -z "$GOOGLE_APPLICATION_CREDENTIALS" ]]; then
-    echo "❌ ERROR: GOOGLE_APPLICATION_CREDENTIALS is not set!"
-    echo "➡️  Set it using: export GOOGLE_APPLICATION_CREDENTIALS='/path/to/ci-tart-puller-key.json'"
-    exit 1
-fi
-
-# 🔹 3. Authenticate with GCP using the service account
+# 🔹 2. Authenticate with GCP using the service account
 echo "🔐 Authenticating with Google Cloud..."
 gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS"
 
-# 🔹 4. Ensure authentication works
+# 🔹 3. Ensure authentication works
 echo "✅ Checking active authentication..."
 gcloud auth list
 
-# 🔹 5. Configure Artifact Registry authentication
+# 🔹 4. Configure Artifact Registry authentication
 echo "🔑 Configuring authentication for Artifact Registry..."
 gcloud auth configure-docker us-west1-docker.pkg.dev --quiet
 
-# 🔹 6. Install Tart if missing
+# 🔹 5. Install Tart if missing
 TART_BIN="/Applications/tart.app/Contents/MacOS/tart"
 
 if ! command -v "$TART_BIN" &> /dev/null; then
@@ -76,7 +76,7 @@ else
     echo "✅ Tart is already installed."
 fi
 
-# 🔹 7. Pull the latest Tart image from GCP
+# 🔹 6. Pull the latest Tart image from GCP
 TART_IMAGE="us-west1-docker.pkg.dev/taskcluster-imaging/mac-images/sequoia-tester:latest"
 LOCAL_NAME="sequoia-tester"
 
@@ -89,27 +89,27 @@ else
     echo "✅ Tart image successfully pulled."
 fi
 
-# 🔹 8. Verify Tart image is available
+# 🔹 7. Verify Tart image is available
 echo "📂 Listing available Tart images..."
 "$TART_BIN" list
 
 echo "🚀 Installing Cilicon..."
 
-# 🔹 9. Download Cilicon-3.zip from S3
+# 🔹 8. Download Cilicon-3.zip from S3
 CILICON_URL="https://ronin-puppet-package-repo.s3.us-west-2.amazonaws.com/macos/public/common/Cilicon-3.zip"
 CILICON_ZIP="/tmp/Cilicon-3.zip"
 
 echo "📥 Downloading Cilicon from $CILICON_URL..."
 curl -sSL "$CILICON_URL" -o "$CILICON_ZIP"
 
-# 🔹 10. Extract Cilicon into /Applications, force overwrite if exists
+# 🔹 9. Extract Cilicon into /Applications, force overwrite if exists
 echo "📂 Extracting Cilicon to /Applications..."
 unzip -o -q "$CILICON_ZIP" -d /Applications
 rm "$CILICON_ZIP"
 
 echo "✅ Cilicon installed successfully!"
 
-# 🔹 11. Determine non-root user
+# 🔹 10. Determine non-root user
 if [[ $EUID -eq 0 ]]; then
     echo "❌ ERROR: Running as root. Cannot determine user home directory!"
     exit 1
@@ -118,7 +118,7 @@ fi
 USER_HOME="$HOME"
 CILICON_CONFIG="$USER_HOME/cilicon.yml"
 
-# 🔹 12. Create Cilicon config file
+# 🔹 11. Create Cilicon config file
 echo "📝 Creating Cilicon config at $CILICON_CONFIG..."
 cat <<EOF > "$CILICON_CONFIG"
 machines:
@@ -165,7 +165,7 @@ EOF
 
 echo "✅ Cilicon configuration written to $CILICON_CONFIG"
 
-# 🔹 13. Launch Cilicon
+# 🔹 12. Launch Cilicon
 echo "🚀 Launching Cilicon..."
 open -a /Applications/Cilicon.app
 
