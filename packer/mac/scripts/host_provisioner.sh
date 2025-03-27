@@ -10,14 +10,14 @@ set -o pipefail  # Fail if any command in a pipeline fails
 
 echo "🚀 Starting Tart CI Setup..."
 
-# 🔹 0. Ensure GOOGLE_APPLICATION_CREDENTIALS is set early
+# 🔹 1. Ensure GOOGLE_APPLICATION_CREDENTIALS is set
 if [[ -z "$GOOGLE_APPLICATION_CREDENTIALS" ]]; then
     echo "❌ ERROR: GOOGLE_APPLICATION_CREDENTIALS is not set!"
     echo "➡️  Set it using: export GOOGLE_APPLICATION_CREDENTIALS='/path/to/ci-tart-puller-key.json'"
     exit 1
 fi
 
-# 🔹 1. Install Google Cloud SDK (gcloud) if missing
+# 🔹 2. Install Google Cloud SDK (gcloud) if missing
 if ! command -v gcloud &> /dev/null; then
     echo "🚀 Installing Google Cloud SDK (gcloud) non-interactively..."
 
@@ -44,19 +44,19 @@ else
     echo "✅ gcloud is already installed."
 fi
 
-# 🔹 2. Authenticate with GCP using the service account
+# 🔹 3. Authenticate with GCP using the service account
 echo "🔐 Authenticating with Google Cloud..."
 gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS"
 
-# 🔹 3. Ensure authentication works
+# 🔹 4. Ensure authentication works
 echo "✅ Checking active authentication..."
 gcloud auth list
 
-# 🔹 4. Configure Artifact Registry authentication
+# 🔹 5. Configure Artifact Registry authentication
 echo "🔑 Configuring authentication for Artifact Registry..."
 gcloud auth configure-docker us-west1-docker.pkg.dev --quiet
 
-# 🔹 5. Install Tart if missing
+# 🔹 6. Install Tart if missing
 TART_BIN="/Applications/tart.app/Contents/MacOS/tart"
 
 if ! command -v "$TART_BIN" &> /dev/null; then
@@ -76,7 +76,7 @@ else
     echo "✅ Tart is already installed."
 fi
 
-# 🔹 6. Pull the latest Tart image from GCP
+# 🔹 7. Pull the latest Tart image from GCP
 TART_IMAGE="us-west1-docker.pkg.dev/taskcluster-imaging/mac-images/sequoia-tester:latest"
 LOCAL_NAME="sequoia-tester"
 
@@ -89,27 +89,40 @@ else
     echo "✅ Tart image successfully pulled."
 fi
 
-# 🔹 7. Verify Tart image is available
+# 🔹 8. Verify Tart image is available
 echo "📂 Listing available Tart images..."
 "$TART_BIN" list
 
+# 🔹 9. Clone each vm with a unqiue name
+echo "🚀 Cloning VMs..."
+for i in 1 2; do
+  VM_NAME="sequoia-tester-$i"
+  if "$TART_BIN" list | grep -q "$VM_NAME"; then
+    echo "⚠️  $VM_NAME already exists. Skipping clone."
+  else
+    "$TART_BIN" clone "$TART_IMAGE" "$VM_NAME"
+    "$TART_BIN" set --random-serial "$VM_NAME"
+    "$TART_BIN" set --random-mac "$VM_NAME"
+  fi
+done
+
 echo "🚀 Installing Cilicon..."
 
-# 🔹 8. Download Cilicon-3.zip from S3
+# 🔹 10. Download Cilicon-3.zip from S3
 CILICON_URL="https://ronin-puppet-package-repo.s3.us-west-2.amazonaws.com/macos/public/common/Cilicon-3.zip"
 CILICON_ZIP="/tmp/Cilicon-3.zip"
 
 echo "📥 Downloading Cilicon from $CILICON_URL..."
 curl -sSL "$CILICON_URL" -o "$CILICON_ZIP"
 
-# 🔹 9. Extract Cilicon into /Applications, force overwrite if exists
+# 🔹 11. Extract Cilicon into /Applications, force overwrite if exists
 echo "📂 Extracting Cilicon to /Applications..."
 unzip -o -q "$CILICON_ZIP" -d /Applications
 rm "$CILICON_ZIP"
 
 echo "✅ Cilicon installed successfully!"
 
-# 🔹 10. Determine non-root user
+# 🔹 12. Determine non-root user
 if [[ $EUID -eq 0 ]]; then
     echo "❌ ERROR: Running as root. Cannot determine user home directory!"
     exit 1
@@ -118,12 +131,18 @@ fi
 USER_HOME="$HOME"
 CILICON_CONFIG="$USER_HOME/cilicon.yml"
 
-# 🔹 11. Create Cilicon config file
+# 🔹 13. Backup existing Cilicon config if it exists
+if [[ -f "$CILICON_CONFIG" ]]; then
+  mv "$CILICON_CONFIG" "$CILICON_CONFIG.bak.$(date +%s)"
+  echo "🗂️  Backed up existing Cilicon config to $CILICON_CONFIG.bak"
+fi
+
+# 🔹 14. Create Cilicon config file
 echo "📝 Creating Cilicon config at $CILICON_CONFIG..."
 cat <<EOF > "$CILICON_CONFIG"
 machines:
-  - id: runner-1
-    source: "oci://us-west1-docker.pkg.dev/taskcluster-imaging/mac-images/sequoia-tester:latest"
+  - id: sequoia-tester-1
+    source: "$USER_HOME/.tart/vms/sequoia-tester-1"
     provisioner:
       type: script
       config:
@@ -142,8 +161,8 @@ machines:
       ramGigabytes: 8
       cpuCores: 4
 
-  - id: runner-2
-    source: "oci://us-west1-docker.pkg.dev/taskcluster-imaging/mac-images/sequoia-tester:latest"
+  - id: sequoia-tester-2
+    source: "$USER_HOME/.tart/vms/sequoia-tester-2"
     provisioner:
       type: script
       config:
@@ -165,8 +184,13 @@ EOF
 
 echo "✅ Cilicon configuration written to $CILICON_CONFIG"
 
-# 🔹 12. Launch Cilicon
+# 🔹 15. Launch Cilicon
 echo "🚀 Launching Cilicon..."
-open -a /Applications/Cilicon.app
+if ! pgrep -f "Cilicon.app" > /dev/null; then
+  open -a /Applications/Cilicon.app
+  echo "🚀 Cilicon launched!"
+else
+  echo "✅ Cilicon already running."
+fi
 
 echo "🎉 Setup complete! Cilicon is running!"
