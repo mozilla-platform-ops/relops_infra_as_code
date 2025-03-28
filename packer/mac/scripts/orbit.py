@@ -4,14 +4,13 @@ from rich import print
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
-from rich.panel import Panel
 from rich import box
 import getpass
 import sys
-import subprocess
+import yaml
 
 console = Console()
-discovered_vms = []  # Store (ip, mac, hostname, host) tuples here
+discovered_vms = []  # List of (ip, mac, hostname, worker_pool, discovered_from)
 
 
 def display_title():
@@ -24,7 +23,7 @@ def get_user_input():
     password = getpass.getpass("Enter the SSH password (hidden): ") or "admin"
     hosts_input = Prompt.ask(
         "\nEnter the underlying macOS hosts (comma-separated)",
-        default="macmini-m4-1.local,macmini-m4-2.local"
+        default="macmini-m4-1.local,macmini-m4-2.local,macmini-m4-3.local,macmini-m4-4.local"
     )
     hosts = [h.strip() for h in hosts_input.split(",")]
     return username, password, hosts
@@ -64,6 +63,7 @@ def discover_vms(username, password, hosts):
             vm_table.add_column("IP Address", style="cyan")
             vm_table.add_column("MAC Address", style="magenta")
             vm_table.add_column("Hostname", style="yellow")
+            vm_table.add_column("Worker Pool", style="bright_blue")
 
             index = 1
             if result.ok and result.stdout.strip():
@@ -88,12 +88,25 @@ def discover_vms(username, password, hosts):
                                 gateway=conn
                             )
                             hostname = vm_conn.run("hostname", hide=True).stdout.strip()
+
+                            try:
+                                # Try to read worker-runner-config.yaml using sudo (with pty to allow sudo password prompt)
+                                worker_config_result = vm_conn.run("sudo cat /opt/worker/worker-runner-config.yaml", hide=True, pty=True)
+                                worker_config = worker_config_result.stdout
+                                parsed_yaml = yaml.safe_load(worker_config)
+                                worker_pool_id = parsed_yaml.get("provider", {}).get("workerPoolID", "Unknown")
+                                pool_name = worker_pool_id.split("/")[-1]
+                            except Exception as e:
+                                pool_name = "[red]Unknown[/red]"
+                                print(f"[dim]    ❌ Could not read worker config on {ip}: {e}[/dim]")
+
                         except Exception as e:
                             hostname = "[red]Unknown[/red]"
-                            print(f"[dim]    ❌ Could not get hostname for {ip}: {e}[/dim]")
+                            pool_name = "[red]Unknown[/red]"
+                            print(f"[dim]    ❌ Could not SSH into VM {ip}: {e}[/dim]")
 
-                        discovered_vms.append((ip, mac, hostname, host))
-                        vm_table.add_row(str(index), ip, mac, hostname)
+                        discovered_vms.append((ip, mac, hostname, pool_name, host))
+                        vm_table.add_row(str(index), ip, mac, hostname, pool_name)
                         index += 1
 
                 console.print(vm_table)
@@ -114,10 +127,11 @@ def interactive_menu(username):
     table.add_column("Hostname", style="yellow")
     table.add_column("IP Address", style="magenta")
     table.add_column("MAC", style="white")
+    table.add_column("Worker Pool", style="bright_blue")
     table.add_column("Discovered From", style="blue")
 
-    for i, (ip, mac, hostname, host) in enumerate(discovered_vms, start=1):
-        table.add_row(str(i), hostname, ip, mac, host)
+    for i, (ip, mac, hostname, pool, host) in enumerate(discovered_vms, start=1):
+        table.add_row(str(i), hostname, ip, mac, pool, host)
 
     console.print(table)
 
@@ -130,8 +144,9 @@ def interactive_menu(username):
         selected_vm = discovered_vms[choice - 1]
         ip = selected_vm[0]
         console.print(f"[green]Connecting to {ip} as {username}...[/green]")
-        gateway_host = selected_vm[3]
-        subprocess.run(["ssh", "-J", f"{username}@{gateway_host}", f"{username}@{ip}"])
+        host = selected_vm[4]
+        import subprocess
+        subprocess.run(["ssh", "-J", f"{username}@{host}", f"{username}@{ip}"])
 
     except (ValueError, IndexError):
         console.print("[red]Invalid selection.[/red]")
