@@ -7,7 +7,7 @@ resource "google_project_iam_custom_role" "custom_role_stop_compute_instances" {
   permissions = ["compute.instances.stop"]
 }
 
-resource "google_project_iam_member" "bhearsum-compute-simulate-maintenance" {
+resource "google_project_iam_member" "bhearsum-compute-stop-instances" {
   project = "fxci-production-level1-workers"
   role    = google_project_iam_custom_role.custom_role_stop_compute_instances.name
   member  = "user:bhearsum@mozilla.com"
