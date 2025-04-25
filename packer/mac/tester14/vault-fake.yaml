@@ -6,13 +6,13 @@ cltbld_user:
     salt: "490238490238ijfklsdjfkljsdkljf9238490324809238490324023840923849823084092384920klsjdflkdsjfkl"
 
 generic_worker:
-    gecko-t-osx-1400-m-vms:
+    gecko-t-osx-1500-m-vms:
         bugzilla_api_key: "sfjlksdjfdksj2949382402394820"
         livelog_secret: "lfjdslkjflksjlskfjlksj2390849032894239402"
         quarantine_access_token: "sjdflsdkjflksdj9203840923849032"
         quarantine_client_id: "project/releng/quarantine-worker"
         taskcluster_access_token: "kldsjflksdjfkl29038490328490238"
-        taskcluster_client_id: "project/releng/generic-worker/datacenter-gecko-t-osx-1400-m-vms"
+        taskcluster_client_id: "project/releng/generic-worker/datacenter-gecko-t-osx-1500-m-vms"
 
 worker:
     taskcluster_version: "60.3.4"
