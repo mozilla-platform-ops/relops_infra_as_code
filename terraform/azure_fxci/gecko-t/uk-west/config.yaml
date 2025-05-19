@@ -1,0 +1,9 @@
+---
+provisioner: gecko-t
+vnet_address_space:
+  - 10.0.0.0/20
+dns_servers:
+  - 1.1.1.1
+  - 8.8.8.8
+subnet_address_prefixes:
+  - 10.0.0.0/20
