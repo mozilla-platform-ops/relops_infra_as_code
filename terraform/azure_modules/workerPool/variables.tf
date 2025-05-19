@@ -30,20 +30,20 @@ variable "provisioner" {
 
 variable "tags" {
   description = "Tags to apply to the resources."
-  type        = map(string)  
+  type        = map(string)
 }
 
 variable "nat_gateway_name" {
   description = "The name of the NAT gateway."
-  type        = string  
+  type        = string
 }
 
 variable "azurerm_virtual_network_name" {
-    type        = string 
+    type        = string
 }
 
 variable "azurerm_subnet_name" {
-    type        = string 
+    type        = string
 }
 
 variable "azurerm_network_security_group_name" {
