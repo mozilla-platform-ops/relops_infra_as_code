@@ -19,11 +19,7 @@ osx_pkg_blueprints/
 
 ## 🚀 Building a Package
 
-1. Make sure you have munkipkg installed:
-
-   ```bash
-   brew install munkipkg
-   ```
+1. Make sure you have munkipkg installed. See https://www.munki.org/munki-pkg/ for available options
 
 2. Build the unsigned package:
 
