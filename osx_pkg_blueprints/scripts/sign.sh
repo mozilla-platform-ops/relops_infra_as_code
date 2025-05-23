@@ -4,7 +4,7 @@ set -euo pipefail
 
 # Check pkg input
 if [[ $# -ne 1 ]]; then
-  echo "Usage: $0 /path/to/unsigned.pkg"
+  echo "Usage: $0 /path/to/component.pkg"
   exit 1
 fi
 
@@ -43,18 +43,23 @@ if [[ -z "$SELECTED_CERT" ]]; then
   exit 1
 fi
 
-# Sign the package
+# Variables for wrapping
 PKG_DIR=$(dirname "$PKG_INPUT")
 PKG_BASENAME=$(basename "$PKG_INPUT" .pkg)
-PKG_SIGNED="${PKG_DIR}/${PKG_BASENAME}-signed.pkg"
+PKG_FINAL="${PKG_DIR}/${PKG_BASENAME}-wrapped.pkg"
+IDENTIFIER="com.mozilla.${PKG_BASENAME//_/.}"  # e.g. com.mozilla.p.role.gecko...
+VERSION="1.0"
 
-echo "📦 Signing package with:"
-echo "    $SELECTED_CERT"
-productsign --sign "$SELECTED_CERT" "$PKG_INPUT" "$PKG_SIGNED"
+echo "📦 Wrapping component package with productbuild..."
+productbuild \
+  --identifier "$IDENTIFIER" \
+  --version "$VERSION" \
+  --package "$PKG_INPUT" \
+  --sign "$SELECTED_CERT" \
+  "$PKG_FINAL"
 
-# Verify
-echo "🔍 Verifying signed package..."
-spctl -a -vv -t install "$PKG_SIGNED"
+echo "🔍 Verifying final signed package..."
+spctl -a -vv -t install "$PKG_FINAL"
 
-echo "✅ Signed package saved to:"
-echo "    $PKG_SIGNED"
+echo "✅ Signed MDM-compatible package saved to:"
+echo "    $PKG_FINAL"
