@@ -702,9 +702,58 @@ resource "azurerm_virtual_network" "geckot" {
       "Name" = "${each.value.rgname}"
     })
   )
-  subnet {
-    name           = "sn-${each.value.rgname}"
-    address_prefix = "10.0.0.0/22"
-    security_group = azurerm_network_security_group.geckot[each.key].id
-  }
+}
+
+resource "azurerm_subnet" "geckot" {
+  for_each             = var.geckot
+  name                 = "sn-${each.value.rgname}"
+  resource_group_name  = azurerm_resource_group.geckot[each.key].name
+  virtual_network_name = azurerm_virtual_network.geckot[each.key].name
+  address_prefixes     = ["10.0.0.0/22"]
+}
+
+
+resource "azurerm_subnet_network_security_group_association" "geckot" {
+  for_each                  = var.geckot
+  subnet_id                 = azurerm_subnet.geckot[each.key].id
+  network_security_group_id = azurerm_network_security_group.geckot[each.key].id
+}
+
+resource "azurerm_public_ip_prefix" "geckot" {
+  for_each            = var.geckot
+  name                = "ippre-${each.value.rglocation}-gecko-t"
+  resource_group_name = azurerm_resource_group.geckot[each.key].name
+  location            = each.value.rglocation
+  prefix_length       = 28
+}
+
+resource "azurerm_public_ip" "geckot" {
+  for_each            = var.geckot
+  name                = "pip-${each.value.rglocation}-gecko-t"
+  location            = each.value.rglocation
+  resource_group_name = azurerm_resource_group.geckot[each.key].name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+resource "azurerm_nat_gateway" "geckot" {
+  for_each                = var.geckot
+  name                    = "ng-${each.value.rglocation}-gecko-t"
+  location                = each.value.rglocation
+  resource_group_name     = azurerm_resource_group.geckot[each.key].name
+  idle_timeout_in_minutes = 4
+  sku_name                = "Standard"
+  tags                    = local.tags
+}
+
+resource "azurerm_nat_gateway_public_ip_prefix_association" "geckot" {
+  for_each            = var.geckot
+  nat_gateway_id      = azurerm_nat_gateway.geckot[each.key].id
+  public_ip_prefix_id = azurerm_public_ip_prefix.geckot[each.key].id
+}
+
+resource "azurerm_subnet_nat_gateway_association" "this" {
+  for_each       = var.geckot
+  nat_gateway_id = azurerm_nat_gateway.geckot[each.key].id
+  subnet_id      = azurerm_subnet.geckot[each.key].id
 }
