@@ -1,4 +1,4 @@
-resource "google_compute_firewall" "default" {
+resource "google_compute_firewall" "ssh_ingress_from_iap" {
   project       = "fxci-production-level1-workers"
   name          = "allow-ssh-ingress-from-iap"
   network       = "default"
