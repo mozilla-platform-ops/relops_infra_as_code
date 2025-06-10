@@ -9,7 +9,7 @@ resource "google_project_iam_member" "monitoring-viewer-svc-account" {
 }
 
 # dev svc account
-resource "google_project_iam_member" "monitoring-viewer-svc-account" {
+resource "google_project_iam_member" "monitoring-viewer-svc-account-dev" {
   project = "fxci-production-level3-workers"
   role = "roles/monitoring.viewer"
   member  = "serviceAccount:fxci-etl-dev@moz-fx-dev-releng.iam.gserviceaccount.com"
