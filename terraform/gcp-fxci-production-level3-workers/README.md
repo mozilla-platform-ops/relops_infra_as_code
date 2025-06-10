@@ -7,7 +7,6 @@ https://console.cloud.google.com/compute/instances?orgonly=true&project=fxci-pro
 ```bash
 # set aws creds per https://mozilla-hub.atlassian.net/wiki/spaces/ROPS/pages/1052606564/Using+Terraform+with+AWS+SSO
 
-export GOOGLE_CLOUD_KEYFILE_JSON=~/.gcp_credentials/BLAH
 gcloud auth login --update-adc
 tf apply
 ```
