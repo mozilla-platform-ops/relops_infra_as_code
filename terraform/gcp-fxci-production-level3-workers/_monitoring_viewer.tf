@@ -1,11 +1,16 @@
 # requested by ahal in https://mozilla-hub.atlassian.net/browse/RELOPS-984
+# and https://mozilla-hub.atlassian.net/browse/RELOPS-1047
 
-# So could someone please grant the Monitoring Viewer role to the
-# fxci-etl@moz-fx-dev-releng.iam.gserviceaccount.com service account?
-# In both the fxci-production-level1-workers and fxci-production-level3-workers projects.
-
+# prod svc account
 resource "google_project_iam_member" "monitoring-viewer-svc-account" {
   project = "fxci-production-level3-workers"
   role = "roles/monitoring.viewer"
   member  = "serviceAccount:fxci-etl@moz-fx-dev-releng.iam.gserviceaccount.com"
+}
+
+# dev svc account
+resource "google_project_iam_member" "monitoring-viewer-svc-account-dev" {
+  project = "fxci-production-level3-workers"
+  role = "roles/monitoring.viewer"
+  member  = "serviceAccount:fxci-etl-dev@moz-fx-dev-releng.iam.gserviceaccount.com"
 }
