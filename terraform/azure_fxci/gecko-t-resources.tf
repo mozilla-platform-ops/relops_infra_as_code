@@ -1,99 +1,3 @@
-locals {
-  geckot = {
-    "canada-central"   = { shortname = "canadacentral", friendlyname = "Canada Central" },
-    "central-india"    = { shortname = "centralindia", friendlyname = "Central India" },
-    "central-us"       = { shortname = "centralus", friendlyname = "Central US" },
-    "east-us"          = { shortname = "eastus", friendlyname = "East US" },
-    "east-us-2"        = { shortname = "eastus2", friendlyname = "East US 2" },
-    "north-central-us" = { shortname = "northcentralus", friendlyname = "North Central US" },
-    "north-europe"     = { shortname = "northeurope", friendlyname = "North Europe" },
-    "south-india"      = { shortname = "southindia", friendlyname = "South India" },
-    "uk-south"         = { shortname = "uksouth", friendlyname = "UK South" },
-    "west-us"          = { shortname = "westus", friendlyname = "West US" },
-    "west-us-2"        = { shortname = "westus2", friendlyname = "West US 2" },
-    "west-us-3"        = { shortname = "westus3", friendlyname = "West US 3" }
-  }
-}
-
-# gecko-t looping through variables
-resource "azurerm_resource_group" "geckot" {
-  for_each = local.geckot
-  name     = "rg2-${each.key}-gecko-t"
-  location = each.value.friendlyname
-}
-
-resource "azurerm_storage_account" "geckot" {
-  for_each                 = local.geckot
-  name                     = replace("st${each.value.rgname}", "/\\W|_|\\s/", "")
-  resource_group_name      = azurerm_resource_group.geckot[each.key].name
-  location                 = each.value.friendlyname
-  account_replication_type = "GRS"
-  account_tier             = "Standard"
-}
-
-resource "azurerm_network_security_group" "geckot" {
-  for_each            = local.geckot
-  name                = "nsg2-${each.key}-gecko-t"
-  resource_group_name = azurerm_resource_group.geckot[each.key].name
-  location            = each.value.friendlyname
-}
-
-resource "azurerm_virtual_network" "geckot" {
-  for_each            = local.geckot
-  name                = "vn2-${each.key}-gecko-t"
-  resource_group_name = azurerm_resource_group.geckot[each.key].name
-  location            = each.value.friendlyname
-  address_space       = ["10.0.0.0/22"]
-  dns_servers         = ["1.1.1.1", "1.1.1.0"]
-}
-
-resource "azurerm_subnet" "geckot" {
-  for_each             = local.geckot
-  name                 = "sn2-${each.key}-gecko-t"
-  resource_group_name  = azurerm_resource_group.geckot[each.key].name
-  virtual_network_name = azurerm_virtual_network.geckot[each.key].name
-  address_prefixes     = ["10.0.0.0/22"]
-}
-
-
-resource "azurerm_subnet_network_security_group_association" "geckot" {
-  for_each                  = local.geckot
-  subnet_id                 = azurerm_subnet.geckot[each.key].id
-  network_security_group_id = azurerm_network_security_group.geckot[each.key].id
-}
-
-resource "azurerm_public_ip_prefix" "geckot" {
-  for_each            = local.geckot
-  name                = "ippre2-${each.key}-gecko-t"
-  resource_group_name = azurerm_resource_group.geckot[each.key].name
-  location            = each.value.friendlyname
-  prefix_length       = 28
-}
-
-resource "azurerm_nat_gateway" "geckot" {
-  for_each                = local.geckot
-  name                    = "ng2-${each.key}-gecko-t"
-  location                = each.value.friendlyname
-  resource_group_name     = azurerm_resource_group.geckot[each.key].name
-  idle_timeout_in_minutes = 4
-  sku_name                = "Standard"
-  tags                    = local.tags
-}
-
-resource "azurerm_nat_gateway_public_ip_prefix_association" "geckot" {
-  for_each            = local.geckot
-  nat_gateway_id      = azurerm_nat_gateway.geckot[each.key].id
-  public_ip_prefix_id = azurerm_public_ip_prefix.geckot[each.key].id
-}
-
-resource "azurerm_subnet_nat_gateway_association" "geckot" {
-  for_each       = local.geckot
-  nat_gateway_id = azurerm_nat_gateway.geckot[each.key].id
-  subnet_id      = azurerm_subnet.geckot[each.key].id
-}
-
-###
-
 resource "azurerm_resource_group" "rg-canada-central-gecko-t" {
   name     = "rg-canada-central-gecko-t"
   location = "Canada Central"
@@ -748,108 +652,59 @@ resource "azurerm_virtual_network" "vn-west-us-3-gecko-t" {
   )
 }
 
-# # gecko-t looping through variables
-# resource "azurerm_resource_group" "geckot" {
-#   for_each = var.geckot
-#   name     = "rg-${each.value.rgname}"
-#   location = each.value.rglocation
-#   tags = merge(local.common_tags,
-#     tomap({
-#       "Name" = "${each.value.rgname}"
-#     })
-#   )
-# }
+# gecko-t looping through variables
+resource "azurerm_resource_group" "geckot" {
+  for_each = var.geckot
+  name     = "rg-${each.value.rgname}"
+  location = each.value.rglocation
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "${each.value.rgname}"
+    })
+  )
+}
 
-# resource "azurerm_storage_account" "geckot" {
-#   for_each                 = var.geckot
-#   name                     = replace("sa${each.value.rgname}", "/\\W|_|\\s/", "")
-#   resource_group_name      = azurerm_resource_group.geckot[each.key].name
-#   location                 = each.value.rglocation
-#   account_replication_type = "GRS"
-#   account_tier             = "Standard"
-#   tags = merge(local.common_tags,
-#     tomap({
-#       "Name" = "${each.value.rgname}"
-#     })
-#   )
-# }
+resource "azurerm_storage_account" "geckot" {
+  for_each                 = var.geckot
+  name                     = replace("sa${each.value.rgname}", "/\\W|_|\\s/", "")
+  resource_group_name      = azurerm_resource_group.geckot[each.key].name
+  location                 = each.value.rglocation
+  account_replication_type = "GRS"
+  account_tier             = "Standard"
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "${each.value.rgname}"
+    })
+  )
+}
 
-# resource "azurerm_network_security_group" "geckot" {
-#   for_each            = var.geckot
-#   name                = "nsg-${each.value.rgname}"
-#   resource_group_name = azurerm_resource_group.geckot[each.key].name
-#   location            = each.value.rglocation
-#   tags = merge(local.common_tags,
-#     tomap({
-#       "Name" = "${each.value.rgname}"
-#     })
-#   )
-# }
+resource "azurerm_network_security_group" "geckot" {
+  for_each            = var.geckot
+  name                = "nsg-${each.value.rgname}"
+  resource_group_name = azurerm_resource_group.geckot[each.key].name
+  location            = each.value.rglocation
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "${each.value.rgname}"
+    })
+  )
+}
 
-# resource "azurerm_virtual_network" "geckot" {
-#   for_each            = var.geckot
-#   name                = "vn-${each.value.rgname}"
-#   resource_group_name = azurerm_resource_group.geckot[each.key].name
-#   location            = each.value.rglocation
-#   address_space       = ["10.0.0.0/22"]
-#   dns_servers         = ["1.1.1.1", "1.1.1.0"]
-#   tags = merge(local.common_tags,
-#     tomap({
-#       "Name" = "${each.value.rgname}"
-#     })
-#   )
-# }
-
-# resource "azurerm_subnet" "geckot" {
-#   for_each             = var.geckot
-#   name                 = "sn-${each.value.rgname}"
-#   resource_group_name  = azurerm_resource_group.geckot[each.key].name
-#   virtual_network_name = azurerm_virtual_network.geckot[each.key].name
-#   address_prefixes     = ["10.0.0.0/22"]
-# }
-
-
-# resource "azurerm_subnet_network_security_group_association" "geckot" {
-#   for_each                  = var.geckot
-#   subnet_id                 = azurerm_subnet.geckot[each.key].id
-#   network_security_group_id = azurerm_network_security_group.geckot[each.key].id
-# }
-
-# resource "azurerm_public_ip_prefix" "geckot" {
-#   for_each            = var.geckot
-#   name                = "ippre-${each.value.rglocation}-gecko-t"
-#   resource_group_name = azurerm_resource_group.geckot[each.key].name
-#   location            = each.value.rglocation
-#   prefix_length       = 28
-# }
-
-# resource "azurerm_public_ip" "geckot" {
-#   for_each            = var.geckot
-#   name                = "pip-${each.value.rglocation}-gecko-t"
-#   location            = each.value.rglocation
-#   resource_group_name = azurerm_resource_group.geckot[each.key].name
-#   allocation_method   = "Static"
-#   sku                 = "Standard"
-# }
-
-# resource "azurerm_nat_gateway" "geckot" {
-#   for_each                = var.geckot
-#   name                    = "ng-${each.value.rglocation}-gecko-t"
-#   location                = each.value.rglocation
-#   resource_group_name     = azurerm_resource_group.geckot[each.key].name
-#   idle_timeout_in_minutes = 4
-#   sku_name                = "Standard"
-#   tags                    = local.tags
-# }
-
-# resource "azurerm_nat_gateway_public_ip_prefix_association" "geckot" {
-#   for_each            = var.geckot
-#   nat_gateway_id      = azurerm_nat_gateway.geckot[each.key].id
-#   public_ip_prefix_id = azurerm_public_ip_prefix.geckot[each.key].id
-# }
-
-# resource "azurerm_subnet_nat_gateway_association" "this" {
-#   for_each       = var.geckot
-#   nat_gateway_id = azurerm_nat_gateway.geckot[each.key].id
-#   subnet_id      = azurerm_subnet.geckot[each.key].id
-# }
+resource "azurerm_virtual_network" "geckot" {
+  for_each            = var.geckot
+  name                = "vn-${each.value.rgname}"
+  resource_group_name = azurerm_resource_group.geckot[each.key].name
+  location            = each.value.rglocation
+  address_space       = ["10.0.0.0/22"]
+  dns_servers         = ["1.1.1.1", "1.1.1.0"]
+  tags = merge(local.common_tags,
+    tomap({
+      "Name" = "${each.value.rgname}"
+    })
+  )
+  subnet {
+    name           = "sn-${each.value.rgname}"
+    address_prefix = "10.0.0.0/22"
+    security_group = azurerm_network_security_group.geckot[each.key].id
+  }
+}
