@@ -7,5 +7,5 @@ output "azurerm_subnet_id" {
 }
 
 output "azurerm_public_ip_prefix_id" {
-  value = azurerm_public_ip_prefix.this.id 
+  value = azurerm_public_ip_prefix.this.id
 }
