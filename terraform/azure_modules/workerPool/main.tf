@@ -71,7 +71,7 @@ resource "azurerm_storage_account" "this" {
   # Azure storage account names must be between 3 and 24 characters, contain only lowercase letters and numbers, 
   # and must not contain special characters or spaces. This regex removes disallowed characters, converts the name 
   # to lowercase, and truncates it to 24 characters to ensure compliance.
-  name                            = substr(lower(replace("${var.azurerm_storage_account_name}", "[^a-z0-9]", "")), 0, 24)
+  name                            = replace("${var.azurerm_storage_account_name}", "/\\W|_|\\s/", "")
   resource_group_name             = var.resource_group_name
   location                        = var.location
   account_kind                    = "StorageV2"
