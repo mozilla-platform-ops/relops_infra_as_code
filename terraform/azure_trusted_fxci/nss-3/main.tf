@@ -5,7 +5,7 @@ locals {
     "Central US"       = "central-us"
     #"East US"          = "east-us"
     "East US 2"        = "east-us-2"
-    "North Central US" = "north-central-us"
+    #"North Central US" = "north-central-us"
     #"North Europe"     = "north-europe"
     #"South India"      = "south-india"
     #"UK South"         = "uk-south"
@@ -19,7 +19,7 @@ locals {
     terraform       = "true"
     source_repo_url = "https://github.com/mozilla-platform-ops/relops_infra_as_code"
   }
-  provisioner = "vpn-1"
+  provisioner = "nss-3"
 }
 
 resource "azurerm_resource_group" "this" {
@@ -28,7 +28,7 @@ resource "azurerm_resource_group" "this" {
   location = each.key
 }
 
-module "vpn-1" {
+module "nss-3" {
   for_each                            = local.location_map
   source                              = "../../azure_modules/workerPool"
   location                            = each.key
