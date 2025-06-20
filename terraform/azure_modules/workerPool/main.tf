@@ -19,6 +19,20 @@ resource "azurerm_network_security_group" "this" {
   location            = var.location
   resource_group_name = var.resource_group_name
   tags                = var.tags
+  dynamic "security_rule" {
+    for_each = var.nsg_security_rules
+    content {
+      name                       = each.value.name
+      priority                   = each.value.priority
+      direction                  = each.value.direction
+      access                     = each.value.access
+      protocol                   = each.value.protocol
+      source_port_range          = each.value.source_port_range
+      destination_port_ranges    = each.value.destination_port_ranges
+      source_address_prefixes    = each.value.source_address_prefixes
+      destination_address_prefix = each.value.destination_address_prefix
+    }
+  }
 }
 
 resource "azurerm_subnet_network_security_group_association" "this" {
@@ -30,16 +44,7 @@ resource "azurerm_public_ip_prefix" "this" {
   name                = var.azurerm_public_ip_prefix_name
   resource_group_name = var.resource_group_name
   location            = var.location
-  prefix_length       = 28
-  tags                = var.tags
-}
-
-resource "azurerm_public_ip" "this" {
-  name                = var.azurerm_public_ip_name
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  allocation_method   = "Static"
-  sku                 = "Standard"
+  prefix_length       = var.azurerm_public_ip_prefix_length
   tags                = var.tags
 }
 

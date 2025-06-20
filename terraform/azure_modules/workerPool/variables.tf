@@ -46,6 +46,12 @@ variable "azurerm_subnet_name" {
     type        = string
 }
 
+variable "azurerm_public_ip_prefix_length" {
+    description = "The length of the public IP prefix."
+    type        = number
+    default     = 28
+}
+
 variable "azurerm_network_security_group_name" {
     type        = string
 }
@@ -54,10 +60,21 @@ variable "azurerm_public_ip_prefix_name" {
     type        = string
 }
 
-variable "azurerm_public_ip_name" {
+variable "azurerm_storage_account_name" {
     type        = string
 }
 
-variable "azurerm_storage_account_name" {
-    type        = string
+variable "nsg_security_rules" {
+  description = "Security rules for the network security group."
+  type        = list(object({
+    name                       = string
+    priority                   = number
+    direction                  = string
+    access                     = string
+    protocol                   = string
+    source_port_range          = string
+    destination_port_ranges    = list(string)
+    source_address_prefixes    = list(string)
+    destination_address_prefix = string
+  }))
 }
