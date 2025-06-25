@@ -19,8 +19,7 @@ locals {
     terraform       = "true"
     source_repo_url = "https://github.com/mozilla-platform-ops/relops_infra_as_code"
   }
-  provisioner = "mozillavpn-1"
-  provisioner_shortened = "mozvpn-1" ## Needed for storage account name
+  provisioner = "vpn-1"
 }
 
 resource "azurerm_resource_group" "this" {
@@ -29,7 +28,7 @@ resource "azurerm_resource_group" "this" {
   location = each.key
 }
 
-module "mozillavpn-1" {
+module "vpn-1" {
   for_each                            = local.location_map
   source                              = "../../azure_modules/workerPool"
   location                            = each.key
@@ -39,7 +38,7 @@ module "mozillavpn-1" {
   azurerm_network_security_group_name = "nsg2-${each.value}-${local.provisioner}"
   azurerm_public_ip_prefix_name       = "ippre2-${each.value}-${local.provisioner}"
   nat_gateway_name                    = "ng2-${each.value}-${local.provisioner}"
-  azurerm_storage_account_name        = "sa2${each.value}-${local.provisioner_shortened}"
+  azurerm_storage_account_name        = "sa2${each.value}-${local.provisioner}"
   vnet_address_space                  = local.config.defaults.vnet_address_space
   vnet_dns_servers                    = local.config.defaults.vnet_dns_servers
   subnet_address_prefixes             = local.config.defaults.subnet_address_prefixes

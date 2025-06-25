@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket         = "relops-tf-states"
-    key            = "azure_fxci_mozillavpn_3.tfstate"
+    key            = "azure_fxci_vpn_1.tfstate"
     use_lockfile   = true
     region         = "us-west-2"
   }
@@ -17,7 +17,7 @@ provider "aws" {
 provider "azurerm" {
   features {}
 
-  # FXCI Trusted Azure dev/test Subscription
-  subscription_id = "a30e97ab-734a-4f3b-a0e4-c51c0bff0701"
+  # FXCI Azure dev/test Subscription
+  subscription_id = "108d46d5-fe9b-4850-9a7d-8c914aa6c1f0"
   tenant_id       = "c0dc8bb0-b616-427e-8217-9513964a145b"
 }

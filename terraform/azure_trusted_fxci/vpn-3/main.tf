@@ -19,7 +19,7 @@ locals {
     terraform       = "true"
     source_repo_url = "https://github.com/mozilla-platform-ops/relops_infra_as_code"
   }
-  provisioner = "mozillavpn-3"
+  provisioner = "vpn-3"
 }
 
 resource "azurerm_resource_group" "this" {
@@ -28,7 +28,7 @@ resource "azurerm_resource_group" "this" {
   location = each.key
 }
 
-module "mozillavpn-3" {
+module "vpn-3" {
   for_each                            = local.location_map
   source                              = "../../azure_modules/workerPool"
   location                            = each.key
