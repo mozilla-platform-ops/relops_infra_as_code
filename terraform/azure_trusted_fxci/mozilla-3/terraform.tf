@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
     bucket         = "relops-tf-states"
-    key            = "azure_fxci_moz_3.tfstate"
-    #use_lockfile   = true
+    key            = "azure_fxci_mozilla_3.tfstate"
+    use_lockfile   = true
     region         = "us-west-2"
   }
 }
