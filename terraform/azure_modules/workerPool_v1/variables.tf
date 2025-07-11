@@ -45,10 +45,6 @@ variable "azurerm_network_security_group_name" {
     type        = string
 }
 
-variable "azurerm_public_ip_prefix_name" {
-    type        = string
-}
-
 variable "azurerm_storage_account_name" {
     type        = string
 }
