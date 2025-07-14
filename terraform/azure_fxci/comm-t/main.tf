@@ -60,7 +60,7 @@ module "comm-t_nogw" {
   location                            = each.key
   azurerm_virtual_network_name        = "vn-${each.value}-${local.provisioner}"
   azurerm_subnet_name                 = "sn-${each.value}-${local.provisioner}"
-  resource_group_name                 = azurerm_resource_group.this[each.key].name
+  resource_group_name                 = azurerm_resource_group.nongw[each.key].name
   azurerm_network_security_group_name = "nsg-${each.value}-${local.provisioner}"
   azurerm_storage_account_name        = "sa${each.value}-${local.provisioner}"
   vnet_address_space                  = local.config.defaults.vnet_address_space
