@@ -68,41 +68,6 @@ variable "comm2" {
   }
 }
 
-variable "vpn1" {
-  description = "storage account location"
-  type        = map(any)
-  default = {
-    "rg-central-us-vpn-1" = {
-      rgname     = "central-us-vpn-1"
-      rglocation = "centralus"
-    }
-    "rg-east-us-vpn-1" = {
-      rgname     = "east-us-vpn-1"
-      rglocation = "eastus"
-    }
-    "rg-east-us-2-vpn-1" = {
-      rgname     = "east-us-2-vpn-1"
-      rglocation = "eastus2"
-    }
-    "rg-north-central-us-vpn-1" = {
-      rgname     = "north-central-us-vpn-1"
-      rglocation = "northcentralus"
-    }
-    "rg-south-central-us-vpn-1" = {
-      rgname     = "south-central-us-vpn-1"
-      rglocation = "southcentralus"
-    }
-    "rg-west-us-vpn-1" = {
-      rgname     = "west-us-vpn-1"
-      rglocation = "westus"
-    }
-    "rg-west-us-2-vpn-1" = {
-      rgname     = "west-us-2-vpn-1"
-      rglocation = "westus2"
-    }
-  }
-}
-
 variable "devloaner" {
   description = "developers using windows vms to test"
   type        = map(any)
