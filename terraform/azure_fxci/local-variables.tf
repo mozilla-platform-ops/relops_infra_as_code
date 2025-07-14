@@ -164,38 +164,3 @@ variable "devloaner" {
     }
   }
 }
-
-variable "mozilla1" {
-  description = "mozilla-1 pool group taskcluster azure resources"
-  type        = map(any)
-  default = {
-    "rg-central-us-mozilla-1" = {
-      rgname     = "central-us-mozilla-1"
-      rglocation = "centralus"
-    }
-    "rg-east-us-mozilla-1" = {
-      rgname     = "east-us-mozilla-1"
-      rglocation = "eastus"
-    }
-    "rg-east-us-2-mozilla-1" = {
-      rgname     = "east-us-2-mozilla-1"
-      rglocation = "eastus2"
-    }
-    "rg-north-central-us-mozilla-1" = {
-      rgname     = "north-central-us-mozilla-1"
-      rglocation = "northcentralus"
-    }
-    "rg-south-central-us-mozilla-1" = {
-      rgname     = "south-central-us-mozilla-1"
-      rglocation = "southcentralus"
-    }
-    "rg-west-us-mozilla-1" = {
-      rgname     = "west-us-mozilla-1"
-      rglocation = "westus"
-    }
-    "rg-west-us-2-mozilla-1" = {
-      rgname     = "west-us-2-mozilla-1"
-      rglocation = "westus2"
-    }
-  }
-}
