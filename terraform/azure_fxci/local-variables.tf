@@ -165,21 +165,6 @@ variable "devloaner" {
   }
 }
 
-variable "geckot" {
-  description = "geckot taskcluster azure resources"
-  type        = map(any)
-  default = {
-    "rg-uk-south-gecko-t" = {
-      rgname     = "uk-south-gecko-t"
-      rglocation = "uksouth"
-    }
-    "rg-uk-west-gecko-t" = {
-      rgname     = "uk-west-gecko-t"
-      rglocation = "ukwest"
-    }
-  }
-}
-
 variable "mozilla1" {
   description = "mozilla-1 pool group taskcluster azure resources"
   type        = map(any)
