@@ -32,6 +32,7 @@ resource "azurerm_resource_group" "nongw" {
   for_each = local.location_map
   name     = "rg-${each.value}-${local.provisioner}"
   location = each.key
+  tags     = local.tags
 }
 
 module "comm-t" {
