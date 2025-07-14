@@ -1,38 +1,3 @@
-variable "gecko2" {
-  description = "storage account location"
-  type        = map(any)
-  default = {
-    "rg-central-us-gecko-2" = {
-      rgname     = "central-us-gecko-2"
-      rglocation = "centralus"
-    }
-    "rg-east-us-gecko-2" = {
-      rgname     = "east-us-gecko-2"
-      rglocation = "eastus"
-    }
-    "rg-east-us-2-gecko-2" = {
-      rgname     = "east-us-2-gecko-2"
-      rglocation = "eastus2"
-    }
-    "rg-north-central-us-gecko-2" = {
-      rgname     = "north-central-us-gecko-2"
-      rglocation = "northcentralus"
-    }
-    "rg-south-central-us-gecko-2" = {
-      rgname     = "south-central-us-gecko-2"
-      rglocation = "southcentralus"
-    }
-    "rg-west-us-gecko-2" = {
-      rgname     = "west-us-gecko-2"
-      rglocation = "westus"
-    }
-    "rg-west-us-2-gecko-2" = {
-      rgname     = "west-us-2-gecko-2"
-      rglocation = "westus2"
-    }
-  }
-}
-
 variable "comm1" {
   description = "storage account location"
   type        = map(any)
