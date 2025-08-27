@@ -12,7 +12,7 @@ packer {
 }
 
 source "tart-cli" "create-base" {
-  from_ipsw    = "https://updates.cdn-apple.com/2025SpringFCS/fullrestores/082-23340/61923341-EE73-4C6E-BB3E-DAB3069548BF/UniversalMac_15.4.1_24E263_Restore.ipsw"
+  from_ipsw    = "https://updates.cdn-apple.com/2025WinterFCS/fullrestores/072-08269/7CAAB9F7-E970-428D-8764-4CD7BCD105CD/UniversalMac_15.3_24D60_Restore.ipsw"
   vm_name      = "sequoia-tester"
   cpu_count    = 4
   memory_gb    = 8
@@ -20,7 +20,7 @@ source "tart-cli" "create-base" {
   ssh_password = "admin"
   ssh_username = "admin"
   ssh_timeout  = "300s"
-    boot_command = [
+      boot_command = [
     # hello, hola, bonjour, etc.
     "<wait60s><spacebar>",
     # Language: most of the times we have a list of "English"[1], "English (UK)", etc. with
@@ -31,30 +31,28 @@ source "tart-cli" "create-base" {
     #
     # [1]: should be named "English (US)", but oh well 🤷
     "<wait30s>italiano<esc>english<enter>",
-    # Select Your Country or Region
+    # Select Your Country and Region
     "<wait30s>united states<leftShiftOn><tab><leftShiftOff><spacebar>",
-    # Transfer Your Data to This Mac
-    "<wait10s><tab><tab><tab><spacebar><tab><tab><spacebar>",
     # Written and Spoken Languages
     "<wait10s><leftShiftOn><tab><leftShiftOff><spacebar>",
     # Accessibility
     "<wait10s><leftShiftOn><tab><leftShiftOff><spacebar>",
     # Data & Privacy
     "<wait10s><leftShiftOn><tab><leftShiftOff><spacebar>",
-    # Create a Mac Account
-    "<wait10s>Managed via Tart<tab>admin<tab>admin<tab>admin<tab><tab><spacebar><tab><tab><spacebar>",
-    # Enable Voice Over
-    "<wait120s><leftAltOn><f5><leftAltOff>",
+    # Migration Assistant
+    "<wait10s><tab><tab><tab><spacebar>",
     # Sign In with Your Apple ID
-    "<wait10s><leftShiftOn><tab><leftShiftOff><spacebar>",
+    "<wait10s><leftShiftOn><tab><leftShiftOff><leftShiftOn><tab><leftShiftOff><spacebar>",
     # Are you sure you want to skip signing in with an Apple ID?
     "<wait10s><tab><spacebar>",
     # Terms and Conditions
     "<wait10s><leftShiftOn><tab><leftShiftOff><spacebar>",
     # I have read and agree to the macOS Software License Agreement
     "<wait10s><tab><spacebar>",
+    # Create a Computer Account
+    "<wait10s>admin<tab><tab>admin<tab>admin<tab><tab><tab><spacebar>",
     # Enable Location Services
-    "<wait10s><leftShiftOn><tab><leftShiftOff><spacebar>",
+    "<wait120s><leftShiftOn><tab><leftShiftOff><spacebar>",
     # Are you sure you don't want to use Location Services?
     "<wait10s><tab><spacebar>",
     # Select Your Time Zone
@@ -67,12 +65,8 @@ source "tart-cli" "create-base" {
     "<wait10s><tab><spacebar><leftShiftOn><tab><leftShiftOff><spacebar>",
     # Choose Your Look
     "<wait10s><leftShiftOn><tab><leftShiftOff><spacebar>",
-    # Update Mac Automatically
-    "<wait10s><tab><spacebar>",
     # Welcome to Mac
     "<wait10s><spacebar>",
-    # Disable Voice Over
-    "<leftAltOn><f5><leftAltOff>",
     # Enable Keyboard navigation
     # This is so that we can navigate the System Settings app using the keyboard
     "<wait10s><leftAltOn><spacebar><leftAltOff>Terminal<enter>",
@@ -81,25 +75,11 @@ source "tart-cli" "create-base" {
     # Now that the installation is done, open "System Settings"
     "<wait10s><leftAltOn><spacebar><leftAltOff>System Settings<enter>",
     # Navigate to "Sharing"
-    "<wait10s><leftCtrlOn><f2><leftCtrlOff><right><right><right><down>Sharing<enter>",
+    "<wait10s><leftAltOn>f<leftAltOff>sharing<enter>",
     # Navigate to "Screen Sharing" and enable it
-    "<wait10s><tab><tab><tab><tab><tab><tab><tab><spacebar>",
+    "<wait10s><tab><tab><tab><tab><tab><spacebar>",
     # Navigate to "Remote Login" and enable it
     "<wait10s><tab><tab><tab><tab><tab><tab><tab><tab><tab><tab><tab><tab><spacebar>",
-    # Quit System Settings
-    "<wait10s><leftAltOn>q<leftAltOff>",
-    # Disable Gatekeeper (1/2)
-    "<wait10s><leftAltOn><spacebar><leftAltOff>Terminal<enter>",
-    "<wait10s>sudo spctl --global-disable<enter>",
-    "<wait10s>admin<enter>",
-    "<wait10s><leftAltOn>q<leftAltOff>",
-    # Disable Gatekeeper (2/2)
-    "<wait10s><leftAltOn><spacebar><leftAltOff>System Settings<enter>",
-    "<wait10s><leftCtrlOn><f2><leftCtrlOff><right><right><right><down>Privacy & Security<enter>",
-    "<wait10s><leftShiftOn><tab><leftShiftOff><leftShiftOn><tab><leftShiftOff><leftShiftOn><tab><leftShiftOff><leftShiftOn><tab><leftShiftOff><leftShiftOn><tab><leftShiftOff><leftShiftOn><tab><leftShiftOff><leftShiftOn><tab><leftShiftOff>",
-    "<wait10s><down><wait1s><down><wait1s><enter>",
-    "<wait10s>admin<enter>",
-    "<wait10s><leftShiftOn><tab><leftShiftOff><wait1s><spacebar>",
     # Quit System Settings
     "<wait10s><leftAltOn>q<leftAltOff>",
   ]
@@ -134,15 +114,5 @@ build {
     ]
   }
 
-  provisioner "ansible" {
-    playbook_file = "../../ansible/playbook-system-updater.yml"
-    extra_arguments = [
-      "-vvv",
-    ]
-    ansible_env_vars = [
-      "ANSIBLE_TRANSPORT=paramiko",
-      "ANSIBLE_HOST_KEY_CHECKING=False",
-    ]
-    use_proxy = false
-  }
+
 }
