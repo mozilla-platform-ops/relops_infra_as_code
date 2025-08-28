@@ -1,7 +1,7 @@
 locals {
   location_map = {
     #"Canada Central"   = "canada-central"
-    #"Central India"    = "central-india"
+    "Central India"    = "central-india"
     "Central US"       = "central-us"
     #"East US"          = "east-us"
     "East US 2"        = "east-us-2"
