@@ -432,9 +432,6 @@ locals {
 ]
 
   DATA_SCANNING_CUSTOM_ROLE_ACTIONS = [
-    "Microsoft.DocumentDB/databaseAccounts/read",
-    "Microsoft.DocumentDB/databaseAccounts/readonlykeys/action",
-    "Microsoft.Insights/metrics/read",
     "Microsoft.ManagedIdentity/userAssignedIdentities/assign/action",
     "Microsoft.Network/virtualNetworks/subnets/joinViaServiceEndpoint/action",
     "Microsoft.Sql/servers/databases/azureAsyncOperation/read",

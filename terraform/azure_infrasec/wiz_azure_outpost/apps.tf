@@ -12,7 +12,7 @@ data "azuread_client_config" "current" {}
 resource "azuread_application" "wiz_da_orchestrator" {
   count            = local.use_orchestrator_wiz_managed_app ? 0 : 1
   display_name     = var.wiz_da_orchestrator_app_name
-  owners           = [data.azuread_client_config.current.object_id]
+  owners                       = [data.azuread_client_config.current.object_id]
   sign_in_audience = "AzureADMyOrg"
   api {
     requested_access_token_version = 2
@@ -65,7 +65,7 @@ locals {
 resource "azuread_application" "wiz_da_scanner" {
   display_name     = var.wiz_da_scanner_app_name
   sign_in_audience = local.sign_in_aud
-  owners           = [data.azuread_client_config.current.object_id]
+  owners                       = [data.azuread_client_config.current.object_id]
   api {
     requested_access_token_version = 2
   }
@@ -122,7 +122,7 @@ resource "azuread_application" "wiz_da_worker" {
   count            = var.use_worker_managed_identity ? 0 : 1
   display_name     = var.wiz_da_worker_app_name
   sign_in_audience = "AzureADMyOrg"
-  owners           = [data.azuread_client_config.current.object_id]
+  owners                       = [data.azuread_client_config.current.object_id]
   api {
     requested_access_token_version = 2
   }
