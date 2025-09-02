@@ -22,22 +22,6 @@ resource "azurerm_shared_image_gallery" "win10_64_2009_alpha" {
   )
 }
 
-resource "azurerm_shared_image" "win10_64_2009_alpha" {
-  name                = "win10-64-2009-alpha"
-  gallery_name        = azurerm_shared_image_gallery.win10_64_2009_alpha.name
-  resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
-  location            = azurerm_resource_group.rg-packer-worker-images.location
-  os_type             = "Windows"
-  release_note_uri    = "https://github.com/mozilla-platform-ops/worker-images/releases"
-  hyper_v_generation  = "V2"
-
-  identifier {
-    publisher = "MicrosoftWindowsDesktop"
-    offer     = "Windows-10"
-    sku       = "win10-22h2-avd"
-  }
-}
-
 ## win10-64-2009
 resource "azurerm_shared_image_gallery" "win10_64_2009" {
   name                = "ronin_t_windows10_64_2009_prod"

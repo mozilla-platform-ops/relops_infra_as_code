@@ -8,9 +8,9 @@ module "wiz_azure_outpost" {
   azure_tenant_id       = local.mozilla_tenant_id
   azure_subscription_id = local.infra_sec_subscription
 
-  wiz_application_keyvault_name     = ""
-  wiz_global_orchestrator_rg_name   = ""
-  wiz_global_orchestrator_rg_region = ""
+  wiz_application_keyvault_name     = "kv-wiz-moz"
+  wiz_global_orchestrator_rg_name   = "rg-wiz-global-orchestrator"
+  wiz_global_orchestrator_rg_region = "westus2"
 
   enable_data_scanning                   = true
   use_worker_managed_identity            = true
