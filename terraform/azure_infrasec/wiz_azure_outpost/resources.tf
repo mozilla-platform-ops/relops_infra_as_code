@@ -9,7 +9,7 @@ resource "azurerm_resource_group" "wiz_orchestrator_rg" {
   name     = var.wiz_global_orchestrator_rg_name
   location = var.wiz_global_orchestrator_rg_region
   tags = {
-    "wiz" = ""
+    "owner_email" = "infrastructuresecurity@mozilla.com"
   }
 }
 
@@ -68,7 +68,7 @@ resource "azurerm_key_vault" "wiz_outpost_keyvault" {
     default_action = "Allow"
   }
   tags = {
-    "wiz" = ""
+    "owner_email" = "infrastructuresecurity@mozilla.com"
   }
 }
 
