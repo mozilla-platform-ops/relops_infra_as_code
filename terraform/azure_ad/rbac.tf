@@ -3,6 +3,26 @@ data "azuread_group" "infrasec" {
   security_enabled = true
 }
 
+data "azuread_group" "releng" {
+  display_name     = "Releng"
+  security_enabled = true
+}
+
+# Assign Billing Reader role to the specified group across all subscriptions
+resource "azurerm_role_assignment" "billing_reader_releng" {
+  for_each             = toset(var.azure_subscriptions)
+  scope                = each.value
+  role_definition_name = "Billing Reader"
+  principal_id         = data.azuread_group.releng.object_id
+}
+
+resource "azurerm_role_assignment" "releng_reader" {
+  for_each             = toset(var.azure_subscriptions)
+  scope                = each.value
+  role_definition_name = "reader"
+  principal_id         = data.azuread_group.releng.object_id
+}
+
 resource "azurerm_role_assignment" "infrasec_reader" {
   for_each             = toset(var.azure_subscriptions)
   scope                = each.value
