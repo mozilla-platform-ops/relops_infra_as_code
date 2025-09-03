@@ -17,9 +17,9 @@ resource "azurerm_role_assignment" "billing_reader_releng" {
 }
 
 resource "azurerm_role_assignment" "releng_contributor" {
-  for_each             = [
+  for_each             = toset([
       "/subscriptions/0a420ff9-bc77-4475-befc-a05071fc92ec",
-  ]
+  ])
   scope                = each.value
   role_definition_name = "Contributor"
   principal_id         = data.azuread_group.releng.object_id
