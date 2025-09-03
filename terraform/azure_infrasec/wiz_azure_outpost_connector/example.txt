@@ -1,0 +1,20 @@
+module "wiz_azure_outpost_connector" {
+
+  source = "https://s3-us-east-2.amazonaws.com/wizio-public/deployment-v2/azure/wiz-azure-outpost-connector-terraform-module.zip"
+  
+  azure_tenant_id             = ""
+  wiz_app_id                  = ""
+  wiz_da_scanner_app_id       = ""
+
+  azure_management_group_id   = ""
+  azure_subscription_id       = ""
+  
+  enable_entra_id_scanning    = true
+  enable_data_scanning        = true
+  enable_serverless_scanning  = true
+}
+
+output "wiz_module_outputs" {
+  sensitive = true
+  value     = module.wiz_azure_outpost_connector
+}

@@ -22,3 +22,21 @@ module "wiz_azure_outpost" {
   wiz_custom_data_scanning_copy_role_name       = "WizDataCopyCustomRole"
   wiz_custom_disk_copy_role_name                = "WizDiskCopyCustomRole"
 }
+
+module "wiz_azure_outpost_connector" {
+  source = "./wiz_azure_outpost_connector"
+
+  azure_management_group_id      = local.mozilla_tenant_id
+  azure_subscription_id          = local.infra_sec_subscription
+  use_existing_service_principal = true
+  wiz_app_id                     = "dfff79c9-64b2-475a-8217-0f84e7ab96e9"
+  wiz_da_scanner_app_id          = module.wiz_azure_outpost.wiz_da_scanner_client_id
+  #use_managed_orchestrator   = true
+  enable_data_scanning       = true
+  enable_serverless_scanning = false
+  enable_openai_scanning     = false
+  enable_entra_id_scanning   = false
+  depends_on = [
+    module.wiz_azure_outpost
+  ]
+}
