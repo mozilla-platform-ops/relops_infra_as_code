@@ -128,6 +128,17 @@ locals {
     "Microsoft.Web/staticSites/read",
     "Microsoft.Web/staticSites/userProvidedFunctionApps/read"
   ]
+
+  non_fxci_subscriptions = [
+    "/subscriptions/36c94cc5-8e6d-49db-a034-bb82b6a2632e", ## Mozilla Monitor
+    "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9", ## Taskcluster Engineering DevTest
+    "/subscriptions/0a420ff9-bc77-4475-befc-a05071fc92ec"  ## Firefox non-CI DevTest
+  ]
+
+  fxci_subscriptions = [
+    "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0", ## FXCI Azure DevTest
+    "/subscriptions/a30e97ab-734a-4f3b-a0e4-c51c0bff0701"  ## Trusted FXCI Azure DevTest
+  ]
 }
 
 # Data source to lookup app registration by client ID
@@ -141,11 +152,7 @@ data "azuread_service_principal" "wiz_sp" {
 }
 
 resource "azurerm_role_definition" "wiz_disk_non_fxci" {
-  for_each = [
-    "/subscriptions/36c94cc5-8e6d-49db-a034-bb82b6a2632e", ## Mozilla Monitor
-    "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9", ## Taskcluster Engineering DevTest
-    "/subscriptions/0a420ff9-bc77-4475-befc-a05071fc92ec"  ## Firefox non-CI DevTest
-  ]
+  for_each    = toset(local.non_fxci_subscriptions)
   name        = "WizDiskAnalyzerRole"
   scope       = each.value
   description = "Wiz DiskAnalyzer Role"
@@ -155,10 +162,7 @@ resource "azurerm_role_definition" "wiz_disk_non_fxci" {
 }
 
 resource "azurerm_role_definition" "wiz_disk_fxci" {
-  for_each = [
-    "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0", ## FXCI Azure DevTest
-    "/subscriptions/a30e97ab-734a-4f3b-a0e4-c51c0bff0701"  ## Trusted FXCI Azure DevTest
-  ]
+  for_each    = toset(local.fxci_subscriptions)
   name        = "FXCI_WizDiskAnalyzerRole"
   scope       = each.value
   description = "Wiz DiskAnalyzer Role for FXCI Subscriptions"
@@ -168,22 +172,15 @@ resource "azurerm_role_definition" "wiz_disk_fxci" {
 }
 
 resource "azurerm_role_assignment" "wiz_disk_fxci" {
-  for_each = [
-    "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0", ## FXCI Azure DevTest
-    "/subscriptions/a30e97ab-734a-4f3b-a0e4-c51c0bff0701"  ## Trusted FXCI Azure DevTest
-  ]
+  for_each             = toset(local.fxci_subscriptions)
   scope                = each.value
-  principal_id         = data.azuread_service_principal.wiz_da_orchestrator_sp.object_id
-  role_definition_name = azurerm_role_definition.wiz_disk_fxci.name
+  principal_id         = data.azuread_service_principal.wiz_sp.object_id
+  role_definition_name = azurerm_role_definition.wiz_disk_fxci[each.key].name
 }
 
 resource "azurerm_role_assignment" "wiz_disk_non_fxci" {
-  for_each = [
-    "/subscriptions/36c94cc5-8e6d-49db-a034-bb82b6a2632e", ## Mozilla Monitor
-    "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9", ## Taskcluster Engineering DevTest
-    "/subscriptions/0a420ff9-bc77-4475-befc-a05071fc92ec"  ## Firefox non-CI DevTest
-  ]
+  for_each             = toset(local.non_fxci_subscriptions)
   scope                = each.value
-  principal_id         = data.azuread_service_principal.wiz_da_orchestrator_sp.object_id
-  role_definition_name = azurerm_role_definition.wiz_disk_non_fxci.name
+  principal_id         = data.azuread_service_principal.wiz_sp.object_id
+  role_definition_name = azurerm_role_definition.wiz_disk_non_fxci[each.key].name
 }
