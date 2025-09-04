@@ -1,6 +1,5 @@
 locals {
-  use_orchestrator_wiz_managed_app = var.wiz_da_orchestrator_wiz_managed_app_id != "00000000-0000-0000-0000-000000000000" ? true : false
-  # If multi_tenancy_enabled is true -> "AzureADMultipleOrgs", else "AzureADMyOrg"
+  use_orchestrator_wiz_managed_app         = var.wiz_da_orchestrator_wiz_managed_app_id != "00000000-0000-0000-0000-000000000000" ? true : false
   sign_in_aud                              = (var.multi_tenancy_enabled ? "AzureADMultipleOrgs" : "AzureADMyOrg")
   wiz_da_worker_principal_id               = var.use_worker_managed_identity ? azurerm_user_assigned_identity.wiz_da_worker_identity[0].principal_id : azuread_service_principal.wiz_da_worker_sp[0].object_id
   wiz_da_scanner_pass                      = (var.wiz_da_scanner_app_secret == "wiz_auto_create_secret" ? azuread_application_password.wiz_da_scanner_pass.value : var.wiz_da_scanner_app_secret)
@@ -221,12 +220,14 @@ locals {
   ]
 }
 
-data "azuread_client_config" "current" {}
+data "azuread_group" "infra_sec_users" {
+  display_name = "Infrastructure Security Team"
+}
 
 resource "azuread_application" "wiz_da_orchestrator" {
   count            = local.use_orchestrator_wiz_managed_app ? 0 : 1
   display_name     = var.wiz_da_orchestrator_app_name
-  owners           = [data.azuread_client_config.current.object_id]
+  owners           = data.azuread_group.infra_sec_users.members
   sign_in_audience = "AzureADMyOrg"
   api {
     requested_access_token_version = 2
@@ -253,7 +254,7 @@ resource "azuread_application_password" "wiz_da_orchestrator_pass" {
 resource "azuread_service_principal" "wiz_da_orchestrator_sp" {
   client_id                    = local.use_orchestrator_wiz_managed_app ? var.wiz_da_orchestrator_wiz_managed_app_id : azuread_application.wiz_da_orchestrator[0].client_id
   app_role_assignment_required = false
-  owners                       = [data.azuread_client_config.current.object_id]
+  owners                       = data.azuread_group.infra_sec_users.members
   feature_tags {
     custom_single_sign_on = false
     enterprise            = false
@@ -266,7 +267,7 @@ resource "azuread_service_principal" "wiz_da_orchestrator_sp" {
 resource "azuread_application" "wiz_da_scanner" {
   display_name     = var.wiz_da_scanner_app_name
   sign_in_audience = local.sign_in_aud
-  owners           = [data.azuread_client_config.current.object_id]
+  owners           = data.azuread_group.infra_sec_users.members
   api {
     requested_access_token_version = 2
   }
@@ -291,7 +292,7 @@ resource "azuread_application_password" "wiz_da_scanner_pass" {
 resource "azuread_service_principal" "wiz_da_scanner_sp" {
   client_id                    = azuread_application.wiz_da_scanner.client_id
   app_role_assignment_required = false
-  owners                       = [data.azuread_client_config.current.object_id]
+  owners                       = data.azuread_group.infra_sec_users.members
   feature_tags {
     custom_single_sign_on = false
     enterprise            = false
@@ -311,7 +312,7 @@ resource "azuread_application" "wiz_da_worker" {
   count            = var.use_worker_managed_identity ? 0 : 1
   display_name     = var.wiz_da_worker_app_name
   sign_in_audience = "AzureADMyOrg"
-  owners           = [data.azuread_client_config.current.object_id]
+  owners           = data.azuread_group.infra_sec_users.members
   api {
     requested_access_token_version = 2
   }
@@ -337,7 +338,7 @@ resource "azuread_application_password" "wiz_da_worker_pass" {
 resource "azuread_service_principal" "wiz_da_worker_sp" {
   count                        = var.use_worker_managed_identity ? 0 : 1
   client_id                    = azuread_application.wiz_da_worker[count.index].client_id
-  owners                       = [data.azuread_client_config.current.object_id]
+  owners                       = data.azuread_group.infra_sec_users.members
   app_role_assignment_required = false
   feature_tags {
     custom_single_sign_on = false
@@ -361,6 +362,7 @@ resource "azurerm_resource_group" "wiz_orchestrator_rg" {
     "owner_email" = "infrastructuresecurity@mozilla.com"
   }
 }
+
 # The key vault used by wiz to store app keys
 resource "azurerm_key_vault" "wiz_outpost_keyvault" {
   name                            = var.wiz_application_keyvault_name
@@ -375,10 +377,9 @@ resource "azurerm_key_vault" "wiz_outpost_keyvault" {
   enabled_for_template_deployment = false
   sku_name                        = "standard"
 
-  # A policy for the entity calling the terraform to put keys/etc
   access_policy {
     tenant_id               = var.azure_tenant_id
-    object_id               = data.azurerm_client_config.current.object_id
+    object_id               = data.azuread_group.infra_sec_users.object_id
     key_permissions         = ["Backup", "Create", "Decrypt", "Delete", "Encrypt", "Get", "Import", "List", "Purge", "Recover", "Restore", "Sign", "UnwrapKey", "Update", "Verify", "WrapKey", "Release", "Rotate", "GetRotationPolicy", "SetRotationPolicy"]
     secret_permissions      = ["Backup", "Delete", "Get", "List", "Purge", "Recover", "Restore", "Set"]
     certificate_permissions = ["Backup", "Create", "Delete", "DeleteIssuers", "Get", "GetIssuers", "Import", "List", "ListIssuers", "ManageContacts", "ManageIssuers", "Purge", "Recover", "Restore", "SetIssuers", "Update"]
