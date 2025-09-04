@@ -51,7 +51,7 @@ variable "wiz_global_orchestrator_rg_name" {
   default = "wiz-orchestrator-global-rg"
 }
 
-# When set we will use Wiz Managed Entraprise App instead of creating a new one
+# When set we will use Wiz Managed Entraprise App instead of creating a new one 
 variable "wiz_da_orchestrator_wiz_managed_app_id" {
   type        = string
   description = "Client ID of your Wiz's tenant managed Entra ID application."

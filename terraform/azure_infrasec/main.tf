@@ -4,16 +4,15 @@ locals {
 }
 
 module "wiz_azure_outpost" {
-  source                = "./wiz_azure_outpost"
-  azure_tenant_id       = local.mozilla_tenant_id
-  azure_subscription_id = local.infra_sec_subscription
-
-  wiz_application_keyvault_name     = "kv-wiz-moz"
-  wiz_global_orchestrator_rg_name   = "rg-wiz-global-orchestrator"
-  wiz_global_orchestrator_rg_region = "westus2"
-
-  enable_data_scanning        = true
-  use_worker_managed_identity = true
+  source                                 = "./wiz_azure_outpost"
+  azure_tenant_id                        = local.mozilla_tenant_id
+  azure_subscription_id                  = local.infra_sec_subscription
+  wiz_application_keyvault_name          = "kv-wiz-moz"
+  wiz_global_orchestrator_rg_name        = "rg-wiz-global-orchestrator"
+  wiz_global_orchestrator_rg_region      = "westus2"
+  wiz_da_orchestrator_wiz_managed_app_id = "dfff79c9-64b2-475a-8217-0f84e7ab96e9"
+  enable_data_scanning                   = true
+  use_worker_managed_identity            = true
 }
 
 # module "wiz_azure_outpost_connector" {
@@ -29,7 +28,4 @@ module "wiz_azure_outpost" {
 #   enable_serverless_scanning = false
 #   enable_openai_scanning     = false
 #   enable_entra_id_scanning   = false
-#   depends_on = [
-#     module.wiz_azure_outpost
-#   ]
 # }

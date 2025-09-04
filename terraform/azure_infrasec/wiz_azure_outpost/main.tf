@@ -1,5 +1,12 @@
+/*
+=================================================
+WIZ DISK ANALYZER ORCHESTRATOR APP, SP, PASSWORD
+=================================================
+*/
+
 locals {
-  use_orchestrator_wiz_managed_app         = var.wiz_da_orchestrator_wiz_managed_app_id != "00000000-0000-0000-0000-000000000000" ? true : false
+  use_orchestrator_wiz_managed_app = var.wiz_da_orchestrator_wiz_managed_app_id != "00000000-0000-0000-0000-000000000000" ? true : false
+  # If multi_tenancy_enabled is true -> "AzureADMultipleOrgs", else "AzureADMyOrg"
   sign_in_aud                              = (var.multi_tenancy_enabled ? "AzureADMultipleOrgs" : "AzureADMyOrg")
   wiz_da_worker_principal_id               = var.use_worker_managed_identity ? azurerm_user_assigned_identity.wiz_da_worker_identity[0].principal_id : azuread_service_principal.wiz_da_worker_sp[0].object_id
   wiz_da_scanner_pass                      = (var.wiz_da_scanner_app_secret == "wiz_auto_create_secret" ? azuread_application_password.wiz_da_scanner_pass.value : var.wiz_da_scanner_app_secret)
@@ -218,10 +225,7 @@ locals {
     "Microsoft.ManagedIdentity/userAssignedIdentities/assign/action",
     "Microsoft.Sql/servers/databases/write"
   ]
-}
 
-data "azuread_group" "infra_sec_users" {
-  display_name = "Infrastructure Security Team"
 }
 
 resource "azuread_application" "wiz_da_orchestrator" {
@@ -264,6 +268,12 @@ resource "azuread_service_principal" "wiz_da_orchestrator_sp" {
   use_existing = true
 }
 
+/*
+=================================================
+WIZ DISK ANALYZER SCANNER APP, SP, PASSWORD
+=================================================
+*/
+
 resource "azuread_application" "wiz_da_scanner" {
   display_name     = var.wiz_da_scanner_app_name
   sign_in_audience = local.sign_in_aud
@@ -301,12 +311,24 @@ resource "azuread_service_principal" "wiz_da_scanner_sp" {
   }
 }
 
+/*
+=================================================
+WIZ DISK ANALYZER CONTROL PLANE MANAGED IDENTITY
+=================================================
+*/
+
 resource "azurerm_user_assigned_identity" "wiz_da_control_plane_identity" {
   count               = var.use_worker_managed_identity ? 1 : 0
   name                = var.wiz_da_control_plane_identity_name
   location            = azurerm_resource_group.wiz_orchestrator_rg.location
   resource_group_name = azurerm_resource_group.wiz_orchestrator_rg.name
 }
+
+/*
+=================================================
+WIZ DISK ANALYZER WORKER APP, SP, PASSWORD
+=================================================
+*/
 
 resource "azuread_application" "wiz_da_worker" {
   count            = var.use_worker_managed_identity ? 0 : 1
@@ -348,6 +370,12 @@ resource "azuread_service_principal" "wiz_da_worker_sp" {
   }
 }
 
+/*
+=================================================
+WIZ DISK ANALYZER WORKER MANAGED IDENTITY
+=================================================
+*/
+
 resource "azurerm_user_assigned_identity" "wiz_da_worker_identity" {
   count               = var.use_worker_managed_identity ? 1 : 0
   name                = var.wiz_da_worker_identity_name
@@ -355,13 +383,26 @@ resource "azurerm_user_assigned_identity" "wiz_da_worker_identity" {
   resource_group_name = azurerm_resource_group.wiz_orchestrator_rg.name
 }
 
+/*
+=================================================
+WIZ RESOURCE GROUP FOR ORCHESTRATOR RESOURCES
+=================================================
+*/
+
+# The resource group where we place the key vaults and Storage
 resource "azurerm_resource_group" "wiz_orchestrator_rg" {
   name     = var.wiz_global_orchestrator_rg_name
   location = var.wiz_global_orchestrator_rg_region
   tags = {
-    "owner_email" = "infrastructuresecurity@mozilla.com"
+    "wiz" = ""
   }
 }
+
+/*
+=================================================
+WIZ KEY VAULT FOR APP SECRETS
+=================================================
+*/
 
 # The key vault used by wiz to store app keys
 resource "azurerm_key_vault" "wiz_outpost_keyvault" {
@@ -377,9 +418,10 @@ resource "azurerm_key_vault" "wiz_outpost_keyvault" {
   enabled_for_template_deployment = false
   sku_name                        = "standard"
 
+  # A policy for the entity calling the terraform to put keys/etc
   access_policy {
     tenant_id               = var.azure_tenant_id
-    object_id               = data.azuread_group.infra_sec_users.object_id
+    object_id               = data.azurerm_client_config.current.object_id
     key_permissions         = ["Backup", "Create", "Decrypt", "Delete", "Encrypt", "Get", "Import", "List", "Purge", "Recover", "Restore", "Sign", "UnwrapKey", "Update", "Verify", "WrapKey", "Release", "Rotate", "GetRotationPolicy", "SetRotationPolicy"]
     secret_permissions      = ["Backup", "Delete", "Get", "List", "Purge", "Recover", "Restore", "Set"]
     certificate_permissions = ["Backup", "Create", "Delete", "DeleteIssuers", "Get", "GetIssuers", "Import", "List", "ListIssuers", "ManageContacts", "ManageIssuers", "Purge", "Recover", "Restore", "SetIssuers", "Update"]
@@ -407,9 +449,23 @@ resource "azurerm_key_vault" "wiz_outpost_keyvault" {
     default_action = "Allow"
   }
   tags = {
-    "owner_email" = "infrastructuresecurity@mozilla.com"
+    "wiz" = ""
   }
 }
+
+/*
+=================================================
+SECRET MANAGEMENT FOR WIZ KEY VAULTS
+NOTE:
+- These could be done in a for_each loop, however we maintain them separately
+- This is done for readibility/ease of editing
+=================================================
+*/
+
+
+# LOCAL CONDITIONAL VARIABLES
+# NOTE:
+# - if values == "wiz_auto_create_secret", then assign value left of : , else assign value right of :
 
 # Write the Wiz Disk Analyzer - Scanner app secret to the key vault
 resource "azurerm_key_vault_secret" "wiz_da_scanner_secret" {
@@ -601,6 +657,16 @@ resource "azurerm_role_definition" "wiz_diskanalyzer_datascanning_copy_role" {
   ]
 }
 
+/*
+=================================================
+ARTIFICIAL WAIT TIMER - AZ DATAPLANE PROPAGATION
+=================================================
+*/
+
+# We add a wait condition here because the custom role can take time to propagate
+# In Azure and may not immediately be available to return results for the policy attachment
+# Using a depends_on at the resource level for the attachment is not as relaible as a simple wait condition
+
 resource "time_sleep" "wait_for_az_dataplane" {
   create_duration = var.azure_wait_timer
   depends_on = [
@@ -610,6 +676,12 @@ resource "time_sleep" "wait_for_az_dataplane" {
     azurerm_role_definition.wiz_orch_diskanalyzer_diskmanager_role,
   ]
 }
+
+/*
+=================================================
+WIZ ROLE ASSIGNMENTS - DA ORCHESTRATOR
+=================================================
+*/
 
 resource "azurerm_role_assignment" "wiz_da_orchestrator_wiz_orch_assign" {
   depends_on           = [time_sleep.wait_for_az_dataplane]
@@ -634,6 +706,12 @@ resource "azurerm_role_assignment" "wiz_da_orchestrator_managed_id_operator_assi
   role_definition_name = "Managed Identity Operator"
 }
 
+/*
+=================================================
+WIZ ROLE ASSIGNMENTS - DA SCANNER
+=================================================
+*/
+
 resource "azurerm_role_assignment" "wiz_da_scanner_azure_wiz_da_diskcopy_assign" {
   depends_on           = [time_sleep.wait_for_az_dataplane]
   scope                = "/subscriptions/${var.azure_subscription_id}"
@@ -641,6 +719,8 @@ resource "azurerm_role_assignment" "wiz_da_scanner_azure_wiz_da_diskcopy_assign"
   role_definition_name = azurerm_role_definition.wiz_diskanalyzer_diskcopy_role.name
 }
 
+# Optionally assign the Wiz DiskAnalyzer Data Scanning Copy Role Wiz Disk Analyzer - Scanner app
+# If enable_data_scanning is true
 resource "azurerm_role_assignment" "wiz_da_scanner_wiz_da_datascanning_copy_assign" {
   count                = (var.enable_data_scanning) ? 1 : 0
   depends_on           = [time_sleep.wait_for_az_dataplane]
@@ -649,12 +729,24 @@ resource "azurerm_role_assignment" "wiz_da_scanner_wiz_da_datascanning_copy_assi
   role_definition_name = azurerm_role_definition.wiz_diskanalyzer_datascanning_copy_role[count.index].name
 }
 
+/*
+=================================================
+WIZ ROLE ASSIGNMENTS - DA CONTROL PLANE
+=================================================
+*/
+
 resource "azurerm_role_assignment" "wiz_da_control_plane_managed_id_operator_assign" {
   count                = var.use_worker_managed_identity ? 1 : 0
   scope                = azurerm_user_assigned_identity.wiz_da_worker_identity[0].id
   principal_id         = azurerm_user_assigned_identity.wiz_da_control_plane_identity[0].principal_id
   role_definition_name = "Managed Identity Operator"
 }
+
+/*
+=================================================
+WIZ ROLE ASSIGNMENTS - DA WORKER
+=================================================
+*/
 
 resource "azurerm_role_assignment" "wiz_da_worker_azure_vm_contributor_assign" {
   scope                = "/subscriptions/${var.azure_subscription_id}"
@@ -669,6 +761,8 @@ resource "azurerm_role_assignment" "wiz_da_worker_wiz_orch_disk_manager_worker_r
   role_definition_name = azurerm_role_definition.wiz_orch_diskanalyzer_diskmanager_role.name
 }
 
+# Optionally assign the Wiz DiskAnalyzer Data Scanning Role to the Wiz Disk Analyser - Worker app
+# If enable_data_scanning is true
 resource "azurerm_role_assignment" "wiz_da_worker_wiz_da_datascanning_assign" {
   count                = (var.enable_data_scanning) ? 1 : 0
   depends_on           = [time_sleep.wait_for_az_dataplane]
