@@ -21,9 +21,6 @@ module "wiz_azure_outpost" {
   wiz_custom_data_scanning_role_name            = "WizOrchestratorDataScanningRole"
   wiz_custom_data_scanning_copy_role_name       = "WizDataCopyCustomRole"
   wiz_custom_disk_copy_role_name                = "WizDiskCopyCustomRole"
-<<<<<<< Updated upstream
-}
-=======
 } 
 
 # module "wiz_azure_outpost_connector" {
@@ -43,4 +40,3 @@ module "wiz_azure_outpost" {
 #     module.wiz_azure_outpost
 #   ]
 # }
->>>>>>> Stashed changes
