@@ -129,16 +129,15 @@ locals {
     "Microsoft.Web/staticSites/userProvidedFunctionApps/read"
   ]
 
-  non_fxci_subscriptions = [
-    "/subscriptions/36c94cc5-8e6d-49db-a034-bb82b6a2632e", ## Mozilla Monitor
-    "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9", ## Taskcluster Engineering DevTest
-    "/subscriptions/0a420ff9-bc77-4475-befc-a05071fc92ec"  ## Firefox non-CI DevTest
-  ]
-
-  fxci_subscriptions = [
-    "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0", ## FXCI Azure DevTest
-    "/subscriptions/a30e97ab-734a-4f3b-a0e4-c51c0bff0701"  ## Trusted FXCI Azure DevTest
-  ]
+  non_fxci_subscriptions_map = {
+    "Mozilla Monitor"                 = "36c94cc5-8e6d-49db-a034-bb82b6a2632e",
+    "Taskcluster Engineering DevTest" = "8a205152-b25a-417f-a676-80465535a6c9"
+    "Firefox_non_CI_DevTest"          = "0a420ff9-bc77-4475-befc-a05071fc92ec"
+  }
+  fxci_subscriptions_map = {
+    "FXCI Azure DevTest"         = "108d46d5-fe9b-4850-9a7d-8c914aa6c1f0",
+    "Trusted FXCI Azure DevTest" = "a30e97ab-734a-4f3b-a0e4-c51c0bff0701"
+  }
 }
 
 # Data source to lookup app registration by client ID
@@ -151,36 +150,40 @@ data "azuread_service_principal" "wiz_sp" {
   client_id = data.azuread_application.wiz_app.client_id
 }
 
+# Role definitions for non-FXCI subscriptions (subscription-scoped)
 resource "azurerm_role_definition" "wiz_disk_non_fxci" {
-  for_each    = toset(local.non_fxci_subscriptions)
-  name        = "WizDiskAnalyzerRole"
-  scope       = each.value
-  description = "Wiz DiskAnalyzer Role"
+  for_each    = local.non_fxci_subscriptions_map
+  name        = "WizDiskAnalyzerRole-${each.value}" # Use full subscription ID for uniqueness
+  scope       = "/subscriptions/${each.value}"
+  description = "Wiz DiskAnalyzer Role for Subscription ${each.key}"
   permissions {
     actions = local.NON_FXCI_WIZ_PERMISSIONS
   }
 }
 
+# Role definitions for FXCI subscriptions (subscription-scoped)
 resource "azurerm_role_definition" "wiz_disk_fxci" {
-  for_each    = toset(local.fxci_subscriptions)
-  name        = "FXCI_WizDiskAnalyzerRole"
-  scope       = each.value
-  description = "Wiz DiskAnalyzer Role for FXCI Subscriptions"
+  for_each    = local.fxci_subscriptions_map
+  name        = "WizDiskAnalyzerRole-${each.value}" # Use full subscription ID for uniqueness
+  scope       = "/subscriptions/${each.value}"
+  description = "Wiz DiskAnalyzer Role for Subscription ${each.key}"
   permissions {
     actions = local.FXCI_WIZ_PERMISSIONS
   }
 }
 
+# Assign FXCI role to FXCI subscriptions
 resource "azurerm_role_assignment" "wiz_disk_fxci" {
-  for_each             = toset(local.fxci_subscriptions)
-  scope                = each.value
-  principal_id         = data.azuread_service_principal.wiz_sp.object_id
-  role_definition_name = azurerm_role_definition.wiz_disk_fxci[each.key].name
+  for_each           = local.fxci_subscriptions_map
+  scope              = "/subscriptions/${each.value}"
+  principal_id       = data.azuread_service_principal.wiz_sp.object_id
+  role_definition_id = azurerm_role_definition.wiz_disk_fxci[each.key].role_definition_resource_id
 }
 
+# Assign non-FXCI role to non-FXCI subscriptions
 resource "azurerm_role_assignment" "wiz_disk_non_fxci" {
-  for_each             = toset(local.non_fxci_subscriptions)
-  scope                = each.value
-  principal_id         = data.azuread_service_principal.wiz_sp.object_id
-  role_definition_name = azurerm_role_definition.wiz_disk_non_fxci[each.key].name
+  for_each           = local.non_fxci_subscriptions_map
+  scope              = "/subscriptions/${each.value}"
+  principal_id       = data.azuread_service_principal.wiz_sp.object_id
+  role_definition_id = azurerm_role_definition.wiz_disk_non_fxci[each.key].role_definition_resource_id
 }
