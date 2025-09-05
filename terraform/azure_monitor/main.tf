@@ -1,16 +1,26 @@
+# ------------------------------------------------------------
 # Naming: <prefix>-<region>-agents
+# ------------------------------------------------------------
 locals {
   region_suffix = replace(lower(var.location), "/[^a-z0-9]/", "")
   base_name     = "${var.prefix}-${local.region_suffix}-agents"
+
+  # Session init script (runs per user logon)
+  session_init     = file("${path.module}/scripts/avd-session-init.ps1")
+  session_init_b64 = base64encode(local.session_init)
 }
 
+# ------------------------------------------------------------
 # Resource Group
+# ------------------------------------------------------------
 resource "azurerm_resource_group" "rg" {
   name     = "${local.base_name}-rg"
   location = var.location
 }
 
+# ------------------------------------------------------------
 # Network
+# ------------------------------------------------------------
 module "network" {
   source              = "./modules/network"
   name                = local.base_name
@@ -20,18 +30,22 @@ module "network" {
   subnet_cidr         = var.subnet_cidr
 }
 
+# ------------------------------------------------------------
 # AVD Core (host pool, app group, workspace, registration token)
+# ------------------------------------------------------------
 module "avd" {
-  source                = "./modules/avd-core"
-  name                  = local.base_name
-  location              = var.location
-  resource_group_name   = azurerm_resource_group.rg.name
-  max_sessions          = 20
-  custom_rdp_properties = "redirectclipboard:i:0 drivestoredirect:s: redirectprinters:i:0 redirectcomports:i:0 redirectsmartcards:i:0 usbdevicestoredirect:s: camerastoredirect:s: audiocapturemode:i:0 devicestoredirect:s: enablerdumultimon:i:1"
-  # token_valid_for      = "4h"  # default already 4h in module; uncomment to be explicit
+  source              = "./modules/avd-core"
+  name                = local.base_name
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+  max_sessions        = 20
+
+  custom_rdp_properties = "redirectclipboard:i:0;redirectprinters:i:0;redirectcomports:i:0;redirectsmartcards:i:0;drivestoredirect:s:;usbdevicestoredirect:s:;camerastoredirect:s:;audiocapturemode:i:0;enablerdumultimon:i:1"
 }
 
-# Scaling plan (logic retained; pinned to keep 100% of hosts online)
+# ------------------------------------------------------------
+# Scaling Plan (business hours, 100% online)
+# ------------------------------------------------------------
 module "scaling" {
   source              = "./modules/scaling"
   name                = local.base_name
@@ -41,15 +55,9 @@ module "scaling" {
   time_zone           = "Pacific Standard Time"
 }
 
-# Init script (stateless; no FSLogix)
-locals {
-  init_script = templatefile("${path.module}/scripts/avd-sessionhost-init.ps1", {
-    registration_token = module.avd.registration_token
-  })
-  init_script_b64 = base64encode(local.init_script)
-}
-
-# Session Hosts (optional via deploy_vms)
+# ------------------------------------------------------------
+# Session Hosts (toggle deploy_vms)
+# ------------------------------------------------------------
 module "session_hosts" {
   source = "./modules/session-hosts"
   count  = var.deploy_vms ? 1 : 0
@@ -62,13 +70,14 @@ module "session_hosts" {
   vm_count = var.vm_count
   vm_size  = var.vm_size
 
-  # Bootstrap creds via TF_VAR_ env vars (short-lived; rotated by LAPS)
+  # Bootstrap creds injected at runtime
   admin_username = var.admin_username
   admin_password = var.admin_password
 
-  init_script_b64 = local.init_script_b64
+  # ✅ required by module: pass our per-logon session init script here
+  init_script_b64 = local.session_init_b64
 
-  # AAD login + LAPS (no-Intune path active)
+  # AAD login + LAPS
   enable_laps              = true
   laps_managed_by_intune   = false
   laps_backup_directory    = 1
@@ -78,7 +87,9 @@ module "session_hosts" {
   laps_admin_account_name  = null
 }
 
-# Ephemeral registration token revoke flow (requires Azure CLI)
+# ------------------------------------------------------------
+# Ephemeral registration token revoke flow
+# ------------------------------------------------------------
 resource "time_sleep" "wait_for_session_host_registration" {
   count           = var.deploy_vms ? 1 : 0
   create_duration = "5m"
@@ -101,7 +112,9 @@ resource "null_resource" "revoke_avd_registration_token" {
   depends_on = [time_sleep.wait_for_session_host_registration]
 }
 
+# ------------------------------------------------------------
 # Diagnostics (Log Analytics)
+# ------------------------------------------------------------
 module "diagnostics" {
   source              = "./modules/diagnostics"
   name                = local.base_name
@@ -110,7 +123,9 @@ module "diagnostics" {
   host_pool_id        = module.avd.host_pool_id
 }
 
-# IAM: assign Desktop Virtualization User on App Group
+# ------------------------------------------------------------
+# IAM: grant access to users/groups
+# ------------------------------------------------------------
 module "iam" {
   source        = "./modules/iam-assignments"
   app_group_id  = module.avd.app_group_id
