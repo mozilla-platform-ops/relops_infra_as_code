@@ -150,12 +150,25 @@ data "azuread_service_principal" "wiz_sp" {
   client_id = data.azuread_application.wiz_app.client_id
 }
 
+# Data source to get the service principal for the app registration
+data "azuread_service_principal" "wiz_enterprise_app_sp" {
+  object_id =  "bc7a1764-1e44-48d6-8990-718a2be1ba34"
+}
+
 # Assign reader to all subscriptions
 resource "azurerm_role_assignment" "wiz_disk_reader" {
   for_each             = merge(local.fxci_subscriptions_map, local.non_fxci_subscriptions_map)
   scope                = "/subscriptions/${each.value}"
   role_definition_name = "Reader"
   principal_id         = data.azuread_service_principal.wiz_sp.object_id
+}
+
+# Assign reader to all subscriptions
+resource "azurerm_role_assignment" "wiz_enterprise_app_reader" {
+  #for_each             = merge(local.fxci_subscriptions_map, local.non_fxci_subscriptions_map)
+  scope                = "/providers/Microsoft.Management/managementGroups/c0dc8bb0-b616-427e-8217-9513964a145b"
+  role_definition_name = "Reader"
+  principal_id         = data.azuread_service_principal.wiz_enterprise_app_sp.object_id
 }
 
 # Role definitions for non-FXCI subscriptions (subscription-scoped)
