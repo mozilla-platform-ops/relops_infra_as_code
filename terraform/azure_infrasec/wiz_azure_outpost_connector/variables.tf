@@ -10,9 +10,9 @@ variable "azure_environment" {
   default     = "public"
   description = <<EOF
     DEPRECATED: This variable is deprecated and will be removed in a future release. Please set this in your terraform provider block instead.
-    
+
     The Cloud Environment which should be used, possible values are: public, usgovernment, german, and china.
-    Defaults to public. 
+    Defaults to public.
   EOF
 }
 
