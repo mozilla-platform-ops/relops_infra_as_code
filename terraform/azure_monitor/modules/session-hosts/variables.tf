@@ -1,75 +1,98 @@
 variable "name" {
-  type = string
+  description = "Base name for the session host resources"
+  type        = string
 }
 
 variable "location" {
-  type = string
+  description = "Azure region for the session hosts"
+  type        = string
 }
 
 variable "resource_group_name" {
-  type = string
+  description = "Resource group in which to create the session hosts"
+  type        = string
 }
 
 variable "subnet_id" {
-  type = string
+  description = "Subnet ID where the session hosts will be deployed"
+  type        = string
 }
 
 variable "vm_count" {
-  type = number
+  description = "Number of session host VMs to create in this pool"
+  type        = number
 }
 
 variable "vm_size" {
-  type = string
+  description = "Size (SKU) of the session host VMs"
+  type        = string
 }
 
 variable "admin_username" {
+  description = "Bootstrap local admin username (short-lived; rotated by LAPS)"
   type        = string
-  description = "Bootstrap local admin username"
 }
 
 variable "admin_password" {
+  description = "Bootstrap local admin password (short-lived; rotated by LAPS)"
   type        = string
   sensitive   = true
-  description = "Bootstrap local admin password (short-lived)"
 }
 
 variable "init_script_b64" {
+  description = "Base64-encoded PowerShell init script (runs on first boot / logon)"
   type        = string
   sensitive   = true
-  description = "Base64-encoded PowerShell init script"
 }
 
+# Optional: pin Marketplace image version (useful for multi-region)
+variable "image_version" {
+  description = "Optional Marketplace image version for Win11 AVD (e.g., 26100.4946.250810)"
+  type        = string
+  default     = null
+}
+
+# -------------------------
+# Windows LAPS configuration
+# -------------------------
 variable "enable_laps" {
-  type    = bool
-  default = true
+  description = "Enable Windows LAPS (Local Administrator Password Solution)"
+  type        = bool
+  default     = true
 }
 
 variable "laps_managed_by_intune" {
-  type    = bool
-  default = false
+  description = "If true, assume Intune delivers LAPS policy; if false, apply local config"
+  type        = bool
+  default     = false
 }
 
 variable "laps_backup_directory" {
-  type    = number
-  default = 1
+  description = "Where LAPS should back up passwords (1=Entra ID, 2=AD, 0=Disabled)"
+  type        = number
+  default     = 1
 }
 
 variable "laps_password_age_days" {
-  type    = number
-  default = 14
+  description = "Number of days before rotating the local admin password"
+  type        = number
+  default     = 14
 }
 
 variable "laps_password_length" {
-  type    = number
-  default = 24
+  description = "Length of generated local admin password"
+  type        = number
+  default     = 24
 }
 
 variable "laps_password_complexity" {
-  type    = number
-  default = 4
+  description = "Password complexity mode (4=upper/lower/numbers/specials)"
+  type        = number
+  default     = 4
 }
 
 variable "laps_admin_account_name" {
-  type    = string
-  default = null
+  description = "Optional: custom local admin account name (null uses built-in Administrator RID)"
+  type        = string
+  default     = null
 }

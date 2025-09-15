@@ -8,29 +8,29 @@ resource "azurerm_virtual_desktop_scaling_plan" "this" {
 
   schedule {
     name         = "BusinessHours"
-    days_of_week = ["Monday","Tuesday","Wednesday","Thursday","Friday"]
+    days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 
-    # --- Ramp Up (also governs PEAK capacity/min) ---
+    # --- Ramp Up (also governs Peak) ---
     ramp_up_start_time                 = var.ramp_up_start
-    ramp_up_load_balancing_algorithm   = "BreadthFirst"  # or "DepthFirst"
+    ramp_up_load_balancing_algorithm   = "BreadthFirst"
     ramp_up_capacity_threshold_percent = 60
     ramp_up_minimum_hosts_percent      = 100
 
-    # PEAK: capacity/min come from ramp_up_*
+    # Peak: uses ramp_up thresholds, just needs start time + algorithm
     peak_start_time               = var.peak_start
     peak_load_balancing_algorithm = "BreadthFirst"
 
-    # --- Ramp Down (also governs OFF-PEAK capacity/min) ---
+    # --- Ramp Down (also governs Off-Peak) ---
     ramp_down_start_time                 = var.ramp_down_start
     ramp_down_load_balancing_algorithm   = "BreadthFirst"
     ramp_down_capacity_threshold_percent = 30
     ramp_down_minimum_hosts_percent      = 100
     ramp_down_force_logoff_users         = false
-    ramp_down_stop_hosts_when            = "ZeroSessions"     # or "ZeroActiveSessions"
+    ramp_down_stop_hosts_when            = "ZeroSessions"
     ramp_down_wait_time_minutes          = 15
     ramp_down_notification_message       = "Host going to drain mode"
 
-    # OFF-PEAK: capacity/min come from ramp_down_*
+    # Off-Peak: uses ramp_down thresholds, just needs start time + algorithm
     off_peak_start_time               = var.off_peak_start
     off_peak_load_balancing_algorithm = "BreadthFirst"
   }
@@ -43,5 +43,6 @@ resource "azurerm_virtual_desktop_scaling_plan_host_pool_association" "assoc" {
 }
 
 output "scaling_plan_id" {
-  value = azurerm_virtual_desktop_scaling_plan.this.id
+  description = "Scaling plan ID"
+  value       = azurerm_virtual_desktop_scaling_plan.this.id
 }

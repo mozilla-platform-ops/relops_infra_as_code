@@ -11,22 +11,13 @@ resource "azurerm_log_analytics_workspace" "this" {
 }
 
 # Diagnostic settings for AVD host pool
-# ⚠️ AVD host pools do not support metrics export, only logs.
+# AVD host pools support logs only (no metrics)
 resource "azurerm_monitor_diagnostic_setting" "hp" {
   name                       = "${var.name}-diag-hp"
   target_resource_id         = var.host_pool_id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.this.id
 
-  # Enable all available log categories
   enabled_log {
     category_group = "AllLogs"
   }
-}
-
-output "law_id" {
-  value = azurerm_log_analytics_workspace.this.id
-}
-
-output "law_name" {
-  value = azurerm_log_analytics_workspace.this.name
 }

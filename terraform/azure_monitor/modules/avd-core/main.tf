@@ -12,6 +12,7 @@ resource "azurerm_virtual_desktop_host_pool" "this" {
   scheduled_agent_updates {
     enabled  = true
     timezone = "UTC"
+
     schedule {
       day_of_week = "Saturday"
       hour_of_day = 3
@@ -45,11 +46,23 @@ resource "azurerm_virtual_desktop_host_pool_registration_info" "reg" {
   expiration_date = timeadd(timestamp(), var.token_valid_for)
 }
 
-output "host_pool_id"       { value = azurerm_virtual_desktop_host_pool.this.id }
-output "app_group_id"       { value = azurerm_virtual_desktop_application_group.desktop.id }
-output "workspace_id"       { value = azurerm_virtual_desktop_workspace.this.id }
+output "host_pool_id" {
+  description = "ID of the AVD host pool"
+  value       = azurerm_virtual_desktop_host_pool.this.id
+}
+
+output "app_group_id" {
+  description = "ID of the AVD desktop application group"
+  value       = azurerm_virtual_desktop_application_group.desktop.id
+}
+
+output "workspace_id" {
+  description = "ID of the AVD workspace"
+  value       = azurerm_virtual_desktop_workspace.this.id
+}
 
 output "registration_token" {
-  value     = azurerm_virtual_desktop_host_pool_registration_info.reg.token
-  sensitive = true
+  description = "Registration token for session host registration"
+  value       = azurerm_virtual_desktop_host_pool_registration_info.reg.token
+  sensitive   = true
 }

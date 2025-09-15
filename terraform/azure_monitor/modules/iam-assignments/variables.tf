@@ -1,10 +1,10 @@
 variable "app_group_id" {
-  type = string
-  # ID of the AVD Application Group where users/groups will be granted access
+  description = "The ID of the AVD Application Group where role assignments should be applied"
+  type        = string
 }
 
 variable "principal_ids" {
-  description = "List of Entra ID user or group object IDs to assign Desktop Virtualization User role"
+  description = "List of Entra ID object IDs (users or groups) to assign the Desktop Virtualization User role"
   type        = list(string)
   default     = []
 }

@@ -1,68 +1,43 @@
+# -----------------------------
+# Root variables.tf
+# -----------------------------
+
 variable "prefix" {
-  type    = string
-  default = "avd-secure"
-}
-
-variable "location" {
-  type    = string
-  default = "eastus"
-}
-
-variable "resource_group" {
-  type    = string
-  default = "rg-avd-secure"
-}
-
-variable "vnet_cidr" {
-  type    = string
-  default = "10.90.0.0/16"
-}
-
-variable "subnet_cidr" {
-  type    = string
-  default = "10.90.1.0/24"
-}
-
-variable "vm_count" {
-  type    = number
-  default = 2
-}
-
-variable "vm_size" {
-  type    = string
-  default = "Standard_D8s_v5"
-}
-
-# -------------------------------------------------------------------
-# Bootstrap Admin Credentials (short-lived)
-# Inject at runtime via TF_VAR_... env vars. Do NOT commit secrets.
-# -------------------------------------------------------------------
-variable "deploy_vms" {
-  type    = bool
-  default = false
+  description = "Base name prefix for all resources"
+  type        = string
 }
 
 variable "admin_username" {
+  description = "Bootstrap local admin username for session hosts (short-lived; LAPS rotates)"
   type        = string
-  description = "Bootstrap local admin username for session hosts (short-lived)"
-  validation {
-    condition     = length(var.admin_username) > 0
-    error_message = "admin_username must not be empty."
-  }
 }
 
 variable "admin_password" {
+  description = "Bootstrap local admin password (short-lived; supply via TF_VAR_admin_password)"
   type        = string
   sensitive   = true
-  description = "Bootstrap local admin password (short-lived; rotated on first boot)"
-  validation {
-    condition     = length(var.admin_password) > 0
-    error_message = "admin_password must not be empty."
-  }
 }
 
 variable "principal_ids" {
+  description = "Entra ID object IDs (users/groups) to grant Desktop Virtualization User on the Desktop App Group"
   type        = list(string)
   default     = []
-  description = "Entra ID object IDs (users/groups) to grant Desktop Virtualization User on the Desktop App Group."
+}
+
+# Multi-pool / multi-region configuration
+# Keyed by a short name (e.g., 'eastus', 'westus2'); each entry creates a full AVD stack in that region.
+variable "pools" {
+  description = <<EOT
+Map of AVD pools keyed by a short name (e.g., "eastus", "westus2").
+Each value configures one pool in that region.
+EOT
+  type = map(object({
+    location      = string
+    vnet_cidr     = string
+    subnet_cidr   = string
+    vm_count      = number
+    vm_size       = string
+    image_version = optional(string) # Marketplace version for Win11 AVD (e.g., 26100.4946.250810). If unset, module default applies.
+    deploy_vms    = optional(bool, true)
+  }))
 }

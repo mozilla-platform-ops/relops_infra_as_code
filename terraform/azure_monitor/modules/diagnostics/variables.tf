@@ -1,20 +1,25 @@
 variable "name" {
-  type = string
+  description = "Base name for diagnostics resources"
+  type        = string
 }
 
 variable "location" {
-  type = string
+  description = "Azure region for the Log Analytics workspace"
+  type        = string
 }
 
 variable "resource_group_name" {
-  type = string
+  description = "Resource group for diagnostics resources"
+  type        = string
 }
 
 variable "host_pool_id" {
-  type = string
+  description = "ID of the host pool to attach diagnostics to"
+  type        = string
 }
 
 variable "retention_days" {
-  type    = number
-  default = 30
+  description = "Retention period (in days) for Log Analytics workspace data"
+  type        = number
+  default     = 30
 }
