@@ -1,66 +1,24 @@
-# ------------------------------------------------------------
+#############################################
+# Pull tenant/subscription from current provider
+#############################################
+data "azurerm_client_config" "current" {}
+
+#############################################
 # Locals
-# ------------------------------------------------------------
+#############################################
+
 locals {
-  # Computer name base: strip dashes, limit to 12 chars; append 3-digit index => max 15 chars
-  comp_base    = substr(replace(var.name, "-", ""), 0, 12)
-
-  # Whether to include LAPS script in bootstrap
-  laps_enabled = var.enable_laps && !var.laps_managed_by_intune
-
-  # Inline PowerShell for LAPS local config (only used if laps_enabled)
-  laps_script = <<-EOLAPS
-    $root = 'HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\LAPS\\Config'
-    if (-not (Test-Path $root)) { New-Item -Path $root -Force | Out-Null }
-
-    $BackupDirectory    = ${var.laps_backup_directory}
-    $PasswordAgeDays    = ${var.laps_password_age_days}
-    $PasswordLength     = ${var.laps_password_length}
-    $PasswordComplexity = ${var.laps_password_complexity}
-    $AdminName          = "${var.laps_admin_account_name != null ? var.laps_admin_account_name : ""}"
-
-    New-ItemProperty -Path $root -Name BackupDirectory    -Value $BackupDirectory    -PropertyType DWord -Force | Out-Null
-    New-ItemProperty -Path $root -Name PasswordAgeDays    -Value $PasswordAgeDays    -PropertyType DWord -Force | Out-Null
-    New-ItemProperty -Path $root -Name PasswordLength     -Value $PasswordLength     -PropertyType DWord -Force | Out-Null
-    New-ItemProperty -Path $root -Name PasswordComplexity -Value $PasswordComplexity -PropertyType DWord -Force | Out-Null
-
-    if ($AdminName -ne "") {
-      New-ItemProperty -Path $root -Name AdministratorAccountName -Value $AdminName -PropertyType String -Force | Out-Null
-    }
-
-    try {
-      Import-Module LAPS -ErrorAction Stop
-      Invoke-LapsPolicyProcessing
-    } catch {
-      # If LAPS module isn’t ready, Windows will process on its next cycle
-    }
-  EOLAPS
-
-  # Base64 for init (provided by module input) and LAPS
-  init_b64 = var.init_script_b64
-  laps_b64 = base64encode(local.laps_script)
-
-  # Build the commandToExecute (two variants), executing scripts from memory.
-  bootstrap_cmd_with_laps = join(" ; ", [
-    # Run session-init from base64 (single-quoted literal for safety)
-    "powershell -NoProfile -ExecutionPolicy Bypass -Command \"[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${local.init_b64}')) | Invoke-Expression\"",
-    # Run LAPS script from base64
-    "powershell -NoProfile -ExecutionPolicy Bypass -Command \"[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${local.laps_b64}')) | Invoke-Expression\""
-  ])
-
-  bootstrap_cmd_no_laps = join(" ; ", [
-    "powershell -NoProfile -ExecutionPolicy Bypass -Command \"[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${local.init_b64}')) | Invoke-Expression\""
-  ])
-
-  bootstrap_cmd = local.laps_enabled ? local.bootstrap_cmd_with_laps : local.bootstrap_cmd_no_laps
+  indices   = toset([for i in range(var.vm_count) : format("%03d", i)])
+  base_name = substr(var.computer_name_prefix, 0, 11)
 }
 
-# ------------------------------------------------------------
-# NICs
-# ------------------------------------------------------------
+#############################################
+# NICs (no public IPs)
+#############################################
+
 resource "azurerm_network_interface" "nic" {
-  count               = var.vm_count
-  name                = "${var.name}-nic-${count.index}"
+  for_each            = local.indices
+  name                = "${var.name}-nic-${each.key}"
   location            = var.location
   resource_group_name = var.resource_group_name
 
@@ -69,73 +27,119 @@ resource "azurerm_network_interface" "nic" {
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = "Dynamic"
   }
+
+  tags = var.tags
 }
 
-# ------------------------------------------------------------
-# Session host VMs
-# ------------------------------------------------------------
-resource "azurerm_windows_virtual_machine" "vm" {
-  count                 = var.vm_count
-  name                  = "${var.name}-sh-${count.index}"
-  location              = var.location
-  resource_group_name   = var.resource_group_name
-  size                  = var.vm_size
-  admin_username        = var.admin_username
-  admin_password        = var.admin_password
-  network_interface_ids = [azurerm_network_interface.nic[count.index].id]
-  provision_vm_agent    = true
-  license_type          = "Windows_Client"
+#############################################
+# Windows Session Host VMs
+#############################################
 
-  # <= 15 chars
-  computer_name = format("%s%03d", local.comp_base, count.index)
+resource "azurerm_windows_virtual_machine" "vm" {
+  for_each                   = local.indices
+  name                       = format("%s-%s", local.base_name, each.key) # <= 15 chars
+  location                   = var.location
+  resource_group_name        = var.resource_group_name
+  size                       = var.vm_size
+  admin_username             = var.admin_username
+  admin_password             = var.admin_password
+  network_interface_ids      = [azurerm_network_interface.nic[each.key].id]
+  provision_vm_agent         = true
+  allow_extension_operations = true
+
+  # Required for AADLoginForWindows to complete Azure AD join
+  identity {
+    type = "SystemAssigned"
+  }
+
+  # Image: Marketplace or SIG (mutually exclusive)
+  dynamic "source_image_reference" {
+    for_each = var.image != null ? [1] : []
+    content {
+      publisher = var.image.publisher
+      offer     = var.image.offer
+      sku       = var.image.sku
+      version   = var.image.version
+    }
+  }
+
+  source_image_id = var.sig_image != null ? var.sig_image.image_id : null
 
   os_disk {
+    name                 = "${var.name}-osdisk-${each.key}"
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
   }
 
-  # Marketplace Win11 AVD
-  source_image_reference {
-    publisher = "MicrosoftWindowsDesktop"
-    offer     = "windows-11"
-    sku       = "win11-24h2-avd"
-    version   = coalesce(var.image_version, "latest")
-  }
+  tags = var.tags
 }
 
-# ------------------------------------------------------------
-# Entra ID login extension
-# ------------------------------------------------------------
+#############################################
+# AAD Login Extension (requires mdmId; pass tenantId too)
+#############################################
+
 resource "azurerm_virtual_machine_extension" "aad_login" {
-  count                      = var.vm_count
-  name                       = "AADLoginForWindows"
-  virtual_machine_id         = azurerm_windows_virtual_machine.vm[count.index].id
-  publisher                  = "Microsoft.Azure.ActiveDirectory"
-  type                       = "AADLoginForWindows"
-  type_handler_version       = "1.0"
-  auto_upgrade_minor_version = true
+  for_each             = var.enable_aad_login ? local.indices : toset([])
+  name                 = "AADLoginForWindows"
+  virtual_machine_id   = azurerm_windows_virtual_machine.vm[each.key].id
+  publisher            = "Microsoft.Azure.ActiveDirectory"
+  type                 = "AADLoginForWindows"
+  type_handler_version = "1.0"
+
+  # Some tenants require tenantId + mdmId for AAD join via the extension.
+  settings = jsonencode({
+    mdmId    = "0000000a-0000-0000-c000-000000000000"
+    tenantId = data.azurerm_client_config.current.tenant_id
+  })
+
+  tags = var.tags
 }
 
-# ------------------------------------------------------------
-# Single bootstrap extension: execute init (and LAPS if enabled) in-memory
-# ------------------------------------------------------------
-resource "azurerm_virtual_machine_extension" "bootstrap" {
-  count                = var.vm_count
-  name                 = "avd-bootstrap"
-  virtual_machine_id   = azurerm_windows_virtual_machine.vm[count.index].id
+#############################################
+# Bootstrap: Custom Script Extension
+#############################################
+
+resource "azurerm_virtual_machine_extension" "init" {
+  for_each             = local.indices
+  name                 = "avd-session-init"
+  virtual_machine_id   = azurerm_windows_virtual_machine.vm[each.key].id
   publisher            = "Microsoft.Compute"
   type                 = "CustomScriptExtension"
   type_handler_version = "1.10"
 
-  protected_settings = jsonencode({
-    commandToExecute = "cmd /c ${local.bootstrap_cmd}"
+  settings = jsonencode({
+    fileUris = [var.init_script_uri]
   })
+
+  protected_settings = jsonencode({
+    commandToExecute = "powershell -ExecutionPolicy Bypass -File avd-session-init.ps1 -EnableLaps:${var.enable_laps_local} -HostPoolId:'${var.hostpool_id}' -RegistrationToken:'${var.registration_token}'"
+  })
+
+  tags = var.tags
+
+  lifecycle {
+    precondition {
+      condition     = try(trimspace(nonsensitive(var.init_script_uri)) != "", false)
+      error_message = "init_script_uri must be a non-empty URI when deploying session hosts."
+    }
+  }
 }
 
-# ------------------------------------------------------------
-# Outputs
-# ------------------------------------------------------------
-output "vm_ids" {
-  description = "IDs of the session host VMs"
-  value       = [for v in azurerm_windows_virtual_machine.vm : v.id]
+#############################################
+# DCR Association (per-VM)
+#############################################
+
+resource "azurerm_monitor_data_collection_rule_association" "vm" {
+  for_each = var.enable_dcr_association ? local.indices : toset([])
+
+  name                    = "dcr-avd-${var.name}-${each.key}"
+  target_resource_id      = azurerm_windows_virtual_machine.vm[each.key].id
+  data_collection_rule_id = var.dcr_id
+
+  lifecycle {
+    precondition {
+      condition     = try(var.enable_dcr_association ? (length(nonsensitive(var.dcr_id)) > 0) : true, false)
+      error_message = "dcr_id must be provided when enable_dcr_association is true."
+    }
+  }
 }

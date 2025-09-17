@@ -1,48 +1,71 @@
+locals {
+  plan_name = "${var.name}-sp"
+}
+
 resource "azurerm_virtual_desktop_scaling_plan" "this" {
-  name                = "${var.name}-scaling"
+  name                = local.plan_name
   location            = var.location
   resource_group_name = var.resource_group_name
-  friendly_name       = "SecureScaling"
-  description         = "All hosts up 100% (scaling logic retained for future use)"
-  time_zone           = var.time_zone
+  time_zone           = var.timezone
+  tags                = var.tags
 
-  schedule {
-    name         = "BusinessHours"
-    days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+  dynamic "schedule" {
+    for_each = var.provide_schedules ? var.schedules : []
 
-    # --- Ramp Up (also governs Peak) ---
-    ramp_up_start_time                 = var.ramp_up_start
-    ramp_up_load_balancing_algorithm   = "BreadthFirst"
-    ramp_up_capacity_threshold_percent = 60
-    ramp_up_minimum_hosts_percent      = 100
+    content {
+      name                                 = schedule.value.name
+      days_of_week                         = schedule.value.days_of_week
+      ramp_up_start_time                   = schedule.value.ramp_up_start_time
+      ramp_up_load_balancing_algorithm     = schedule.value.ramp_up_load_balancing_algorithm
+      ramp_up_minimum_hosts_percent        = schedule.value.ramp_up_minimum_hosts_pct
+      ramp_up_capacity_threshold_percent   = schedule.value.ramp_up_capacity_threshold_percent
+      peak_start_time                      = schedule.value.peak_start_time
+      peak_load_balancing_algorithm        = schedule.value.peak_load_balancing_algorithm
+      ramp_down_start_time                 = schedule.value.ramp_down_start_time
+      ramp_down_load_balancing_algorithm   = schedule.value.ramp_down_load_balancing_algorithm
+      ramp_down_minimum_hosts_percent      = schedule.value.ramp_down_minimum_hosts_percent
+      ramp_down_capacity_threshold_percent = schedule.value.ramp_down_capacity_threshold_percent
+      ramp_down_force_logoff_users         = schedule.value.ramp_down_force_logoff_users
+      ramp_down_wait_time_minutes          = schedule.value.ramp_down_wait_time_minutes
+      ramp_down_stop_hosts_when            = schedule.value.ramp_down_stop_hosts_when
+      ramp_down_notification_message       = schedule.value.ramp_down_notification_message
+      off_peak_start_time                  = schedule.value.off_peak_start_time
+      off_peak_load_balancing_algorithm    = schedule.value.off_peak_load_balancing_algorithm
+    }
+  }
 
-    # Peak: uses ramp_up thresholds, just needs start time + algorithm
-    peak_start_time               = var.peak_start
-    peak_load_balancing_algorithm = "BreadthFirst"
+  dynamic "schedule" {
+    for_each = var.provide_schedules ? [] : [1]
 
-    # --- Ramp Down (also governs Off-Peak) ---
-    ramp_down_start_time                 = var.ramp_down_start
-    ramp_down_load_balancing_algorithm   = "BreadthFirst"
-    ramp_down_capacity_threshold_percent = 30
-    ramp_down_minimum_hosts_percent      = 100
-    ramp_down_force_logoff_users         = false
-    ramp_down_stop_hosts_when            = "ZeroSessions"
-    ramp_down_wait_time_minutes          = 15
-    ramp_down_notification_message       = "Host going to drain mode"
+    content {
+      name         = "always-on"
+      days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
-    # Off-Peak: uses ramp_down thresholds, just needs start time + algorithm
-    off_peak_start_time               = var.off_peak_start
-    off_peak_load_balancing_algorithm = "BreadthFirst"
+      ramp_up_start_time                 = "00:00"
+      ramp_up_load_balancing_algorithm   = "BreadthFirst"
+      ramp_up_minimum_hosts_percent      = 100
+      ramp_up_capacity_threshold_percent = 90
+
+      peak_start_time               = "00:30"
+      peak_load_balancing_algorithm = "BreadthFirst"
+
+      ramp_down_start_time                 = "22:00"
+      ramp_down_load_balancing_algorithm   = "BreadthFirst"
+      ramp_down_minimum_hosts_percent      = 100
+      ramp_down_capacity_threshold_percent = 90
+      ramp_down_force_logoff_users         = false
+      ramp_down_wait_time_minutes          = 60
+      ramp_down_stop_hosts_when            = "ZeroSessions"
+      ramp_down_notification_message       = "Scaling down session hosts"
+
+      off_peak_start_time               = "23:59"
+      off_peak_load_balancing_algorithm = "BreadthFirst"
+    }
   }
 }
 
 resource "azurerm_virtual_desktop_scaling_plan_host_pool_association" "assoc" {
   scaling_plan_id = azurerm_virtual_desktop_scaling_plan.this.id
   host_pool_id    = var.host_pool_id
-  enabled         = true
-}
-
-output "scaling_plan_id" {
-  description = "Scaling plan ID"
-  value       = azurerm_virtual_desktop_scaling_plan.this.id
+  enabled         = var.association_enabled
 }

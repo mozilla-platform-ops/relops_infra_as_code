@@ -1,94 +1,74 @@
-# ===================================================================
-# terraform.tfvars — Multi-region AVD (self-documenting)
-# -------------------------------------------------------------------
-# How to define a POOL entry:
-#
-# pools = {
-#   <pool_key> = {
-#     # 1) REQUIRED infra + VM settings
-#     location     = "<azure-region>"        # e.g., "eastus", "westus2"
-#     vnet_cidr    = "10.x.0.0/16"
-#     subnet_cidr  = "10.x.1.0/24"
-#     vm_count     = <number>                # e.g., 2
-#     vm_size      = "<SKU>"                 # e.g., "Standard_D8s_v5"
-#     deploy_vms   = true | false            # create session hosts or infra only
-#
-#     # 2) REQUIRED image block — choose ONE of the following patterns:
-#
-#     # 2a) Marketplace image (publisher/offer/sku/version)
-#     image = {
-#       source    = "marketplace"
-#       publisher = "MicrosoftWindowsDesktop"
-#       offer     = "windows-11"
-#       sku       = "win11-24h2-avd"
-#       version   = "26100.4946.250810"     # pin a version available in this region
-#     }
-#
-#     # 2b) Shared Image Gallery (SIG) image
-#     # image = {
-#     #   source                   = "sig"
-#     #   gallery_resource_group   = "rg-images"
-#     #   gallery_name             = "moz-secure-gallery"
-#     #   image_name               = "avd-secure"
-#     #   image_version            = "1.0.4"         # SIG version (forces replace when changed)
-#     # }
-#
-#     # 2c) Direct image ID (SIG version or managed image)
-#     # image = {
-#     #   source          = "id"
-#     #   source_image_id = "/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.Compute/galleries/<gal>/images/<img>/versions/<ver>"
-#     # }
-#   }
-# }
-#
-# Global notes:
-# - DO NOT put secrets here. Inject admin_password via env: export TF_VAR_admin_password="..."
-# - principal_ids are Entra ID (AAD) object IDs (users/groups) that get Desktop Virtualization User on the app group.
-# - pool_key is used in naming (e.g., avd-secure-<pool_key>-agents-*).
-# ===================================================================
+#############################################
+# Project / shared resources
+#############################################
 
-# -------- Global settings --------
-prefix         = "avd-secure"
+project_name          = "avdproj"
+default_location      = "eastus"
+shared_resource_group = "rg-avd-shared"
+
+tags = {
+  environment = "dev"
+  owner       = "relops"
+  project     = "avd-secure"
+}
+
+#############################################
+# Bootstrap credentials
+#############################################
+
 admin_username = "avdadmin"
+# admin_password is NOT stored here.
+# Supply securely at runtime:
+#   export TF_VAR_admin_password='Some$trongTempPass!'
+#   terraform apply
 
-# Inject at runtime:
-#   export TF_VAR_admin_password="$(openssl rand -base64 24)"
+#############################################
+# IAM principals
+#############################################
 
+# Markco Test Group
 principal_ids = [
-  "b6f616f1-77b3-4337-b485-bf8ee0e5e934" # Example: AVD Users group objectId
+  "b6f616f1-77b3-4337-b485-bf8ee0e5e934"
 ]
 
-# -------- Pools (single test pool example) --------
-pools = {
-  test = {
-    location    = "eastus2"
-    vnet_cidr   = "10.90.0.0/16"
-    subnet_cidr = "10.90.1.0/24"
-    vm_count    = 1
-    vm_size     = "Standard_D8s_v5"
-    deploy_vms  = true
+#############################################
+# Monitoring alerts
+#############################################
 
-    # Marketplace image (Win11 24H2 AVD) — verify version exists in this region
+alert_emails = [
+  "mcornmesser@mozilla.com",
+  "relops2@mozilla.com"
+]
+
+#############################################
+# Pools (per host pool)
+#############################################
+
+pools = {
+  pool1 = {
+    location            = "westus"
+    resource_group_name = "rg-avd-westus"
+    vnet_cidr           = "10.10.0.0/16"
+    subnet_cidr         = "10.10.1.0/24"
+
+    vm_count = 2
+    # TEMP size for testing
+    # need to eval once region is decided
+    vm_size = "Standard_D8as_v6"
+
+    # Marketplace image (Windows 11 multi-session + M365 apps)
     image = {
-      source    = "marketplace"
-      publisher = "MicrosoftWindowsDesktop"
+      publisher = "microsoftwindowsdesktop"
       offer     = "windows-11"
       sku       = "win11-24h2-avd"
-      version   = "26100.4946.250810"
+      version   = "latest"
     }
 
-    # --- Alternative image patterns (commented) ---
-    # image = {
-    #   source                   = "sig"
-    #   gallery_resource_group   = "rg-images"
-    #   gallery_name             = "moz-secure-gallery"
-    #   image_name               = "avd-secure"
-    #   image_version            = "1.0.4"
-    # }
+    deploy_vms                     = true
+    max_sessions_per_host          = 10
+    registration_token_valid_hours = 1
+    custom_rdp_properties          = "redirectclipboard:i:0;multimon:i:1"
+    enable_laps_local              = true
 
-    # image = {
-    #   source          = "id"
-    #   source_image_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-images/providers/Microsoft.Compute/galleries/moz-secure-gallery/images/avd-secure/versions/1.0.4"
-    # }
   }
 }

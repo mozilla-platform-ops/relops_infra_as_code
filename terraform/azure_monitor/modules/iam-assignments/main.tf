@@ -1,11 +1,16 @@
-data "azurerm_role_definition" "desktop_virtualization_user" {
-  name  = "Desktop Virtualization User"
-  scope = var.app_group_id
+locals {
+  principals = toset(var.principal_ids)
 }
 
-resource "azurerm_role_assignment" "assign" {
-  for_each           = toset(var.principal_ids)
-  scope              = var.app_group_id
-  role_definition_id = data.azurerm_role_definition.desktop_virtualization_user.role_definition_id
-  principal_id       = each.value
+# Assign the role per principal at the DAG scope
+resource "azurerm_role_assignment" "dag_access" {
+  for_each = local.principals
+
+  scope                = var.app_group_id
+  role_definition_name = var.role_definition_name
+  principal_id         = each.value
+
+  # If you're assigning to service principals in tenants with conditional access,
+  # uncomment the next line to bypass AAD checks during creation:
+  # skip_service_principal_aad_check = true
 }

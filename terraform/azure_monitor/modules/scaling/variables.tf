@@ -1,50 +1,90 @@
 variable "name" {
-  description = "Base name for scaling plan resources"
+  description = "Short name used to prefix the scaling plan."
   type        = string
 }
 
 variable "location" {
-  description = "Azure region for the scaling plan"
+  description = "Azure region for the scaling plan."
   type        = string
 }
 
 variable "resource_group_name" {
-  description = "Resource group in which to create the scaling plan"
+  description = "Resource group for the scaling plan."
   type        = string
 }
 
 variable "host_pool_id" {
-  description = "ID of the host pool this scaling plan should apply to"
+  description = "Resource ID of the host pool to associate with this scaling plan."
   type        = string
 }
 
-variable "time_zone" {
-  description = "Time zone for scaling schedule"
+variable "timezone" {
+  description = "Time zone for schedules (e.g., 'Pacific Standard Time')."
   type        = string
-  default     = "Pacific Standard Time"
+  default     = "UTC"
 }
 
-# Schedule times (24h format, local to time_zone)
-variable "ramp_up_start" {
-  description = "Start time for ramp up"
-  type        = string
-  default     = "08:00"
+variable "tags" {
+  description = "Tags to apply to the scaling plan."
+  type        = map(string)
+  default     = {}
 }
 
-variable "peak_start" {
-  description = "Start time for peak hours"
-  type        = string
-  default     = "09:00"
+variable "provide_schedules" {
+  description = "If true, use the provided 'schedules' list; otherwise create a 24x7 always-on schedule."
+  type        = bool
+  default     = false
 }
 
-variable "ramp_down_start" {
-  description = "Start time for ramp down"
-  type        = string
-  default     = "17:00"
+variable "schedules" {
+  description = <<EOT
+List of scaling schedule objects. Each item:
+{
+  name                                 = string
+  days_of_week                         = list(string)
+  ramp_up_start_time                   = string
+  ramp_up_load_balancing_algorithm     = string
+  ramp_up_minimum_hosts_pct            = number
+  ramp_up_capacity_threshold_percent   = number
+  peak_start_time                      = string
+  peak_load_balancing_algorithm        = string
+  ramp_down_start_time                 = string
+  ramp_down_load_balancing_algorithm   = string
+  ramp_down_minimum_hosts_percent      = number
+  ramp_down_capacity_threshold_percent = number
+  ramp_down_force_logoff_users         = bool
+  ramp_down_wait_time_minutes          = number
+  ramp_down_stop_hosts_when            = string   # "ZeroSessions" | "ZeroActiveSessions"
+  ramp_down_notification_message       = string
+  off_peak_start_time                  = string
+  off_peak_load_balancing_algorithm    = string
+}
+EOT
+  type = list(object({
+    name                                 = string
+    days_of_week                         = list(string)
+    ramp_up_start_time                   = string
+    ramp_up_load_balancing_algorithm     = string
+    ramp_up_minimum_hosts_pct            = number
+    ramp_up_capacity_threshold_percent   = number
+    peak_start_time                      = string
+    peak_load_balancing_algorithm        = string
+    ramp_down_start_time                 = string
+    ramp_down_load_balancing_algorithm   = string
+    ramp_down_minimum_hosts_percent      = number
+    ramp_down_capacity_threshold_percent = number
+    ramp_down_force_logoff_users         = bool
+    ramp_down_wait_time_minutes          = number
+    ramp_down_stop_hosts_when            = string
+    ramp_down_notification_message       = string
+    off_peak_start_time                  = string
+    off_peak_load_balancing_algorithm    = string
+  }))
+  default = []
 }
 
-variable "off_peak_start" {
-  description = "Start time for off-peak period"
-  type        = string
-  default     = "18:00"
+variable "association_enabled" {
+  description = "Whether the host pool association to the scaling plan is enabled."
+  type        = bool
+  default     = true
 }
