@@ -157,3 +157,45 @@ resource "azurerm_role_assignment" "worker_images_tceng" {
   principal_id         = azuread_service_principal.worker_images_tceng.object_id
   scope                = "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9"
 }
+
+# application: worker_manager_monitor
+# A stable GUID for the scope (created once, re-used forever)
+resource "random_uuid" "worker_images_monitor_scope" {}
+
+resource "azuread_application" "worker_images_monitor" {
+  display_name = "worker_images_monitor"
+  owners       = [data.azuread_user.mcornmesser.id]
+
+  api {
+    requested_access_token_version = 1
+
+    oauth2_permission_scope {
+      admin_consent_description  = "Allow the application to access worker_manager_monitor on behalf of the signed-in user."
+      admin_consent_display_name = "Access worker_manager_monitor"
+      enabled                    = true
+      id                         = random_uuid.worker_images_monitor_scope.result
+      type                       = "User"
+      user_consent_description   = "Allow the application to access worker_manager_monitor on your behalf."
+      user_consent_display_name  = "Access worker_manager_monitor"
+      value                      = "user_impersonation"
+    }
+  }
+
+  web {
+    redirect_uris = []
+    implicit_grant {
+      access_token_issuance_enabled = false
+      id_token_issuance_enabled     = true
+    }
+  }
+}
+
+resource "azuread_service_principal" "worker_images_monitor" {
+  client_id = azuread_application.worker_images_monitor.client_id
+}
+
+resource "azurerm_role_assignment" "worker_images_monitor" {
+  role_definition_name = "Contributor"
+  principal_id         = azuread_service_principal.worker_images_monitor.object_id
+  scope                = "/subscriptions/36c94cc5-8e6d-49db-a034-bb82b6a2632e"
+}
