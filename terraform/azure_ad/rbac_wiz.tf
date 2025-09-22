@@ -165,9 +165,15 @@ resource "azurerm_role_assignment" "wiz_disk_reader" {
 
 # Assign reader to all subscriptions
 resource "azurerm_role_assignment" "wiz_enterprise_app_reader" {
-  #for_each             = merge(local.fxci_subscriptions_map, local.non_fxci_subscriptions_map)
+  for_each             = toset([
+    "Reader",
+    "Storage Blob Data Reader",
+    "Storage File Data Privileged Reader",
+    "Azure Kubernetes Service Cluster User Role",
+    "Azure Kubernetes Service RBAC Reader"
+  ])
   scope                = "/providers/Microsoft.Management/managementGroups/c0dc8bb0-b616-427e-8217-9513964a145b"
-  role_definition_name = "Reader"
+  role_definition_name = each.value
   principal_id         = data.azuread_service_principal.wiz_enterprise_app_sp.object_id
 }
 
