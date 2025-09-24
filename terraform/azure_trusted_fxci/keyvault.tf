@@ -23,7 +23,6 @@ resource "azurerm_key_vault" "cot" {
   tenant_id           = local.tenant_id
   sku_name            = "standard"
 
-  # Access policy for the current user/service principal running Terraform
   access_policy {
     tenant_id = local.tenant_id
     object_id = local.relops_object_id
