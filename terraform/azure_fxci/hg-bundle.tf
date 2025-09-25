@@ -35,14 +35,15 @@ resource "azurerm_resource_group" "hgbundle" {
 }
 
 resource "azurerm_storage_account" "hgbundle" {
-  for_each                 = local.regions
-  name                     = substr(replace("mozhg${each.value}", "/\\W|_|\\s/", ""), 0, 24)
-  resource_group_name      = azurerm_resource_group.hgbundle[each.value].name
-  account_replication_type = "LRS"
-  location                 = each.value
-  account_tier             = "Premium"
-  tags                     = local.tags
-  account_kind             = "BlockBlobStorage"
+  for_each                         = local.regions
+  name                             = substr(replace("mozhg${each.value}", "/\\W|_|\\s/", ""), 0, 24)
+  resource_group_name              = azurerm_resource_group.hgbundle[each.value].name
+  account_replication_type         = "LRS"
+  cross_tenant_replication_enabled = true
+  location                         = each.value
+  account_tier                     = "Premium"
+  tags                             = local.tags
+  account_kind                     = "BlockBlobStorage"
   blob_properties {
     versioning_enabled       = true
     last_access_time_enabled = true
