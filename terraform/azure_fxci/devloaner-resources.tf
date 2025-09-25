@@ -10,12 +10,13 @@ resource "azurerm_resource_group" "devloaner" {
 }
 
 resource "azurerm_storage_account" "devloaner" {
-  for_each                 = var.devloaner
-  name                     = replace("sa${each.value.rgname}", "/\\W|_|\\s/", "")
-  resource_group_name      = azurerm_resource_group.devloaner[each.key].name
-  location                 = each.value.rglocation
-  account_replication_type = "GRS"
-  account_tier             = "Standard"
+  for_each                         = var.devloaner
+  name                             = replace("sa${each.value.rgname}", "/\\W|_|\\s/", "")
+  resource_group_name              = azurerm_resource_group.devloaner[each.key].name
+  location                         = each.value.rglocation
+  cross_tenant_replication_enabled = true
+  account_replication_type         = "GRS"
+  account_tier                     = "Standard"
   tags = merge(local.common_tags,
     tomap({
       "Name" = "${each.value.rgname}"
@@ -48,8 +49,8 @@ resource "azurerm_virtual_network" "devloaner" {
     })
   )
   subnet {
-    name           = "sn-${each.value.rgname}"
-    address_prefix = "10.0.0.0/24"
-    security_group = azurerm_network_security_group.devloaner[each.key].id
+    name             = "sn-${each.value.rgname}"
+    address_prefixes = ["10.0.0.0/24"]
+    security_group   = azurerm_network_security_group.devloaner[each.key].id
   }
 }
