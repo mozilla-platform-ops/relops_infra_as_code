@@ -157,7 +157,7 @@ data "azuread_service_principal" "wiz_enterprise_app_sp" {
 
 # Assign reader to all subscriptions
 resource "azurerm_role_assignment" "wiz_disk_reader" {
-  for_each             = merge(local.fxci_subscriptions_map, local.non_fxci_subscriptions_map)
+  for_each             = local.non_fxci_subscriptions_map
   scope                = "/subscriptions/${each.value}"
   role_definition_name = "Reader"
   principal_id         = data.azuread_service_principal.wiz_sp.object_id
