@@ -1,23 +1,22 @@
 locals {
-  tags = {
-    terraform       = "true"
-    source_repo_url = "https://github.com/mozilla-platform-ops/relops_infra_as_code"
-  }
   tenant_id               = "c0dc8bb0-b616-427e-8217-9513964a145b"
   location                = "Central US"
   locationshort           = "central-us"
   relops_object_id        = "cb79b99f-fdaa-4e0d-a2c8-c5841890fa74"
-  worker_images_object_id = "e3767e68-5284-4622-ba3f-f05c595a9928"
+  worker_images_object_id = "74bce7ad-06b0-4fbd-9f89-be87a691d682"
 }
 
 resource "azurerm_resource_group" "cot" {
   name     = "rg-${local.locationshort}-cot"
   location = local.location
-  tags     = local.tags
+  tags     = {
+    terraform       = "true"
+    source_repo_url = "https://github.com/mozilla-platform-ops/relops_infra_as_code"
+  }
 }
 
 resource "azurerm_key_vault" "cot" {
-  name                = "kv-${local.locationshort}-cot"
+  name                = "kv-${local.locationshort}-key"
   location            = azurerm_resource_group.cot.location
   resource_group_name = azurerm_resource_group.cot.name
   tenant_id           = local.tenant_id
