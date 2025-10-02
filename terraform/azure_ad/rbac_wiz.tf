@@ -130,7 +130,7 @@ locals {
   ]
 
   non_fxci_subscriptions_map = {
-    "Mozilla Monitor"                 = "36c94cc5-8e6d-49db-a034-bb82b6a2632e",
+    "Mozilla 0DIN"                    = "e1cb04e4-3788-471a-881f-385e66ad80ab",
     "Taskcluster Engineering DevTest" = "8a205152-b25a-417f-a676-80465535a6c9"
     "Firefox_non_CI_DevTest"          = "0a420ff9-bc77-4475-befc-a05071fc92ec"
   }
