@@ -61,13 +61,13 @@ variable "firefox_nonci_subscription_id" {
   type        = string
 }
 
-variable "odin_subscription_id" {
+variable "zero_din_subscription_id" {
   description = "Mozilla ODIN Subscription ID"
   type        = string
 }
 
 # Group membership variables
-variable "odin_group" {
+variable "zero_din_group" {
   description = "List of UPNs for the 0DIN group membership."
   type        = list(string)
   default     = []

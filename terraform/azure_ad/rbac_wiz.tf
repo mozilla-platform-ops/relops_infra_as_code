@@ -152,7 +152,7 @@ data "azuread_service_principal" "wiz_sp" {
 
 # Data source to get the service principal for the app registration
 data "azuread_service_principal" "wiz_enterprise_app_sp" {
-  object_id =  "bc7a1764-1e44-48d6-8990-718a2be1ba34"
+  object_id = "bc7a1764-1e44-48d6-8990-718a2be1ba34"
 }
 
 # Assign reader to all subscriptions
@@ -165,7 +165,7 @@ resource "azurerm_role_assignment" "wiz_disk_reader" {
 
 # Assign reader to all subscriptions
 resource "azurerm_role_assignment" "wiz_enterprise_app_reader" {
-  for_each             = toset([
+  for_each = toset([
     "Reader",
     "Storage Blob Data Reader",
     "Storage File Data Privileged Reader",
