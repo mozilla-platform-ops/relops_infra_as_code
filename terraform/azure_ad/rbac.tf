@@ -32,6 +32,7 @@ resource "azurerm_role_assignment" "releng_reader" {
     "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0",
     "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9",
     "/subscriptions/a30e97ab-734a-4f3b-a0e4-c51c0bff0701",
+    "/subscriptions/e1cb04e4-3788-471a-881f-385e66ad80ab",
     "/subscriptions/9b9774fb-67f1-45b7-830f-aafe07a94396"
   ])
   scope                = each.value

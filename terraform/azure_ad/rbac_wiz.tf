@@ -130,7 +130,7 @@ locals {
   ]
 
   non_fxci_subscriptions_map = {
-    "Mozilla Monitor"                 = "36c94cc5-8e6d-49db-a034-bb82b6a2632e",
+    "Mozilla 0DIN"                    = "e1cb04e4-3788-471a-881f-385e66ad80ab",
     "Taskcluster Engineering DevTest" = "8a205152-b25a-417f-a676-80465535a6c9"
     "Firefox_non_CI_DevTest"          = "0a420ff9-bc77-4475-befc-a05071fc92ec"
   }
@@ -152,7 +152,7 @@ data "azuread_service_principal" "wiz_sp" {
 
 # Data source to get the service principal for the app registration
 data "azuread_service_principal" "wiz_enterprise_app_sp" {
-  object_id =  "bc7a1764-1e44-48d6-8990-718a2be1ba34"
+  object_id = "bc7a1764-1e44-48d6-8990-718a2be1ba34"
 }
 
 # Assign reader to all subscriptions
@@ -165,7 +165,7 @@ resource "azurerm_role_assignment" "wiz_disk_reader" {
 
 # Assign reader to all subscriptions
 resource "azurerm_role_assignment" "wiz_enterprise_app_reader" {
-  for_each             = toset([
+  for_each = toset([
     "Reader",
     "Storage Blob Data Reader",
     "Storage File Data Privileged Reader",
