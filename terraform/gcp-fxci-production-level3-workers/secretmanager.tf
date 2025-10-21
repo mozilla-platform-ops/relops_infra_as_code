@@ -13,12 +13,12 @@ resource "google_secret_manager_secret_iam_member" "cot_worker_images" {
 }
 
 resource "google_secret_manager_secret_iam_member" "cot_users" {
-  for_each = [
+  for_each = toset([
     "aerickson",
     "jmoss",
     "mcornmesser",
     "rcurran"
-  ]
+  ])
   project   = "fxci-production-level3-workers"
   member    = "user:${each.value}@mozilla.com"
   secret_id = google_secret_manager_secret.cot.id
