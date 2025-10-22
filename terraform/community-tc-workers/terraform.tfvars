@@ -1,0 +1,1 @@
+oidc_github_repositories = ["mozilla-platform-ops/worker-images"]
