@@ -23,6 +23,7 @@ if [ -e "${STATE_NAME}" ]; then
     exit 1
 fi
 
+# TODO: eventually remove, we don't use this any longer
 if [ -e "base/tf_state_lock_${STATE_NAME}.tf" ]; then
     echo "Error: A tf state lock file of that name already exists"
     exit 1
