@@ -12,10 +12,19 @@ pre-commit hooks.
 
 ### os x
 
-```
+```bash
+# newer modules, use latest tf (1.13.4+)
+brew tap hashicorp/tap
+brew install hashicorp/tap/terraform
+
+# for working with older modules, use tf 1.5.7
+brew install terraform
+
+# install dev dependencies
 brew install pre-commit
 brew install terraform-docs
 
+# setup pre-commit
 pre-commit install
 ```
 
