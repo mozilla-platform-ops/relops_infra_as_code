@@ -2,7 +2,7 @@ terraform {
   backend "s3" {
     bucket         = "relops-tf-states"
     key            = "gcp-taskcluster-imaging.tfstate"
-    dynamodb_table = "tf_state_lock_gcp-taskcluster-imaging"
+    use_lockfile = true
     region         = "us-west-2"
   }
 }

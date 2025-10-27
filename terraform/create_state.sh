@@ -18,12 +18,13 @@ fi
 
 STATE_NAME=$1
 
-if [ -a "${STATE_NAME}" ]; then
+if [ -e "${STATE_NAME}" ]; then
     echo "Error: A file or dir by that name already exists"
     exit 1
 fi
 
-if [ -a "base/tf_state_lock_${STATE_NAME}.tf" ]; then
+# TODO: eventually remove, we don't use this any longer
+if [ -e "base/tf_state_lock_${STATE_NAME}.tf" ]; then
     echo "Error: A tf state lock file of that name already exists"
     exit 1
 fi
@@ -44,7 +45,7 @@ terraform {
   backend "s3" {
     bucket         = "relops-tf-states"
     key            = "${STATE_NAME}.tfstate"
-    dynamodb_table = "tf_state_lock_${STATE_NAME}"
+    use_lockfile   = true
     region         = "us-west-2"
   }
 }
@@ -59,37 +60,34 @@ tag_production_state = "production"
 tag_owner_email = "${USER}@mozilla.com"
 EOF
 
-echo "Generating base/tf_state_lock_${STATE_NAME}.tf"
-cat <<EOF >"base/tf_state_lock_${STATE_NAME}.tf"
-resource "aws_dynamodb_table" "tf_state_lock_${STATE_NAME}" {
-  name           = "tf_state_lock_${STATE_NAME}"
-  hash_key       = "LockID"
-  read_capacity  = 20
-  write_capacity = 20
+# aerickson: i don't think is required now (but keep around for a bit)
+#
+# echo "Generating base/tf_state_lock_${STATE_NAME}.tf"
+# cat <<EOF >"base/tf_state_lock_${STATE_NAME}.tf"
+# resource "aws_dynamodb_table" "tf_state_lock_${STATE_NAME}" {
+#   name           = "tf_state_lock_${STATE_NAME}"
+#   hash_key       = "LockID"
+#   read_capacity  = 20
+#   write_capacity = 20
 
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
+#   attribute {
+#     name = "LockID"
+#     type = "S"
+#   }
 
-  tags = {
-    Name        = "${STATE_NAME} Terraform State Lock Table"
-    Terraform   = "true"
-    Repo_url    = var.repo_url
-    Environment = "prod"
-    Owner       = "relops@mozilla.com"
-  }
-}
-EOF
+#   tags = {
+#     Name        = "${STATE_NAME} Terraform State Lock Table"
+#     Terraform   = "true"
+#     Repo_url    = var.repo_url
+#     Environment = "prod"
+#     Owner       = "relops@mozilla.com"
+#   }
+# }
+# EOF
 
 echo "\
 -------------------------------------------------------------------------------
 Success! Please run the following:
-
-## to create the state lock dyanmodb
-cd base
-# for the apply below, if there are any deletions, exit and mention in #specops
-terraform apply
 
 ## initialize the environment for your new module
 cd ../${STATE_NAME}
