@@ -59,38 +59,34 @@ tag_production_state = "production"
 tag_owner_email = "${USER}@mozilla.com"
 EOF
 
-# TODO: is this needed now?
-echo "Generating base/tf_state_lock_${STATE_NAME}.tf"
-cat <<EOF >"base/tf_state_lock_${STATE_NAME}.tf"
-resource "aws_dynamodb_table" "tf_state_lock_${STATE_NAME}" {
-  name           = "tf_state_lock_${STATE_NAME}"
-  hash_key       = "LockID"
-  read_capacity  = 20
-  write_capacity = 20
+# aerickson: i don't think is required now (but keep around for a bit)
+#
+# echo "Generating base/tf_state_lock_${STATE_NAME}.tf"
+# cat <<EOF >"base/tf_state_lock_${STATE_NAME}.tf"
+# resource "aws_dynamodb_table" "tf_state_lock_${STATE_NAME}" {
+#   name           = "tf_state_lock_${STATE_NAME}"
+#   hash_key       = "LockID"
+#   read_capacity  = 20
+#   write_capacity = 20
 
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
+#   attribute {
+#     name = "LockID"
+#     type = "S"
+#   }
 
-  tags = {
-    Name        = "${STATE_NAME} Terraform State Lock Table"
-    Terraform   = "true"
-    Repo_url    = var.repo_url
-    Environment = "prod"
-    Owner       = "relops@mozilla.com"
-  }
-}
-EOF
+#   tags = {
+#     Name        = "${STATE_NAME} Terraform State Lock Table"
+#     Terraform   = "true"
+#     Repo_url    = var.repo_url
+#     Environment = "prod"
+#     Owner       = "relops@mozilla.com"
+#   }
+# }
+# EOF
 
 echo "\
 -------------------------------------------------------------------------------
 Success! Please run the following:
-
-## to create the state lock dyanmodb
-cd base
-# for the apply below, if there are any deletions, exit and mention in #specops
-terraform apply
 
 ## initialize the environment for your new module
 cd ../${STATE_NAME}
