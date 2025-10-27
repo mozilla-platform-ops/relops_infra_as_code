@@ -18,12 +18,12 @@ fi
 
 STATE_NAME=$1
 
-if [ -a "${STATE_NAME}" ]; then
+if [ -e "${STATE_NAME}" ]; then
     echo "Error: A file or dir by that name already exists"
     exit 1
 fi
 
-if [ -a "base/tf_state_lock_${STATE_NAME}.tf" ]; then
+if [ -e "base/tf_state_lock_${STATE_NAME}.tf" ]; then
     echo "Error: A tf state lock file of that name already exists"
     exit 1
 fi
@@ -44,7 +44,7 @@ terraform {
   backend "s3" {
     bucket         = "relops-tf-states"
     key            = "${STATE_NAME}.tfstate"
-    dynamodb_table = "tf_state_lock_${STATE_NAME}"
+    use_lockfile   = true
     region         = "us-west-2"
   }
 }
