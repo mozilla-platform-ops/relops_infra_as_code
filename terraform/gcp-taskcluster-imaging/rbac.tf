@@ -20,7 +20,7 @@ import {
 # Resource definitions
 resource "google_project_iam_member" "releng-users-image-user" {
   for_each = var.releng_users
-  
+
   member  = "user:${each.value}@mozilla.com"
   project = "taskcluster-imaging"
   role    = "roles/compute.imageUser"
@@ -28,7 +28,7 @@ resource "google_project_iam_member" "releng-users-image-user" {
 
 resource "google_project_iam_member" "translations-users-image-user" {
   for_each = var.translations_users
-  
+
   member  = "user:${each.value}@mozilla.com"
   project = "taskcluster-imaging"
   role    = "roles/compute.imageUser"
@@ -36,7 +36,7 @@ resource "google_project_iam_member" "translations-users-image-user" {
 
 resource "google_project_iam_member" "read-only-users-image-user" {
   for_each = var.read_only_users
-  
+
   member  = "user:${each.value}@mozilla.com"
   project = "taskcluster-imaging"
   role    = "roles/compute.imageUser"
