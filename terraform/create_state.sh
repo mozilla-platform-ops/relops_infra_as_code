@@ -59,6 +59,7 @@ tag_production_state = "production"
 tag_owner_email = "${USER}@mozilla.com"
 EOF
 
+# TODO: is this needed now?
 echo "Generating base/tf_state_lock_${STATE_NAME}.tf"
 cat <<EOF >"base/tf_state_lock_${STATE_NAME}.tf"
 resource "aws_dynamodb_table" "tf_state_lock_${STATE_NAME}" {
