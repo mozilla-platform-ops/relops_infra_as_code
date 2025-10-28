@@ -20,6 +20,7 @@ locals {
     source_repo_url = "https://github.com/mozilla-platform-ops/relops_infra_as_code"
   }
   provisioner = "taskgraph-t"
+  provisioner_short = "taskt"
 }
 
 resource "azurerm_resource_group" "nongw" {
@@ -37,7 +38,7 @@ module "gecko-t_nogw" {
   azurerm_subnet_name                 = "sn-${each.value}-${local.provisioner}"
   resource_group_name                 = azurerm_resource_group.nongw[each.key].name
   azurerm_network_security_group_name = "nsg-${each.value}-${local.provisioner}"
-  azurerm_storage_account_name        = "sa${each.value}-${local.provisioner}"
+  azurerm_storage_account_name        = "sa${each.value}-${local.provisioner_short}"
   vnet_address_space                  = local.config.defaults.vnet_address_space
   vnet_dns_servers                    = local.config.defaults.vnet_dns_servers
   subnet_address_prefixes             = local.config.defaults.subnet_address_prefixes
