@@ -95,7 +95,8 @@ data "aws_iam_policy_document" "github_actions_assume_role" {
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = [for repo in var.oidc_github_repositories : "repo:${repo}:ref:refs/heads/main"]
+      # Allow all branches, environments, and workflow types from the specified repositories
+      values   = [for repo in var.oidc_github_repositories : "repo:${repo}:*"]
     }
   }
 }
