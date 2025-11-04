@@ -15,5 +15,6 @@ terraform {
 
 provider "aws" {
   region              = var.aws_region
-  allowed_account_ids = ["885316786408", "961225894672"]
+  profile             = "AdministratorAccess-885316786408"  # Profile for deployment account
+  allowed_account_ids = ["885316786408"]
 }
