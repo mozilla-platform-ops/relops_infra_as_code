@@ -95,8 +95,13 @@ data "aws_iam_policy_document" "github_actions_assume_role" {
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      # Allow all branches, environments, and workflow types from the specified repositories
-      values   = [for repo in var.oidc_github_repositories : "repo:${repo}:*"]
+      # Allow main branch pushes and prod environment deployments
+      values   = flatten([
+        for repo in var.oidc_github_repositories : [
+          "repo:${repo}:ref:refs/heads/main",
+          "repo:${repo}:environment:prod"
+        ]
+      ])
     }
   }
 }
