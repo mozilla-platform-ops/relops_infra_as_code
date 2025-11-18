@@ -53,24 +53,18 @@ resource "azurerm_monitor_diagnostic_setting" "splunkeventhub" {
   eventhub_name                  = azurerm_eventhub.activitylogs.name
   eventhub_authorization_rule_id = "${data.azurerm_subscription.currentSubscription.id}/resourceGroups/${azurerm_resource_group.splunkeventhub.name}/providers/Microsoft.EventHub/namespaces/${azurerm_eventhub_namespace.splunk.name}/authorizationRules/RootManageSharedAccessKey"
 
-  log {
+  enabled_log {
     category = "Administrative"
-    enabled  = true
   }
-
-  log {
+  enabled_log {
     category = "Security"
-    enabled  = true
   }
-
-  log {
+  enabled_log {
     category = "Alert"
-    enabled  = true
   }
 
-  log {
+  enabled_log {
     category = "Policy"
-    enabled  = true
   }
 }
 
