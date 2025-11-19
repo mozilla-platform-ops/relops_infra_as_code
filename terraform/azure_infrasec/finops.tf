@@ -1,7 +1,8 @@
+## Azure Cost Exports for Azure Infrastructure Security Subscription
 resource "azapi_resource" "azure_infrasec_cost_export_actual" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
-  name      = "azure-firefox-nonci_actual"
-  parent_id = "/subscriptions/0a420ff9-bc77-4475-befc-a05071fc92ec"
+  name      = "azure-infrasec_actual"
+  parent_id = "/subscriptions/9b9774fb-67f1-45b7-830f-aafe07a94396"
 
   body = {
     properties = {
@@ -19,7 +20,7 @@ resource "azapi_resource" "azure_infrasec_cost_export_actual" {
         destination = {
           resourceId     = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/resourceGroups/rg-azure-cost-mgmt/providers/Microsoft.Storage/storageAccounts/safinopsdata"
           container      = "cost-management"
-          rootFolderPath = "azure_firefox_nonci_daily_actual"
+          rootFolderPath = "azure_infrasec_daily_actual"
         }
       }
       partitionData = true
@@ -36,8 +37,8 @@ resource "azapi_resource" "azure_infrasec_cost_export_actual" {
 
 resource "azapi_resource" "azure_infrasec_cost_export_amortized" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
-  name      = "azure-firefox-nonci_amortized"
-  parent_id = "/subscriptions/0a420ff9-bc77-4475-befc-a05071fc92ec"
+  name      = "azure-infrasec_amortized"
+  parent_id = "/subscriptions/9b9774fb-67f1-45b7-830f-aafe07a94396"
 
   body = {
     properties = {
@@ -55,7 +56,7 @@ resource "azapi_resource" "azure_infrasec_cost_export_amortized" {
         destination = {
           resourceId     = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/resourceGroups/rg-azure-cost-mgmt/providers/Microsoft.Storage/storageAccounts/safinopsdata"
           container      = "cost-management"
-          rootFolderPath = "azure_firefox_nonci_daily_amortized"
+          rootFolderPath = "azure_infrasec_daily_amortized"
         }
       }
       partitionData = true

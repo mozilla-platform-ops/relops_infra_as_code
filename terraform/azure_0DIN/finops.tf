@@ -1,4 +1,3 @@
-## Azure Cost Exports
 resource "azapi_resource" "azure_zero_din_cost_export_actual" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
   name      = "azure_0din_actual"
