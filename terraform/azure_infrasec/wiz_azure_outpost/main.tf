@@ -297,6 +297,10 @@ resource "azuread_application_password" "wiz_da_scanner_pass" {
   display_name   = "Wiz Disk Analyzer - Scanner"
   application_id = azuread_application.wiz_da_scanner.id
   end_date       = timeadd(formatdate("YYYY-MM-DD'T'00:00:00Z", timestamp()), var.key_expire_end_date_relative) # 24h * 365 days * 10 years
+
+  lifecycle {
+    ignore_changes = [end_date]
+  }
 }
 
 resource "azuread_service_principal" "wiz_da_scanner_sp" {
@@ -413,7 +417,7 @@ resource "azurerm_key_vault" "wiz_outpost_keyvault" {
   enabled_for_disk_encryption     = false
   soft_delete_retention_days      = 90
   purge_protection_enabled        = false
-  enable_rbac_authorization       = false
+  rbac_authorization_enabled      = false
   enabled_for_deployment          = false
   enabled_for_template_deployment = false
   sku_name                        = "standard"
@@ -451,6 +455,10 @@ resource "azurerm_key_vault" "wiz_outpost_keyvault" {
   tags = {
     "wiz" = ""
   }
+
+  lifecycle {
+    ignore_changes = [network_acls]
+  }
 }
 
 /*
@@ -475,6 +483,10 @@ resource "azurerm_key_vault_secret" "wiz_da_scanner_secret" {
   tags = {
     "app-name" = var.wiz_da_scanner_app_name
     "file-encoding" : "utf-8"
+  }
+
+  lifecycle {
+    ignore_changes = [value]
   }
 }
 
