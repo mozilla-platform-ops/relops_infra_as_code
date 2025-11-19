@@ -10,7 +10,7 @@ resource "azurerm_resource_group" "this" {
 
 # storage account names can only consist of lowercase letters and numbers
 resource "azurerm_storage_account" "this" {
-  name                     = "safinopsdata"
+  name                     = "safinopsdatafirefoxnonci"
   resource_group_name      = azurerm_resource_group.this.name
   location                 = "East us"
   account_tier             = "Standard"
