@@ -425,7 +425,7 @@ resource "azurerm_key_vault" "wiz_outpost_keyvault" {
   # A policy for the entity calling the terraform to put keys/etc
   access_policy {
     tenant_id               = var.azure_tenant_id
-    object_id               = data.azurerm_client_config.current.object_id
+    object_id               = data.azuread_group.relops.object_id
     key_permissions         = ["Backup", "Create", "Decrypt", "Delete", "Encrypt", "Get", "Import", "List", "Purge", "Recover", "Restore", "Sign", "UnwrapKey", "Update", "Verify", "WrapKey", "Release", "Rotate", "GetRotationPolicy", "SetRotationPolicy"]
     secret_permissions      = ["Backup", "Delete", "Get", "List", "Purge", "Recover", "Restore", "Set"]
     certificate_permissions = ["Backup", "Create", "Delete", "DeleteIssuers", "Get", "GetIssuers", "Import", "List", "ListIssuers", "ManageContacts", "ManageIssuers", "Purge", "Recover", "Restore", "SetIssuers", "Update"]
