@@ -74,7 +74,7 @@ resource "azurerm_virtual_network" "vn-north-central-us-ff-desktop1" {
   dns_servers         = ["1.1.1.1", "1.1.1.0"]
   subnet {
     name           = "sn-north-central-us-ff-desktop"
-    address_prefix = "10.0.0.0/24"
+    address_prefixes = ["10.0.0.0/24"]
     security_group = azurerm_network_security_group.nsg-north-central-us-ff-desktop.id
   }
   tags = merge(local.common_tags,

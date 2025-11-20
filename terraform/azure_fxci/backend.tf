@@ -2,7 +2,7 @@ terraform {
   backend "s3" {
     bucket         = "relops-tf-states"
     key            = "azure_fxci.tfstate"
-    dynamodb_table = "tf_state_lock_azure_fxci"
+    use_lockfile = true
     region         = "us-west-2"
   }
 }

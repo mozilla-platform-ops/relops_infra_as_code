@@ -1,7 +1,7 @@
-resource "azapi_resource" "azure_zero_din_cost_export_actual" {
+resource "azapi_resource" "azure_infrasec_cost_export_actual" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
-  name      = "azure_0din_actual"
-  parent_id = "/subscriptions/e1cb04e4-3788-471a-881f-385e66ad80ab"
+  name      = "azure-firefox-nonci_actual"
+  parent_id = "/subscriptions/0a420ff9-bc77-4475-befc-a05071fc92ec"
 
   body = {
     properties = {
@@ -19,7 +19,7 @@ resource "azapi_resource" "azure_zero_din_cost_export_actual" {
         destination = {
           resourceId     = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/resourceGroups/rg-azure-cost-mgmt/providers/Microsoft.Storage/storageAccounts/safinopsdata"
           container      = "cost-management"
-          rootFolderPath = "azure_0din_daily_actual"
+          rootFolderPath = "azure_firefox_nonci_daily_actual"
         }
       }
       partitionData = true
@@ -34,10 +34,10 @@ resource "azapi_resource" "azure_zero_din_cost_export_actual" {
   }
 }
 
-resource "azapi_resource" "azure_zero_din_cost_export_amortized" {
+resource "azapi_resource" "azure_infrasec_cost_export_amortized" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
-  name      = "azure_0din_amortized"
-  parent_id = "/subscriptions/e1cb04e4-3788-471a-881f-385e66ad80ab"
+  name      = "azure-firefox-nonci_amortized"
+  parent_id = "/subscriptions/0a420ff9-bc77-4475-befc-a05071fc92ec"
 
   body = {
     properties = {
@@ -55,7 +55,7 @@ resource "azapi_resource" "azure_zero_din_cost_export_amortized" {
         destination = {
           resourceId     = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/resourceGroups/rg-azure-cost-mgmt/providers/Microsoft.Storage/storageAccounts/safinopsdata"
           container      = "cost-management"
-          rootFolderPath = "azure_0din_daily_amortized"
+          rootFolderPath = "azure_firefox_nonci_daily_amortized"
         }
       }
       partitionData = true

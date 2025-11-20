@@ -1,4 +1,4 @@
-terraform {
+Terraform {
   required_version = ">= 0.15"
   required_providers {
     aws = {
@@ -12,4 +12,4 @@ terraform {
       source  = "azure/azapi"
     }
   }
-}
+

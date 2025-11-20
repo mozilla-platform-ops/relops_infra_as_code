@@ -1,27 +1,71 @@
-data "azurerm_resource_group" "example" {
-  name     = "rg-azure-cost-mgmt"
-  location = "East US"
-}
+resource "azapi_resource" "azure_tceng_cost_export_actual" {
+  type      = "Microsoft.CostManagement/exports@2025-03-01"
+  name      = "azure-tceng_actual"
+  parent_id = "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9"
 
-data "azurerm_storage_account" "example" {
-  name                = "safinopsdata"
-  resource_group_name = azurerm_resource_group.this.name
-}
-
-resource "azurerm_billing_account_cost_management_export" "tceng" {
-  name                         = "tceng_daily_actual"
-  billing_account_id           = "example"
-  recurrence_type              = "Monthly"
-  recurrence_period_start_date = "2020-08-18T00:00:00Z"
-  recurrence_period_end_date   = "2020-09-18T00:00:00Z"
-
-  export_data_storage_location {
-    container_id     = azurerm_storage_container.example.resource_manager_id
-    root_folder_path = "/root/updated"
+  body = {
+    properties = {
+      schedule = {
+        status     = "Active"
+        recurrence = "Daily"
+        recurrencePeriod = {
+          from = "2025-09-02T00:00:00.000Z"
+          to   = "2050-02-01T00:00:00.000Z"
+        }
+      }
+      format = "Csv"
+      compressionMode = "None"
+      deliveryInfo = {
+        destination = {
+          resourceId     = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/resourceGroups/rg-azure-cost-mgmt/providers/Microsoft.Storage/storageAccounts/safinopsdata"
+          container      = "cost-management"
+          rootFolderPath = "azure_tceng_daily_actual"
+        }
+      }
+      partitionData = true
+      definition = {
+        type      = "ActualCost"
+        timeframe = "MonthToDate"
+        dataSet = {
+          granularity = "Daily"
+        }
+      }
+    }
   }
+}
 
-  export_data_options {
-    type       = "Usage"
-    time_frame = "WeekToDate"
+resource "azapi_resource" "azure_tceng_cost_export_amortized" {
+  type      = "Microsoft.CostManagement/exports@2025-03-01"
+  name      = "azure-tceng_amortized"
+  parent_id = "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9"
+
+  body = {
+    properties = {
+      schedule = {
+        status     = "Active"
+        recurrence = "Daily"
+        recurrencePeriod = {
+          from = "2025-09-02T00:00:00.000Z"
+          to   = "2050-02-01T00:00:00.000Z"
+        }
+      }
+      format = "Csv"
+      compressionMode = "None"
+      deliveryInfo = {
+        destination = {
+          resourceId     = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/resourceGroups/rg-azure-cost-mgmt/providers/Microsoft.Storage/storageAccounts/safinopsdata"
+          container      = "cost-management"
+          rootFolderPath = "azure_tceng_daily_amortized"
+        }
+      }
+      partitionData = true
+      definition = {
+        type      = "AmortizedCost"
+        timeframe = "MonthToDate"
+        dataSet = {
+          granularity = "Daily"
+        }
+      }
+    }
   }
 }
