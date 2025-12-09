@@ -22,7 +22,6 @@ azure_subscriptions = [
 
 # 0DIN group membership
 zero_din_group = [
-  "markco_test@mozilla.com",
   "mfigueroa@mozilla.com",
   "pamini@mozilla.com",
   "reddings@mozilla.com",

@@ -8,6 +8,11 @@ data "azuread_group" "releng" {
   security_enabled = true
 }
 
+data "azuread_group" "tceng" {
+  display_name     = "Taskcluster"
+  security_enabled = true
+}
+
 # Assign Billing Reader role to the specified group across all subscriptions
 resource "azurerm_role_assignment" "billing_reader_releng" {
   for_each             = toset(var.azure_subscriptions)
@@ -38,6 +43,15 @@ resource "azurerm_role_assignment" "releng_reader" {
   scope                = each.value
   role_definition_name = "reader"
   principal_id         = data.azuread_group.releng.object_id
+}
+
+resource "azurerm_role_assignment" "tceng_reader" {
+  for_each = toset([
+    "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0"
+  ])
+  scope                = each.value
+  role_definition_name = "reader"
+  principal_id         = data.azuread_group.tceng.object_id
 }
 
 resource "azurerm_role_assignment" "infrasec_reader" {
