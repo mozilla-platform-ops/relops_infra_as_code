@@ -25,6 +25,7 @@ sleep 60
 sudo grep -iv 'token\|secret"' /home/ubuntu/worker.cfg 2>/dev/null
 sudo grep -iv 'token\|secret"' /etc/taskcluster/docker-worker/config.yml 2>/dev/null
 
+# shellcheck disable=SC2009
 ps -faux | grep "$(printf "%s\|" $(pgrep --full 'docker-worker'))docker-worker"
 
 echo END_startup-script-proj
