@@ -138,6 +138,14 @@ locals {
     "FXCI Azure DevTest"         = "108d46d5-fe9b-4850-9a7d-8c914aa6c1f0",
     "Trusted FXCI Azure DevTest" = "a30e97ab-734a-4f3b-a0e4-c51c0bff0701"
   }
+
+  wiz_graph_permissions = {
+    "AccessReview.Read.All"   = "d07a8cc0-3d51-4b77-b3b0-32bf3a4589c8"
+    "AuditLog.Read.All"       = "b0afded3-3588-46d8-8b3d-9842eff778da"
+    "Directory.Read.All"      = "7ab1d382-f21e-4acd-a863-ba3e13f7da61"
+    "Policy.Read.All"         = "246dd0d5-5bd0-4def-940b-0421030a5b68"
+    "RoleManagement.Read.All" = "c7fbd983-d9aa-4fa7-84b8-17382c103bc4"
+  }
 }
 
 # Data source to lookup app registration by client ID
@@ -153,6 +161,18 @@ data "azuread_service_principal" "wiz_sp" {
 # Data source to get the service principal for the app registration
 data "azuread_service_principal" "wiz_enterprise_app_sp" {
   object_id = "bc7a1764-1e44-48d6-8990-718a2be1ba34"
+}
+
+# Microsoft Graph service principal (well-known app ID)
+data "azuread_service_principal" "msgraph" {
+  client_id = "00000003-0000-0000-c000-000000000000"
+}
+
+resource "azuread_app_role_assignment" "wiz_enterprise_app_graph" {
+  for_each            = local.wiz_graph_permissions
+  app_role_id         = each.value
+  principal_object_id = data.azuread_service_principal.wiz_enterprise_app_sp.object_id
+  resource_object_id  = data.azuread_service_principal.msgraph.object_id
 }
 
 # Assign reader to all subscriptions
