@@ -1,6 +1,6 @@
-resource "azapi_resource" "azure_tceng_cost_export_actual" {
+resource "azapi_resource" "tceng_cost_export_actual" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
-  name      = "azure-tceng_actual"
+  name      = "taskcluster-daily_actual"
   parent_id = "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9"
 
   body = {
@@ -19,7 +19,7 @@ resource "azapi_resource" "azure_tceng_cost_export_actual" {
         destination = {
           resourceId     = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/resourceGroups/rg-azure-cost-mgmt/providers/Microsoft.Storage/storageAccounts/safinopsdata"
           container      = "cost-management"
-          rootFolderPath = "azure_tceng_daily_actual"
+          rootFolderPath = "taskcluster"
         }
       }
       partitionData = true
@@ -34,9 +34,9 @@ resource "azapi_resource" "azure_tceng_cost_export_actual" {
   }
 }
 
-resource "azapi_resource" "azure_tceng_cost_export_amortized" {
+resource "azapi_resource" "tceng_cost_export_amortized" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
-  name      = "azure-tceng_amortized"
+  name      = "taskcluster-daily_amortized"
   parent_id = "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9"
 
   body = {
@@ -55,7 +55,7 @@ resource "azapi_resource" "azure_tceng_cost_export_amortized" {
         destination = {
           resourceId     = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/resourceGroups/rg-azure-cost-mgmt/providers/Microsoft.Storage/storageAccounts/safinopsdata"
           container      = "cost-management"
-          rootFolderPath = "azure_tceng_daily_amortized"
+          rootFolderPath = "taskcluster"
         }
       }
       partitionData = true
