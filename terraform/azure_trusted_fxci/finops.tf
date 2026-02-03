@@ -1,15 +1,3 @@
-## Azure Cost Exports for FXCI Trusted Azure dev/test Subscription
-
-import {
-  to = azapi_resource.trusted_fxci_cost_export_actual
-  id = "/subscriptions/a30e97ab-734a-4f3b-a0e4-c51c0bff0701/providers/Microsoft.CostManagement/exports/trusted_fxci_daily_actual"
-}
-
-import {
-  to = azapi_resource.trusted_fxci_cost_export_amortized
-  id = "/subscriptions/a30e97ab-734a-4f3b-a0e4-c51c0bff0701/providers/Microsoft.CostManagement/exports/trusted_fxci_daily_amortized"
-}
-
 resource "azapi_resource" "trusted_fxci_cost_export_actual" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
   name      = "trusted_fxci_daily_actual"

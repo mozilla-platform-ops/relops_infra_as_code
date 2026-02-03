@@ -1,10 +1,3 @@
-## Azure Cost Exports for Firefox Non-CI DevTest Subscription
-
-import {
-  to = azapi_resource.fx_nonci_cost_export_amortized
-  id = "/subscriptions/0a420ff9-bc77-4475-befc-a05071fc92ec/providers/Microsoft.CostManagement/exports/fx_non_ci-amortized-cost"
-}
-
 resource "azapi_resource" "fx_nonci_cost_export_amortized" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
   name      = "fx_non_ci-amortized-cost"

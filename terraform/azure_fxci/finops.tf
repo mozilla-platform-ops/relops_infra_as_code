@@ -1,15 +1,3 @@
-## Creating one storage account for all cost data exports
-
-import {
-  to = azapi_resource.fxci_cost_export_actual
-  id = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/providers/Microsoft.CostManagement/exports/fxci_daily_actual"
-}
-
-import {
-  to = azapi_resource.fxci_cost_export_amortized
-  id = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/providers/Microsoft.CostManagement/exports/fxci_daily_amortized"
-}
-
 resource "azurerm_resource_group" "this" {
   name     = "rg-azure-cost-mgmt"
   location = "East US"

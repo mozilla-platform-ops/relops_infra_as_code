@@ -1,15 +1,3 @@
-## Azure Cost Exports for Azure Infrastructure Security Subscription
-
-import {
-  to = azapi_resource.azure_infrasec_cost_export_actual
-  id = "/subscriptions/9b9774fb-67f1-45b7-830f-aafe07a94396/providers/Microsoft.CostManagement/exports/azure-infrasec_actual"
-}
-
-import {
-  to = azapi_resource.azure_infrasec_cost_export_amortized
-  id = "/subscriptions/9b9774fb-67f1-45b7-830f-aafe07a94396/providers/Microsoft.CostManagement/exports/azure-infrasec_amortized"
-}
-
 resource "azapi_resource" "azure_infrasec_cost_export_actual" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
   name      = "azure-infrasec_actual"

@@ -1,15 +1,3 @@
-## Azure Cost Exports for Taskcluster Engineering Subscription
-
-import {
-  to = azapi_resource.taskcluster_cost_export_actual
-  id = "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9/providers/Microsoft.CostManagement/exports/taskcluster-daily_actual"
-}
-
-import {
-  to = azapi_resource.taskcluster_cost_export_amortized
-  id = "/subscriptions/8a205152-b25a-417f-a676-80465535a6c9/providers/Microsoft.CostManagement/exports/taskcluster-daily_amortized"
-}
-
 resource "azapi_resource" "taskcluster_cost_export_actual" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
   name      = "taskcluster-daily_actual"
