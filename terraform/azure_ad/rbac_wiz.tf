@@ -140,7 +140,7 @@ locals {
   }
 
   wiz_graph_permissions = {
-    "AccessReview.Read.All"   = "d07a8cc0-3d51-4b77-b3b0-32bf3a4589c8"
+    "AccessReview.Read.All"   = "ebfcd32b-babb-40f4-a14b-42706e83bd28"
     "AuditLog.Read.All"       = "b0afded3-3588-46d8-8b3d-9842eff778da"
     "Directory.Read.All"      = "7ab1d382-f21e-4acd-a863-ba3e13f7da61"
     "Policy.Read.All"         = "246dd0d5-5bd0-4def-940b-0421030a5b68"
