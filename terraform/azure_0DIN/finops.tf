@@ -1,15 +1,3 @@
-## Azure Cost Exports for Azure 0DIN Subscription
-
-import {
-  to = azapi_resource.azure_zero_din_cost_export_actual
-  id = "/subscriptions/e1cb04e4-3788-471a-881f-385e66ad80ab/providers/Microsoft.CostManagement/exports/azure_0din_actual"
-}
-
-import {
-  to = azapi_resource.azure_zero_din_cost_export_amortized
-  id = "/subscriptions/e1cb04e4-3788-471a-881f-385e66ad80ab/providers/Microsoft.CostManagement/exports/azure_0din_amortized"
-}
-
 resource "azapi_resource" "azure_zero_din_cost_export_actual" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
   name      = "azure_0din_actual"
