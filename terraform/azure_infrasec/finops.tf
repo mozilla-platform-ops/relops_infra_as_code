@@ -1,4 +1,3 @@
-## Azure Cost Exports for Azure Infrastructure Security Subscription
 resource "azapi_resource" "azure_infrasec_cost_export_actual" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
   name      = "azure-infrasec_actual"
@@ -10,14 +9,16 @@ resource "azapi_resource" "azure_infrasec_cost_export_actual" {
         status     = "Active"
         recurrence = "Daily"
         recurrencePeriod = {
-          from = "2025-09-02T00:00:00.000Z"
-          to   = "2050-02-01T00:00:00.000Z"
+          from = "2025-09-02T00:00:00Z"
+          to   = "2050-02-01T00:00:00Z"
         }
       }
-      format = "Csv"
-      compressionMode = "None"
+      format                = "Csv"
+      compressionMode       = "None"
+      dataOverwriteBehavior = "CreateNewReport"
       deliveryInfo = {
         destination = {
+          type           = "AzureBlob"
           resourceId     = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/resourceGroups/rg-azure-cost-mgmt/providers/Microsoft.Storage/storageAccounts/safinopsdata"
           container      = "cost-management"
           rootFolderPath = "azure_infrasec_daily_actual"
@@ -29,6 +30,11 @@ resource "azapi_resource" "azure_infrasec_cost_export_actual" {
         timeframe = "MonthToDate"
         dataSet = {
           granularity = "Daily"
+          configuration = {
+            columns     = []
+            dataVersion = "2021-10-01"
+            filters     = []
+          }
         }
       }
     }
@@ -46,14 +52,16 @@ resource "azapi_resource" "azure_infrasec_cost_export_amortized" {
         status     = "Active"
         recurrence = "Daily"
         recurrencePeriod = {
-          from = "2025-09-02T00:00:00.000Z"
-          to   = "2050-02-01T00:00:00.000Z"
+          from = "2025-09-02T00:00:00Z"
+          to   = "2050-02-01T00:00:00Z"
         }
       }
-      format = "Csv"
-      compressionMode = "None"
+      format                = "Csv"
+      compressionMode       = "None"
+      dataOverwriteBehavior = "CreateNewReport"
       deliveryInfo = {
         destination = {
+          type           = "AzureBlob"
           resourceId     = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/resourceGroups/rg-azure-cost-mgmt/providers/Microsoft.Storage/storageAccounts/safinopsdata"
           container      = "cost-management"
           rootFolderPath = "azure_infrasec_daily_amortized"
@@ -65,6 +73,11 @@ resource "azapi_resource" "azure_infrasec_cost_export_amortized" {
         timeframe = "MonthToDate"
         dataSet = {
           granularity = "Daily"
+          configuration = {
+            columns     = []
+            dataVersion = "2021-10-01"
+            filters     = []
+          }
         }
       }
     }
