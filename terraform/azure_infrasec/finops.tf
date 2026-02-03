@@ -1,7 +1,7 @@
 ## Azure Cost Exports for Azure Infrastructure Security Subscription
-resource "azapi_resource" "infrasec_cost_export_actual" {
+resource "azapi_resource" "azure_infrasec_cost_export_actual" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
-  name      = "infrasec_actual"
+  name      = "azure-infrasec_actual"
   parent_id = "/subscriptions/9b9774fb-67f1-45b7-830f-aafe07a94396"
 
   body = {
@@ -20,7 +20,7 @@ resource "azapi_resource" "infrasec_cost_export_actual" {
         destination = {
           resourceId     = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/resourceGroups/rg-azure-cost-mgmt/providers/Microsoft.Storage/storageAccounts/safinopsdata"
           container      = "cost-management"
-          rootFolderPath = "infrasec"
+          rootFolderPath = "azure_infrasec_daily_actual"
         }
       }
       partitionData = true
@@ -35,9 +35,9 @@ resource "azapi_resource" "infrasec_cost_export_actual" {
   }
 }
 
-resource "azapi_resource" "infrasec_cost_export_amortized" {
+resource "azapi_resource" "azure_infrasec_cost_export_amortized" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
-  name      = "infrasec_amortized"
+  name      = "azure-infrasec_amortized"
   parent_id = "/subscriptions/9b9774fb-67f1-45b7-830f-aafe07a94396"
 
   body = {
@@ -56,7 +56,7 @@ resource "azapi_resource" "infrasec_cost_export_amortized" {
         destination = {
           resourceId     = "/subscriptions/108d46d5-fe9b-4850-9a7d-8c914aa6c1f0/resourceGroups/rg-azure-cost-mgmt/providers/Microsoft.Storage/storageAccounts/safinopsdata"
           container      = "cost-management"
-          rootFolderPath = "infrasec"
+          rootFolderPath = "azure_infrasec_daily_amortized"
         }
       }
       partitionData = true
