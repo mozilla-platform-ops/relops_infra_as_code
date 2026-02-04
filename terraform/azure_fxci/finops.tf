@@ -59,9 +59,7 @@ resource "azapi_resource" "fxci_cost_export_actual" {
         dataSet = {
           granularity = "Daily"
           configuration = {
-            columns     = []
-            dataVersion = "2021-10-01"
-            filters     = []
+            columns = []
           }
         }
       }
@@ -106,9 +104,7 @@ resource "azapi_resource" "fxci_cost_export_amortized" {
         dataSet = {
           granularity = "Daily"
           configuration = {
-            columns     = []
-            dataVersion = "2021-10-01"
-            filters     = []
+            columns = []
           }
         }
       }
