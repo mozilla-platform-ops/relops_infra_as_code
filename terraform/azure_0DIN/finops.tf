@@ -32,7 +32,7 @@ resource "azapi_resource" "azure_zero_din_cost_export_actual" {
           granularity = "Daily"
           configuration = {
             columns     = []
-            dataVersion = "2023-05-01"
+            dataVersion = "2021-10-01"
             filters     = []
           }
         }
@@ -75,7 +75,7 @@ resource "azapi_resource" "azure_zero_din_cost_export_amortized" {
           granularity = "Daily"
           configuration = {
             columns     = []
-            dataVersion = "2023-05-01"
+            dataVersion = "2021-10-01"
             filters     = []
           }
         }
