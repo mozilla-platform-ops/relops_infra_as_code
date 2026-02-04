@@ -19,7 +19,7 @@ resource "azapi_resource" "trusted_fxci_cost_export_actual" {
       }
       format                = "Csv"
       compressionMode       = "None"
-      dataOverwriteBehavior = "OverwritePreviousReport"
+      dataOverwriteBehavior = "CreateNewReport"
       exportDescription     = ""
       deliveryInfo = {
         destination = {
@@ -67,7 +67,7 @@ resource "azapi_resource" "trusted_fxci_cost_export_amortized" {
       }
       format                = "Csv"
       compressionMode       = "None"
-      dataOverwriteBehavior = "OverwritePreviousReport"
+      dataOverwriteBehavior = "CreateNewReport"
       exportDescription     = ""
       deliveryInfo = {
         destination = {

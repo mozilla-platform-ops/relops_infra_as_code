@@ -20,7 +20,7 @@ resource "azapi_resource" "fx_nonci_cost_export_amortized" {
       format                = "Csv"
       compressionMode       = "None"
       dataOverwriteBehavior = "CreateNewReport"
-      exportDescription = ""
+      exportDescription     = ""
       deliveryInfo = {
         destination = {
           type           = "AzureBlob"

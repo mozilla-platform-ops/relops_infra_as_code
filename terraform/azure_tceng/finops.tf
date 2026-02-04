@@ -19,7 +19,7 @@ resource "azapi_resource" "taskcluster_cost_export_actual" {
       }
       format                = "Csv"
       compressionMode       = "gzip"
-      dataOverwriteBehavior = "OverwritePreviousReport"
+      dataOverwriteBehavior = "CreateNewReport"
       exportDescription     = ""
       deliveryInfo = {
         destination = {
@@ -67,7 +67,7 @@ resource "azapi_resource" "taskcluster_cost_export_amortized" {
       }
       format                = "Csv"
       compressionMode       = "gzip"
-      dataOverwriteBehavior = "OverwritePreviousReport"
+      dataOverwriteBehavior = "CreateNewReport"
       exportDescription     = ""
       deliveryInfo = {
         destination = {

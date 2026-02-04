@@ -16,16 +16,6 @@ data "azurerm_storage_account" "finops" {
   resource_group_name = "rg-azure-cost-mgmt"
 }
 
-import {
-  to = azapi_resource.anonym_cost_export_actual
-  id = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.mozilla_billing_profile_id}/invoiceSections/${local.anonym_invoice_section_id}/providers/Microsoft.CostManagement/exports/anonym_daily-actual-cost"
-}
-
-import {
-  to = azapi_resource.anonym_cost_export_amortized
-  id = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.mozilla_billing_profile_id}/invoiceSections/${local.anonym_invoice_section_id}/providers/Microsoft.CostManagement/exports/anonym-amortized-cost"
-}
-
 # Anonym invoice section - Actual Cost export
 resource "azapi_resource" "anonym_cost_export_actual" {
   type      = "Microsoft.CostManagement/exports@2025-03-01"
