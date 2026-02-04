@@ -46,6 +46,7 @@ resource "azapi_resource" "fxci_cost_export_actual" {
       dataOverwriteBehavior = "CreateNewReport"
       deliveryInfo = {
         destination = {
+          type           = "AzureBlob"
           resourceId     = azurerm_storage_account.this.id
           container      = "cost-management"
           rootFolderPath = "fxci_daily"
@@ -58,7 +59,9 @@ resource "azapi_resource" "fxci_cost_export_actual" {
         dataSet = {
           granularity = "Daily"
           configuration = {
-            columns = []
+            columns     = []
+            dataVersion = "2023-05-01"
+            filters     = []
           }
         }
       }
@@ -90,6 +93,7 @@ resource "azapi_resource" "fxci_cost_export_amortized" {
       dataOverwriteBehavior = "CreateNewReport"
       deliveryInfo = {
         destination = {
+          type           = "AzureBlob"
           resourceId     = azurerm_storage_account.this.id
           container      = "cost-management"
           rootFolderPath = "fxci_daily"
@@ -102,7 +106,9 @@ resource "azapi_resource" "fxci_cost_export_amortized" {
         dataSet = {
           granularity = "Daily"
           configuration = {
-            columns = []
+            columns     = []
+            dataVersion = "2023-05-01"
+            filters     = []
           }
         }
       }
