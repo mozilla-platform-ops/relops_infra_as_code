@@ -7,7 +7,12 @@ locals {
   mozilla_billing_profile_id = "GRUW-TLBL-BG7-PGB"
 
   # Invoice sections under mozilla billing profile
-  anonym_invoice_section_id = "RUDC-GV4R-PJA-PGB"
+  anonym_invoice_section_id  = "RUDC-GV4R-PJA-PGB"
+  mozilla_invoice_section_id = "VVEC-AWWS-PJA-PGB"
+
+  # US Corp Card billing profile
+  uscorpcard_billing_profile_id = "F6IO-6MX2-BG7-PGB"
+  uscorpcard_invoice_section_id = "C7BX-N2MV-PJA-PGB"
 }
 
 # Storage account for cost exports (managed in azure_fxci)
@@ -110,4 +115,274 @@ resource "azapi_resource" "anonym_cost_export_amortized" {
       }
     }
   }
+}
+
+module "anonym_focusCost" {
+  source = "../azure_modules/costExport"
+
+  columns                 = []
+  compression_mode        = "None"
+  container_name          = "cost-management"
+  cost_type               = "FocusCost"
+  data_overwrite_behavior = "CreateNewReport"
+  data_version            = "1.0r2"
+  export_description      = "Anonym Focus Cost Export. https://mozilla-hub.atlassian.net/browse/RELOPS-2174"
+  export_name             = "anonym_focuscost_daily"
+  format                  = "Csv"
+  granularity             = "Daily"
+  parent_id               = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.mozilla_billing_profile_id}/invoiceSections/${local.anonym_invoice_section_id}"
+  partition_data          = true
+  recurrence              = "Daily"
+  recurrence_period_from  = "2026-02-05T00:00:00Z"
+  recurrence_period_to    = "2050-02-05T00:00:00Z"
+  root_folder_path        = "anonym_focuscost"
+  status                  = "Active"
+  storage_account_id      = data.azurerm_storage_account.finops.id
+  timeframe               = "MonthToDate"
+}
+
+module "mozilla_reservationDetails" {
+  source = "../azure_modules/costExport"
+
+  columns                 = []
+  compression_mode        = "None"
+  container_name          = "cost-management"
+  cost_type               = "ReservationDetails"
+  data_overwrite_behavior = "CreateNewReport"
+  data_version            = "2023-03-01"
+  export_description      = "Mozilla Reservation Details Export. https://mozilla-hub.atlassian.net/browse/RELOPS-2174"
+  export_name             = "mozilla_reservation_details_daily"
+  format                  = "Csv"
+  granularity             = "Daily"
+  parent_id               = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.mozilla_billing_profile_id}"
+  partition_data          = true
+  recurrence              = "Daily"
+  recurrence_period_from  = "2026-02-05T00:00:00Z"
+  recurrence_period_to    = "2050-02-05T00:00:00Z"
+  root_folder_path        = "mozilla_reservation_details"
+  status                  = "Active"
+  storage_account_id      = data.azurerm_storage_account.finops.id
+  timeframe               = "MonthToDate"
+}
+
+module "mozilla_reservationRecommendations" {
+  source = "../azure_modules/costExport"
+
+  columns                 = []
+  compression_mode        = "None"
+  container_name          = "cost-management"
+  cost_type               = "ReservationRecommendations"
+  data_overwrite_behavior = "CreateNewReport"
+  data_version            = "2023-05-01"
+  export_description      = "Mozilla Reservation Recommendations Export. https://mozilla-hub.atlassian.net/browse/RELOPS-2174"
+  export_name             = "mozilla_reservation_recommendations_daily"
+  format                  = "Csv"
+  granularity             = null
+  parent_id               = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.mozilla_billing_profile_id}"
+  partition_data          = true
+  recurrence              = "Daily"
+  recurrence_period_from  = "2026-02-05T00:00:00Z"
+  recurrence_period_to    = "2050-02-05T00:00:00Z"
+  root_folder_path        = "mozilla_reservation_recommendations"
+  status                  = "Active"
+  storage_account_id      = data.azurerm_storage_account.finops.id
+  timeframe               = "MonthToDate"
+}
+
+module "mozilla_reservationTransactions" {
+  source = "../azure_modules/costExport"
+
+  columns                 = []
+  compression_mode        = "None"
+  container_name          = "cost-management"
+  cost_type               = "ReservationTransactions"
+  data_overwrite_behavior = "CreateNewReport"
+  data_version            = "2023-05-01"
+  export_description      = "Mozilla Reservation Transactions Export. https://mozilla-hub.atlassian.net/browse/RELOPS-2174"
+  export_name             = "mozilla_reservation_transactions_daily"
+  format                  = "Csv"
+  granularity             = null
+  parent_id               = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.mozilla_billing_profile_id}"
+  partition_data          = true
+  recurrence              = "Daily"
+  recurrence_period_from  = "2026-02-05T00:00:00Z"
+  recurrence_period_to    = "2050-02-05T00:00:00Z"
+  root_folder_path        = "mozilla_reservation_transactions"
+  status                  = "Active"
+  storage_account_id      = data.azurerm_storage_account.finops.id
+  timeframe               = "MonthToDate"
+}
+
+module "mozilla_focusCost" {
+  source = "../azure_modules/costExport"
+
+  columns                 = []
+  compression_mode        = "None"
+  container_name          = "cost-management"
+  cost_type               = "FocusCost"
+  data_overwrite_behavior = "CreateNewReport"
+  data_version            = "1.0r2"
+  export_description      = "Mozilla Focus Cost Export. https://mozilla-hub.atlassian.net/browse/RELOPS-2174"
+  export_name             = "mozilla_focus_cost_daily"
+  format                  = "Csv"
+  granularity             = "Daily"
+  parent_id               = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.mozilla_billing_profile_id}/invoiceSections/${local.mozilla_invoice_section_id}"
+  partition_data          = true
+  recurrence              = "Daily"
+  recurrence_period_from  = "2026-02-05T00:00:00Z"
+  recurrence_period_to    = "2050-02-05T00:00:00Z"
+  root_folder_path        = "mozilla_focus_cost"
+  status                  = "Active"
+  storage_account_id      = data.azurerm_storage_account.finops.id
+  timeframe               = "MonthToDate"
+}
+
+# US Corp Card invoice section - Actual Cost export
+module "uscorpcard_actualCost" {
+  source = "../azure_modules/costExport"
+
+  columns                 = []
+  compression_mode        = "None"
+  container_name          = "cost-management"
+  cost_type               = "ActualCost"
+  data_overwrite_behavior = "CreateNewReport"
+  data_version            = "2021-10-01"
+  export_description      = "US Corp Card Actual Cost Export. https://mozilla-hub.atlassian.net/browse/RELOPS-2174"
+  export_name             = "uscorpcard_actual_cost_daily"
+  format                  = "Csv"
+  granularity             = "Daily"
+  parent_id               = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.uscorpcard_billing_profile_id}/invoiceSections/${local.uscorpcard_invoice_section_id}"
+  partition_data          = true
+  recurrence              = "Daily"
+  recurrence_period_from  = "2026-02-05T00:00:00Z"
+  recurrence_period_to    = "2050-02-05T00:00:00Z"
+  root_folder_path        = "uscorpcard_actual_cost"
+  status                  = "Active"
+  storage_account_id      = data.azurerm_storage_account.finops.id
+  timeframe               = "MonthToDate"
+}
+
+# US Corp Card invoice section - Amortized Cost export
+module "uscorpcard_amortizedCost" {
+  source = "../azure_modules/costExport"
+
+  columns                 = []
+  compression_mode        = "None"
+  container_name          = "cost-management"
+  cost_type               = "AmortizedCost"
+  data_overwrite_behavior = "CreateNewReport"
+  data_version            = "2021-10-01"
+  export_description      = "US Corp Card Amortized Cost Export. https://mozilla-hub.atlassian.net/browse/RELOPS-2174"
+  export_name             = "uscorpcard_amortized_cost_daily"
+  format                  = "Csv"
+  granularity             = "Daily"
+  parent_id               = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.uscorpcard_billing_profile_id}/invoiceSections/${local.uscorpcard_invoice_section_id}"
+  partition_data          = true
+  recurrence              = "Daily"
+  recurrence_period_from  = "2026-02-05T00:00:00Z"
+  recurrence_period_to    = "2050-02-05T00:00:00Z"
+  root_folder_path        = "uscorpcard_amortized_cost"
+  status                  = "Active"
+  storage_account_id      = data.azurerm_storage_account.finops.id
+  timeframe               = "MonthToDate"
+}
+
+# US Corp Card invoice section - Focus Cost export
+module "uscorpcard_focusCost" {
+  source = "../azure_modules/costExport"
+
+  columns                 = []
+  compression_mode        = "None"
+  container_name          = "cost-management"
+  cost_type               = "FocusCost"
+  data_overwrite_behavior = "CreateNewReport"
+  data_version            = "1.0r2"
+  export_description      = "US Corp Card Focus Cost Export. https://mozilla-hub.atlassian.net/browse/RELOPS-2174"
+  export_name             = "uscorpcard_focus_cost_daily"
+  format                  = "Csv"
+  granularity             = "Daily"
+  parent_id               = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.uscorpcard_billing_profile_id}/invoiceSections/${local.uscorpcard_invoice_section_id}"
+  partition_data          = true
+  recurrence              = "Daily"
+  recurrence_period_from  = "2026-02-05T00:00:00Z"
+  recurrence_period_to    = "2050-02-05T00:00:00Z"
+  root_folder_path        = "uscorpcard_focus_cost"
+  status                  = "Active"
+  storage_account_id      = data.azurerm_storage_account.finops.id
+  timeframe               = "MonthToDate"
+}
+
+# US Corp Card billing profile - Reservation Details export
+module "uscorpcard_reservationDetails" {
+  source = "../azure_modules/costExport"
+
+  columns                 = []
+  compression_mode        = "None"
+  container_name          = "cost-management"
+  cost_type               = "ReservationDetails"
+  data_overwrite_behavior = "CreateNewReport"
+  data_version            = "2023-03-01"
+  export_description      = "US Corp Card Reservation Details Export. https://mozilla-hub.atlassian.net/browse/RELOPS-2174"
+  export_name             = "uscorpcard_reservation_details_daily"
+  format                  = "Csv"
+  granularity             = "Daily"
+  parent_id               = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.uscorpcard_billing_profile_id}"
+  partition_data          = true
+  recurrence              = "Daily"
+  recurrence_period_from  = "2026-02-05T00:00:00Z"
+  recurrence_period_to    = "2050-02-05T00:00:00Z"
+  root_folder_path        = "uscorpcard_reservation_details"
+  status                  = "Active"
+  storage_account_id      = data.azurerm_storage_account.finops.id
+  timeframe               = "MonthToDate"
+}
+
+# US Corp Card billing profile - Reservation Recommendations export
+module "uscorpcard_reservationRecommendations" {
+  source = "../azure_modules/costExport"
+
+  columns                 = []
+  compression_mode        = "None"
+  container_name          = "cost-management"
+  cost_type               = "ReservationRecommendations"
+  data_overwrite_behavior = "CreateNewReport"
+  data_version            = "2023-05-01"
+  export_description      = "US Corp Card Reservation Recommendations Export. https://mozilla-hub.atlassian.net/browse/RELOPS-2174"
+  export_name             = "uscorpcard_reservation_recommendations_daily"
+  format                  = "Csv"
+  granularity             = null
+  parent_id               = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.uscorpcard_billing_profile_id}"
+  partition_data          = true
+  recurrence              = "Daily"
+  recurrence_period_from  = "2026-02-05T00:00:00Z"
+  recurrence_period_to    = "2050-02-05T00:00:00Z"
+  root_folder_path        = "uscorpcard_reservation_recommendations"
+  status                  = "Active"
+  storage_account_id      = data.azurerm_storage_account.finops.id
+  timeframe               = "MonthToDate"
+}
+
+# US Corp Card billing profile - Reservation Transactions export
+module "uscorpcard_reservationTransactions" {
+  source = "../azure_modules/costExport"
+
+  columns                 = []
+  compression_mode        = "None"
+  container_name          = "cost-management"
+  cost_type               = "ReservationTransactions"
+  data_overwrite_behavior = "CreateNewReport"
+  data_version            = "2023-05-01"
+  export_description      = "US Corp Card Reservation Transactions Export. https://mozilla-hub.atlassian.net/browse/RELOPS-2174"
+  export_name             = "uscorpcard_reservation_transactions_daily"
+  format                  = "Csv"
+  granularity             = null
+  parent_id               = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.uscorpcard_billing_profile_id}"
+  partition_data          = true
+  recurrence              = "Daily"
+  recurrence_period_from  = "2026-02-05T00:00:00Z"
+  recurrence_period_to    = "2050-02-05T00:00:00Z"
+  root_folder_path        = "uscorpcard_reservation_transactions"
+  status                  = "Active"
+  storage_account_id      = data.azurerm_storage_account.finops.id
+  timeframe               = "MonthToDate"
 }
