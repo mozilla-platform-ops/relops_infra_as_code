@@ -64,13 +64,14 @@ resource "azurerm_shared_image_gallery" "this" {
   name                = each.key
   resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
   location            = azurerm_resource_group.rg-packer-worker-images.location
-  description         = replace(each.key, "_", "-")
-
-  tags = merge(local.common_tags,
-    tomap({
-      "Name" = "rg-packer-worker-images"
-    })
-  )
+  description         = "Shared Image Gallery for ${each.value.sku}"
+  tags = {
+    terraform        = "true"
+    project_name     = "worker-images"
+    production_state = "production"
+    owner_email      = "relops@mozilla.com"
+    source_repo_url  = "https://github.com/mozilla-platform-ops/relops_infra_as_code"
+  }
 }
 
 resource "azurerm_shared_image" "this" {
@@ -84,12 +85,13 @@ resource "azurerm_shared_image" "this" {
   hyper_v_generation                = each.value.hyper_v_generation
   architecture                      = each.value.architecture
   disk_controller_type_nvme_enabled = true
-
-  tags = merge(local.common_tags,
-    tomap({
-      "Name" = "rg-packer-worker-images"
-    })
-  )
+  tags = {
+    terraform        = "true"
+    project_name     = "worker-images"
+    production_state = "production"
+    owner_email      = "relops@mozilla.com"
+    source_repo_url  = "https://github.com/mozilla-platform-ops/relops_infra_as_code"
+  }
 
   identifier {
     publisher = each.value.publisher
