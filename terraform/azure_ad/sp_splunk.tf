@@ -1,6 +1,6 @@
 resource "azuread_application" "splunkeventhub" {
   display_name = "sp-infosec-splunkeventhub"
-  owners       = [data.azuread_user.jmoss.id]
+  owners       = [data.azuread_user.jmoss.object_id]
   web {
     redirect_uris = []
 

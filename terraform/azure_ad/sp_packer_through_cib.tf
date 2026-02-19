@@ -6,7 +6,7 @@ data "azuread_user" "mcornmesser" {
 resource "azuread_application" "Packer_Through_CIB" {
   display_name = "Packer_Through_CIB"
   # Packer bits live in the CloudImageBuilder repo
-  owners = [data.azuread_user.mcornmesser.id]
+  owners = [data.azuread_user.mcornmesser.object_id]
   required_resource_access {
     # azure management service api
     resource_app_id = "797f4846-ba00-4fd7-ba43-dac1f8f63013"
