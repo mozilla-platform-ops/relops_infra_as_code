@@ -64,6 +64,38 @@ locals {
       os_type            = "Windows"
       hyper_v_generation = "V2"
     },
+    "win11a6425h2builderalpha" = {
+      publisher          = "windows11preview-arm64"
+      offer              = "Windows-11"
+      sku                = "win11-25h2-ent"
+      architecture       = "Arm64"
+      os_type            = "Windows"
+      hyper_v_generation = "V2"
+    },
+    "win11a6425h2builder" = {
+      publisher          = "windows11preview-arm64"
+      offer              = "Windows-11"
+      sku                = "win11-25h2-ent"
+      architecture       = "Arm64"
+      os_type            = "Windows"
+      hyper_v_generation = "V2"
+    },
+    "win11a6425h2testeralpha" = {
+      publisher          = "windows11preview-arm64"
+      offer              = "Windows-11"
+      sku                = "win11-25h2-ent"
+      architecture       = "Arm64"
+      os_type            = "Windows"
+      hyper_v_generation = "V2"
+    },
+    "win11a6425h2tester" = {
+      publisher          = "windows11preview-arm64"
+      offer              = "Windows-11"
+      sku                = "win11-25h2-ent"
+      architecture       = "Arm64"
+      os_type            = "Windows"
+      hyper_v_generation = "V2"
+    },
     "win116424h2" = {
       publisher          = "MicrosoftWindowsDesktop"
       offer              = "Windows-11"
@@ -76,6 +108,22 @@ locals {
       publisher          = "MicrosoftWindowsDesktop"
       offer              = "Windows-11"
       sku                = "win11-24h2-avd"
+      architecture       = "x64"
+      os_type            = "Windows"
+      hyper_v_generation = "V2"
+    },
+    "win116425h2" = {
+      publisher          = "MicrosoftWindowsDesktop"
+      offer              = "Windows-11"
+      sku                = "win11-25h2-avd"
+      architecture       = "x64"
+      os_type            = "Windows"
+      hyper_v_generation = "V2"
+    },
+    "win116425h2alpha" = {
+      publisher          = "MicrosoftWindowsDesktop"
+      offer              = "Windows-11"
+      sku                = "win11-25h2-avd"
       architecture       = "x64"
       os_type            = "Windows"
       hyper_v_generation = "V2"
