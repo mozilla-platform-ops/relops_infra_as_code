@@ -5,7 +5,7 @@ data "azuread_user" "jmoss" {
 # application: worker_images_dev
 resource "azuread_application" "worker_images_dev" {
   display_name = "worker_images_dev"
-  owners       = [data.azuread_user.jmoss.id]
+  owners       = [data.azuread_user.jmoss.object_id]
   web {
     homepage_url = "https://github.com/mozilla-platform-ops/worker-images"
     implicit_grant {
@@ -43,7 +43,7 @@ resource "azurerm_role_assignment" "worker_images_dev" {
 
 resource "azuread_application" "worker_images_fxci" {
   display_name = "worker_images_fxci"
-  owners       = [data.azuread_user.jmoss.id]
+  owners       = [data.azuread_user.jmoss.object_id]
   web {
     homepage_url = "https://github.com/mozilla-platform-ops/worker-images"
     implicit_grant {
@@ -81,7 +81,7 @@ resource "azurerm_role_assignment" "worker_images_fxci" {
 
 resource "azuread_application" "worker_images_fxci_trusted" {
   display_name = "worker_images_fxci_trusted"
-  owners       = [data.azuread_user.jmoss.id]
+  owners       = [data.azuread_user.jmoss.object_id]
   web {
     homepage_url = "https://github.com/mozilla-platform-ops/worker-images"
     implicit_grant {
@@ -120,7 +120,7 @@ resource "azurerm_role_assignment" "worker_images_fxci_trusted" {
 # application: worker_manager_tceng
 resource "azuread_application" "worker_images_tceng" {
   display_name = "worker_images_tceng"
-  owners       = [data.azuread_user.mcornmesser.id]
+  owners       = [data.azuread_user.mcornmesser.object_id]
   api {
     known_client_applications      = []
     mapped_claims_enabled          = false

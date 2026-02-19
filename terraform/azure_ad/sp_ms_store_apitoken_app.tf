@@ -1,6 +1,6 @@
 resource "azuread_application" "ms_store_apitoken_app" {
   display_name = "MS Store API Token app"
-  owners       = [data.azuread_user.mcornmesser.id]
+  owners       = [data.azuread_user.mcornmesser.object_id]
   api {
     known_client_applications      = []
     mapped_claims_enabled          = false
