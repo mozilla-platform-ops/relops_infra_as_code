@@ -47,18 +47,6 @@ locals {
       image_tags                        = local.worker_image_tags
       disk_controller_type_nvme_enabled = true
     },
-    "trusted_win11_64_25h2" = {
-      publisher                         = "MicrosoftWindowsDesktop"
-      offer                             = "Windows-11"
-      sku                               = "win11-25h2-avd"
-      architecture                      = "x64"
-      os_type                           = "Windows"
-      hyper_v_generation                = "V2"
-      gallery_description               = "Shared Image Gallery for win11-25h2-avd"
-      gallery_tags                      = local.worker_image_tags
-      image_tags                        = local.worker_image_tags
-      disk_controller_type_nvme_enabled = true
-    },
     "trusted_win2022_64_2009" = {
       publisher                         = "MicrosoftWindowsServer"
       offer                             = "WindowsServer"
