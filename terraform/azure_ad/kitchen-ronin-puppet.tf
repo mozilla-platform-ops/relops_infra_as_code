@@ -26,7 +26,7 @@ resource "azuread_service_principal" "ronin_puppet_test_kitchen" {
 resource "azurerm_role_assignment" "ronin_puppet_test_kitchen_contributor" {
   role_definition_name = "Contributor"
   principal_id         = azuread_service_principal.ronin_puppet_test_kitchen.object_id
-  scope                = data.azurerm_subscription.currentSubscription.id
+  scope                = "/subscriptions/${var.fxci_devtest_subscription_id}"
 }
 
 resource "azuread_application_federated_identity_credential" "ronin_puppet_test_kitchen_pr" {
