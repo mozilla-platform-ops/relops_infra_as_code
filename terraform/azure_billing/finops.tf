@@ -237,6 +237,56 @@ module "mozilla_focusCost" {
   timeframe               = "MonthToDate"
 }
 
+# Mozilla billing profile - Actual Cost export
+module "mozilla_actualCost" {
+  source = "../azure_modules/costExport"
+
+  columns                 = []
+  compression_mode        = "None"
+  container_name          = "cost-management"
+  cost_type               = "ActualCost"
+  data_overwrite_behavior = "CreateNewReport"
+  data_version            = "2021-10-01"
+  export_description      = "Mozilla Actual Cost Export. https://mozilla-hub.atlassian.net/browse/RELOPS-2249"
+  export_name             = "mozilla_actual_cost_daily"
+  format                  = "Csv"
+  granularity             = "Daily"
+  parent_id               = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.mozilla_billing_profile_id}"
+  partition_data          = true
+  recurrence              = "Daily"
+  recurrence_period_from  = "2026-02-05T00:00:00Z"
+  recurrence_period_to    = "2050-02-05T00:00:00Z"
+  root_folder_path        = "mozilla_actual_cost"
+  status                  = "Active"
+  storage_account_id      = data.azurerm_storage_account.finops.id
+  timeframe               = "MonthToDate"
+}
+
+# Mozilla billing profile - Amortized Cost export
+module "mozilla_amortizedCost" {
+  source = "../azure_modules/costExport"
+
+  columns                 = []
+  compression_mode        = "None"
+  container_name          = "cost-management"
+  cost_type               = "AmortizedCost"
+  data_overwrite_behavior = "CreateNewReport"
+  data_version            = "2021-10-01"
+  export_description      = "Mozilla Amortized Cost Export. https://mozilla-hub.atlassian.net/browse/RELOPS-2249"
+  export_name             = "mozilla_amortized_cost_daily"
+  format                  = "Csv"
+  granularity             = "Daily"
+  parent_id               = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.mozilla_billing_profile_id}"
+  partition_data          = true
+  recurrence              = "Daily"
+  recurrence_period_from  = "2026-02-05T00:00:00Z"
+  recurrence_period_to    = "2050-02-05T00:00:00Z"
+  root_folder_path        = "mozilla_amortized_cost"
+  status                  = "Active"
+  storage_account_id      = data.azurerm_storage_account.finops.id
+  timeframe               = "MonthToDate"
+}
+
 # US Corp Card invoice section - Actual Cost export
 module "uscorpcard_actualCost" {
   source = "../azure_modules/costExport"
