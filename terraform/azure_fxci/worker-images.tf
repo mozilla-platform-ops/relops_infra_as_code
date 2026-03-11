@@ -64,7 +64,7 @@ locals {
       os_type            = "Windows"
       hyper_v_generation = "V2"
     },
-    "win11a6425h2builderalpha" = {
+    "win11_a64_25h2_builder_alpha" = {
       publisher          = "windows11preview-arm64"
       offer              = "Windows-11"
       sku                = "win11-25h2-ent"
@@ -72,7 +72,7 @@ locals {
       os_type            = "Windows"
       hyper_v_generation = "V2"
     },
-    "win11a6425h2builder" = {
+    "win11_a64_25h2_builder" = {
       publisher          = "windows11preview-arm64"
       offer              = "Windows-11"
       sku                = "win11-25h2-ent"
@@ -80,7 +80,7 @@ locals {
       os_type            = "Windows"
       hyper_v_generation = "V2"
     },
-    "win11a6425h2testeralpha" = {
+    "win11_a64_25h2_tester_alpha" = {
       publisher          = "windows11preview-arm64"
       offer              = "Windows-11"
       sku                = "win11-25h2-ent"
@@ -88,7 +88,7 @@ locals {
       os_type            = "Windows"
       hyper_v_generation = "V2"
     },
-    "win11a6425h2tester" = {
+    "win11_a64_25h2_tester" = {
       publisher          = "windows11preview-arm64"
       offer              = "Windows-11"
       sku                = "win11-25h2-ent"
@@ -112,7 +112,7 @@ locals {
       os_type            = "Windows"
       hyper_v_generation = "V2"
     },
-    "win116425h2" = {
+    "win11_64_25h2" = {
       publisher          = "MicrosoftWindowsDesktop"
       offer              = "Windows-11"
       sku                = "win11-25h2-avd"
@@ -120,7 +120,7 @@ locals {
       os_type            = "Windows"
       hyper_v_generation = "V2"
     },
-    "win116425h2alpha" = {
+    "win11_64_25h2_alpha" = {
       publisher          = "MicrosoftWindowsDesktop"
       offer              = "Windows-11"
       sku                = "win11-25h2-avd"
