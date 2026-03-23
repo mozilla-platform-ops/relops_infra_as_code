@@ -38,6 +38,15 @@ resource "azuread_application_federated_identity_credential" "ronin_puppet_test_
   subject        = "repo:mozilla-platform-ops/ronin_puppet:pull_request"
 }
 
+resource "azuread_application_federated_identity_credential" "ronin_puppet_test_kitchen_master" {
+  application_id = azuread_application.ronin_puppet_test_kitchen.id
+  display_name   = "github-actions-master"
+  description    = "GitHub Actions OIDC for master branch workflows in mozilla-platform-ops/ronin_puppet"
+  audiences      = ["api://AzureADTokenExchange"]
+  issuer         = "https://token.actions.githubusercontent.com"
+  subject        = "repo:mozilla-platform-ops/ronin_puppet:ref:refs/heads/master"
+}
+
 resource "azuread_application_federated_identity_credential" "ronin_puppet_test_kitchen_branches" {
   application_id = azuread_application.ronin_puppet_test_kitchen.id
   display_name   = "github-actions-branches"
