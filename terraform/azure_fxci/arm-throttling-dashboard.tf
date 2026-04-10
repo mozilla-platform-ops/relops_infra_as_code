@@ -90,8 +90,8 @@ resource "azapi_resource" "fxci_arm_throttling_dashboard" {
                               id = local.fxci_arm_throttling_dashboard_subscription_resource_id
                             }
                             name            = "Traffic"
-                            aggregationType = 1
-                            namespace       = "microsoft.resources/subscriptions"
+                            aggregationType = 7
+                            namespace       = "Microsoft.Resources/subscriptions"
                             metricVisualization = {
                               displayName         = "Traffic"
                               resourceDisplayName = "FXCI DevTest"
@@ -154,7 +154,7 @@ resource "azapi_resource" "fxci_arm_throttling_dashboard" {
                             }
                             name            = "Latency"
                             aggregationType = 4
-                            namespace       = "microsoft.resources/subscriptions"
+                            namespace       = "Microsoft.Resources/subscriptions"
                             metricVisualization = {
                               displayName         = "Latency"
                               resourceDisplayName = "FXCI DevTest"
