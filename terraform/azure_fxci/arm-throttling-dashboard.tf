@@ -75,23 +75,57 @@ resource "azapi_resource" "fxci_arm_throttling_dashboard" {
               metadata = {
                 inputs = [
                   {
-                    name = "queryInputs"
+                    name       = "sharedTimeRange"
+                    isOptional = true
+                  },
+                  {
+                    name = "options"
                     value = {
-                      timespan = {
-                        duration = "P7D"
-                      }
-                      id        = local.fxci_arm_throttling_dashboard_subscription_resource_id
-                      chartType = 0
-                      metrics = [
-                        {
-                          name       = "Traffic"
-                          resourceId = local.fxci_arm_throttling_dashboard_subscription_resource_id
+                      chart = {
+                        title     = "ARM Traffic (7d)"
+                        titleKind = 2
+                        metrics = [
+                          {
+                            resourceMetadata = {
+                              id = local.fxci_arm_throttling_dashboard_subscription_resource_id
+                            }
+                            name            = "Traffic"
+                            aggregationType = 1
+                            namespace       = "microsoft.resources/subscriptions"
+                            metricVisualization = {
+                              displayName         = "Traffic"
+                              resourceDisplayName = "FXCI DevTest"
+                            }
+                          }
+                        ]
+                        timespan = {
+                          relative = {
+                            duration = 604800000
+                          }
                         }
-                      ]
+                        visualization = {
+                          chartType = 2
+                          legendVisualization = {
+                            isVisible    = true
+                            position     = 2
+                            hideSubtitle = false
+                          }
+                          axisVisualization = {
+                            x = {
+                              isVisible = true
+                              axisType  = 2
+                            }
+                            y = {
+                              isVisible = true
+                              axisType  = 1
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 ]
-                type = "Extension/Microsoft_Azure_Monitoring/PartType/MetricsChartPart"
+                type = "Extension/HubsExtension/PartType/MonitorChartPart"
               }
             },
             {
@@ -104,23 +138,57 @@ resource "azapi_resource" "fxci_arm_throttling_dashboard" {
               metadata = {
                 inputs = [
                   {
-                    name = "queryInputs"
+                    name       = "sharedTimeRange"
+                    isOptional = true
+                  },
+                  {
+                    name = "options"
                     value = {
-                      timespan = {
-                        duration = "P7D"
-                      }
-                      id        = local.fxci_arm_throttling_dashboard_subscription_resource_id
-                      chartType = 0
-                      metrics = [
-                        {
-                          name       = "Latency"
-                          resourceId = local.fxci_arm_throttling_dashboard_subscription_resource_id
+                      chart = {
+                        title     = "ARM Latency (7d)"
+                        titleKind = 2
+                        metrics = [
+                          {
+                            resourceMetadata = {
+                              id = local.fxci_arm_throttling_dashboard_subscription_resource_id
+                            }
+                            name            = "Latency"
+                            aggregationType = 4
+                            namespace       = "microsoft.resources/subscriptions"
+                            metricVisualization = {
+                              displayName         = "Latency"
+                              resourceDisplayName = "FXCI DevTest"
+                            }
+                          }
+                        ]
+                        timespan = {
+                          relative = {
+                            duration = 604800000
+                          }
                         }
-                      ]
+                        visualization = {
+                          chartType = 2
+                          legendVisualization = {
+                            isVisible    = true
+                            position     = 2
+                            hideSubtitle = false
+                          }
+                          axisVisualization = {
+                            x = {
+                              isVisible = true
+                              axisType  = 2
+                            }
+                            y = {
+                              isVisible = true
+                              axisType  = 1
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 ]
-                type = "Extension/Microsoft_Azure_Monitoring/PartType/MetricsChartPart"
+                type = "Extension/HubsExtension/PartType/MonitorChartPart"
               }
             },
             {
