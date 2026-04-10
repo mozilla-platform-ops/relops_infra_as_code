@@ -24,7 +24,7 @@ locals {
 }
 
 resource "azapi_resource" "fxci_arm_throttling_dashboard" {
-  type                      = "Microsoft.Portal/dashboards@2020-09-01-preview"
+  type                      = "Microsoft.Portal/dashboards@2025-04-01-preview"
   name                      = "arm-throttle-fxci"
   parent_id                 = azurerm_resource_group.rg-central-us-runbooks.id
   location                  = azurerm_resource_group.rg-central-us-runbooks.location
