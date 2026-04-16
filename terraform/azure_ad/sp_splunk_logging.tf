@@ -5,10 +5,7 @@ resource "azuread_application" "splunk_logging" {
   display_name     = "Splunk Logging"
   sign_in_audience = "AzureADMyOrg"
 
-  owners = [
-    data.azuread_user.jmoss.object_id,
-    "4e48c4fe-303d-4d1d-bd6f-76f39f7b1c08", # mcornmesser@mozilla.com
-  ]
+  owners = data.azuread_group.relops.members
 
   required_resource_access {
     resource_app_id = "00000003-0000-0000-c000-000000000000" # Microsoft Graph
