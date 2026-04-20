@@ -61,11 +61,35 @@ resource "azurerm_role_assignment" "infrasec_reader" {
   principal_id         = data.azuread_group.infrasec.object_id
 }
 
+# Reader on the tenant root management group so operators running terraform in
+# azure_infrasec can resolve the "azurerm_management_group.tenant_root" data
+# source (used to enumerate subscriptions for CrowdStrike log forwarding).
+resource "azurerm_role_assignment" "infrasec_tenant_root_mg_reader" {
+  scope                = "/providers/Microsoft.Management/managementGroups/c0dc8bb0-b616-427e-8217-9513964a145b"
+  role_definition_name = "Reader"
+  principal_id         = data.azuread_group.infrasec.object_id
+}
+
+resource "azurerm_role_assignment" "releng_tenant_root_mg_reader" {
+  scope                = "/providers/Microsoft.Management/managementGroups/c0dc8bb0-b616-427e-8217-9513964a145b"
+  role_definition_name = "Reader"
+  principal_id         = data.azuread_group.releng.object_id
+}
+
 resource "azurerm_role_assignment" "splunkeventhub" {
   for_each             = toset(var.azure_subscriptions)
   scope                = each.value
   role_definition_name = "Azure Event Hubs Data Receiver"
   principal_id         = azuread_service_principal.splunkeventhub.object_id
+}
+
+# Scoped to the CrowdStrike Event Hub Namespace only (least-privilege per the
+# Falcon NGSIEM connector guide). The namespace is managed in the
+# azure_infrasec workspace; this references it by constructed resource ID.
+resource "azurerm_role_assignment" "crowdstrikeeventhub" {
+  scope                = "/subscriptions/${var.infra_sec_subscription_id}/resourceGroups/rg-crowdstrike-eventhub/providers/Microsoft.EventHub/namespaces/mozcrowdstrikeeventhub"
+  role_definition_name = "Azure Event Hubs Data Receiver"
+  principal_id         = azuread_service_principal.crowdstrikeeventhub.object_id
 }
 
 variable "azure_subscriptions" {
