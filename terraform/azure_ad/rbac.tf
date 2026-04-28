@@ -1,24 +1,9 @@
-data "azuread_group" "infrasec" {
-  display_name     = "Infrastructure Security Team"
-  security_enabled = true
-}
-
-data "azuread_group" "releng" {
-  display_name     = "Releng"
-  security_enabled = true
-}
-
-data "azuread_group" "tceng" {
-  display_name     = "Taskcluster"
-  security_enabled = true
-}
-
 # Assign Billing Reader role to the specified group across all subscriptions
 resource "azurerm_role_assignment" "billing_reader_releng" {
   for_each             = toset(var.azure_subscriptions)
   scope                = each.value
   role_definition_name = "Billing Reader"
-  principal_id         = data.azuread_group.releng.object_id
+  principal_id         = azuread_group.releng.object_id
 }
 
 ## contributor to non-ci sub
@@ -28,7 +13,7 @@ resource "azurerm_role_assignment" "releng_contributor" {
   ])
   scope                = each.value
   role_definition_name = "Contributor"
-  principal_id         = data.azuread_group.releng.object_id
+  principal_id         = azuread_group.releng.object_id
 }
 
 ## reader to the others
@@ -42,7 +27,7 @@ resource "azurerm_role_assignment" "releng_reader" {
   ])
   scope                = each.value
   role_definition_name = "reader"
-  principal_id         = data.azuread_group.releng.object_id
+  principal_id         = azuread_group.releng.object_id
 }
 
 resource "azurerm_role_assignment" "tceng_reader" {
@@ -51,14 +36,14 @@ resource "azurerm_role_assignment" "tceng_reader" {
   ])
   scope                = each.value
   role_definition_name = "reader"
-  principal_id         = data.azuread_group.tceng.object_id
+  principal_id         = azuread_group.tceng.object_id
 }
 
 resource "azurerm_role_assignment" "infrasec_reader" {
   for_each             = toset(var.azure_subscriptions)
   scope                = each.value
   role_definition_name = "reader"
-  principal_id         = data.azuread_group.infrasec.object_id
+  principal_id         = azuread_group.infrasec.object_id
 }
 
 # Reader on the tenant root management group so operators running terraform in
@@ -67,13 +52,13 @@ resource "azurerm_role_assignment" "infrasec_reader" {
 resource "azurerm_role_assignment" "infrasec_tenant_root_mg_reader" {
   scope                = "/providers/Microsoft.Management/managementGroups/c0dc8bb0-b616-427e-8217-9513964a145b"
   role_definition_name = "Reader"
-  principal_id         = data.azuread_group.infrasec.object_id
+  principal_id         = azuread_group.infrasec.object_id
 }
 
 resource "azurerm_role_assignment" "releng_tenant_root_mg_reader" {
   scope                = "/providers/Microsoft.Management/managementGroups/c0dc8bb0-b616-427e-8217-9513964a145b"
   role_definition_name = "Reader"
-  principal_id         = data.azuread_group.releng.object_id
+  principal_id         = azuread_group.releng.object_id
 }
 
 resource "azurerm_role_assignment" "splunkeventhub" {
@@ -108,4 +93,133 @@ resource "azurerm_role_assignment" "zero_din_contributor" {
   scope                = data.azurerm_subscription.zero_din.id
   role_definition_name = "Contributor"
   principal_id         = azuread_group.zero_din.object_id
+}
+
+# Relops — Contributor on FXCI, Trusted FXCI, 0DIN, and FF Non-CI
+resource "azurerm_role_assignment" "relops_contributor" {
+  for_each = toset([
+    "/subscriptions/${var.fxci_devtest_subscription_id}",
+    "/subscriptions/${var.trusted_fxci_subscription_id}",
+    "/subscriptions/${var.zero_din_subscription_id}",
+    "/subscriptions/${var.firefox_nonci_subscription_id}",
+  ])
+  scope                = each.value
+  role_definition_name = "Contributor"
+  principal_id         = azuread_group.relops.object_id
+}
+
+# CI Billing — Billing Administrator directory role (tenant-wide)
+data "azuread_directory_role" "billing_admin" {
+  display_name = "Billing Administrator"
+}
+
+resource "azuread_directory_role_member" "ci_billing_billing_admin" {
+  role_object_id   = data.azuread_directory_role.billing_admin.object_id
+  member_object_id = azuread_group.ci_billing.object_id
+}
+
+# CI Billing — Cost Management Contributor on FXCI, Trusted FXCI, and FF Non-CI
+resource "azurerm_role_assignment" "ci_billing_cost_mgmt_contributor" {
+  for_each = toset([
+    "/subscriptions/${var.fxci_devtest_subscription_id}",
+    "/subscriptions/${var.trusted_fxci_subscription_id}",
+    "/subscriptions/${var.firefox_nonci_subscription_id}",
+  ])
+  scope                = each.value
+  role_definition_name = "Cost Management Contributor"
+  principal_id         = azuread_group.ci_billing.object_id
+}
+
+# Firefox Enterprise VMs — Contributor on FF Non-CI
+resource "azurerm_role_assignment" "firefox_enterprise_vms_contributor" {
+  scope                = "/subscriptions/${var.firefox_nonci_subscription_id}"
+  role_definition_name = "Contributor"
+  principal_id         = azuread_group.firefox_enterprise_vms.object_id
+}
+
+# Relops — additional roles from ticket audit
+resource "azurerm_role_assignment" "relops_billing_reader" {
+  for_each = toset([
+    "/subscriptions/${var.fxci_devtest_subscription_id}",
+    "/subscriptions/${var.firefox_nonci_subscription_id}",
+  ])
+  scope                = each.value
+  role_definition_name = "Billing Reader"
+  principal_id         = azuread_group.relops.object_id
+}
+
+resource "azurerm_role_assignment" "relops_security_reader" {
+  for_each = toset([
+    "/subscriptions/${var.fxci_devtest_subscription_id}",
+    "/subscriptions/${var.firefox_nonci_subscription_id}",
+  ])
+  scope                = each.value
+  role_definition_name = "Security Reader"
+  principal_id         = azuread_group.relops.object_id
+}
+
+resource "azurerm_role_assignment" "relops_user_access_admin" {
+  for_each = toset([
+    "/subscriptions/${var.fxci_devtest_subscription_id}",
+    "/subscriptions/${var.firefox_nonci_subscription_id}",
+  ])
+  scope                = each.value
+  role_definition_name = "User Access Administrator"
+  principal_id         = azuread_group.relops.object_id
+}
+
+resource "azurerm_role_assignment" "relops_eventhubs_data_sender" {
+  scope                = "/subscriptions/${var.firefox_nonci_subscription_id}"
+  role_definition_name = "Azure Event Hubs Data Sender"
+  principal_id         = azuread_group.relops.object_id
+}
+
+# Taskcluster — Contributor on TCEng
+resource "azurerm_role_assignment" "tceng_contributor" {
+  scope                = "/subscriptions/${var.taskcluster_subscription_id}"
+  role_definition_name = "Contributor"
+  principal_id         = azuread_group.tceng.object_id
+}
+
+# Security Engineering — Monitoring Reader on FXCI; Security Reader on FXCI and Trusted FXCI
+resource "azurerm_role_assignment" "security_engineering_monitoring_reader" {
+  scope                = "/subscriptions/${var.fxci_devtest_subscription_id}"
+  role_definition_name = "Monitoring Reader"
+  principal_id         = azuread_group.security_engineering.object_id
+}
+
+resource "azurerm_role_assignment" "security_engineering_security_reader" {
+  for_each = toset([
+    "/subscriptions/${var.fxci_devtest_subscription_id}",
+    "/subscriptions/${var.trusted_fxci_subscription_id}",
+  ])
+  scope                = each.value
+  role_definition_name = "Security Reader"
+  principal_id         = azuread_group.security_engineering.object_id
+}
+
+# Cognitive Services — Contributor, Cognitive Services Contributor, and Custom Vision Contributor on FF Non-CI
+resource "azurerm_role_assignment" "cognitive_services_roles" {
+  for_each = toset([
+    "Contributor",
+    "Cognitive Services Contributor",
+    "Cognitive Services Custom Vision Contributor",
+  ])
+  scope                = "/subscriptions/${var.firefox_nonci_subscription_id}"
+  role_definition_name = each.value
+  principal_id         = azuread_group.cognitive_services.object_id
+}
+
+# Data SRE — Contributor on FF Non-CI
+resource "azurerm_role_assignment" "data_sre_contributor" {
+  scope                = "/subscriptions/${var.firefox_nonci_subscription_id}"
+  role_definition_name = "Contributor"
+  principal_id         = azuread_group.data_sre.object_id
+}
+
+# SEIO — Contributor on FXCI main CI subscription
+resource "azurerm_role_assignment" "seio_contributor" {
+  scope                = "/subscriptions/${var.fxci_devtest_subscription_id}"
+  role_definition_name = "Contributor"
+  principal_id         = azuread_group.seio.object_id
 }
