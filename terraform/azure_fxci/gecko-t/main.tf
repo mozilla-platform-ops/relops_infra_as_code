@@ -1,6 +1,7 @@
 locals {
   location_map = {
     "Canada Central"   = "canada-central"
+    "Canada East"      = "canada-east"
     "Central India"    = "central-india"
     "Central US"       = "central-us"
     "East US"          = "east-us"
@@ -8,6 +9,7 @@ locals {
     "North Central US" = "north-central-us"
     "North Europe"     = "north-europe"
     "South India"      = "south-india"
+    "Southeast Asia"   = "southeast-asia"
     "UK South"         = "uk-south"
     "West US"          = "west-us"
     "West US 2"        = "west-us-2"
