@@ -101,7 +101,7 @@ cognitive_services_group = [
 
 # Alekhya Reddy Kommasani, Arkadiusz Komarzewski, Curtis Morales, Wesley Dawson
 data_sre_group = [
-  # "akommasani@mozilla.com",
+  "akommasani@mozilla.com",
   "akomarzewski@mozilla.com",
   "cmorales@mozilla.com",
   "wdawson@mozilla.com",
