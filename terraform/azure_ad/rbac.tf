@@ -109,12 +109,12 @@ resource "azurerm_role_assignment" "relops_contributor" {
 }
 
 # CI Billing — Billing Administrator directory role (tenant-wide)
-data "azuread_directory_role" "billing_admin" {
+resource "azuread_directory_role" "billing_admin" {
   display_name = "Billing Administrator"
 }
 
 resource "azuread_directory_role_member" "ci_billing_billing_admin" {
-  role_object_id   = data.azuread_directory_role.billing_admin.object_id
+  role_object_id   = azuread_directory_role.billing_admin.object_id
   member_object_id = azuread_group.ci_billing.object_id
 }
 
@@ -179,23 +179,6 @@ resource "azurerm_role_assignment" "tceng_contributor" {
   scope                = "/subscriptions/${var.taskcluster_subscription_id}"
   role_definition_name = "Contributor"
   principal_id         = azuread_group.tceng.object_id
-}
-
-# Security Engineering — Monitoring Reader on FXCI; Security Reader on FXCI and Trusted FXCI
-resource "azurerm_role_assignment" "security_engineering_monitoring_reader" {
-  scope                = "/subscriptions/${var.fxci_devtest_subscription_id}"
-  role_definition_name = "Monitoring Reader"
-  principal_id         = azuread_group.security_engineering.object_id
-}
-
-resource "azurerm_role_assignment" "security_engineering_security_reader" {
-  for_each = toset([
-    "/subscriptions/${var.fxci_devtest_subscription_id}",
-    "/subscriptions/${var.trusted_fxci_subscription_id}",
-  ])
-  scope                = each.value
-  role_definition_name = "Security Reader"
-  principal_id         = azuread_group.security_engineering.object_id
 }
 
 # Cognitive Services — Contributor, Cognitive Services Contributor, and Custom Vision Contributor on FF Non-CI

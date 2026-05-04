@@ -84,12 +84,6 @@ variable "firefox_desktop_vms_group" {
   default     = []
 }
 
-variable "security_engineering_group" {
-  description = "List of UPNs for the Security Engineering group membership."
-  type        = list(string)
-  default     = []
-}
-
 variable "cognitive_services_group" {
   description = "List of UPNs for the Cognitive Services group membership."
   type        = list(string)

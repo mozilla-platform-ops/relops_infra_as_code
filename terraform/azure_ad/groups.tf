@@ -162,25 +162,6 @@ resource "azuread_group_member" "firefox_desktop_vms_membership" {
   member_object_id = each.value.object_id
 }
 
-# Empty group with active role assignments — verify if intentional
-resource "azuread_group" "security_engineering" {
-  display_name     = "Security Engineering"
-  security_enabled = true
-  mail_enabled     = false
-  description      = "Managed by RelOps — Security Engineering team"
-}
-
-data "azuread_user" "security_engineering_members" {
-  for_each            = toset(var.security_engineering_group)
-  user_principal_name = each.value
-}
-
-resource "azuread_group_member" "security_engineering_membership" {
-  for_each         = data.azuread_user.security_engineering_members
-  group_object_id  = azuread_group.security_engineering.object_id
-  member_object_id = each.value.object_id
-}
-
 resource "azuread_group" "cognitive_services" {
   display_name     = "Cognitive Services"
   security_enabled = true
@@ -266,9 +247,9 @@ data "azuread_user" "service_desk_members" {
 }
 
 resource "azuread_group_member" "service_desk_membership" {
-  for_each         = data.azuread_user.service_desk_members
+  for_each         = toset(var.service_desk_group)
   group_object_id  = azuread_group.service_desk.object_id
-  member_object_id = each.value.object_id
+  member_object_id = data.azuread_user.service_desk_members[each.value].object_id
 }
 
 resource "azuread_group" "webrtc_group" {

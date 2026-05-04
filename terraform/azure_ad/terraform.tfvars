@@ -59,7 +59,7 @@ tceng_group = [
 infrasec_group = [
   "asyed@mozilla.com",
   "cfoji@mozilla.com",
-  "dkirchn@mozilla.com",
+  "dkirchner@mozilla.com",
   "rpohl@mozilla.com",
   "sseehra@mozilla.com",
 ]
@@ -91,9 +91,6 @@ firefox_desktop_vms_group = [
   "drubino@mozilla.com",
 ]
 
-# Currently empty in Azure — confirm before adding members
-security_engineering_group = []
-
 # Evgeny Pavlov
 cognitive_services_group = [
   "epavlov@mozilla.com",
@@ -110,7 +107,7 @@ data_sre_group = [
 # Andreas Wagner, Dimitri Kirchner, Jonathan Moss
 passkey_poc_group = [
   "awagner@mozilla.com",
-  "dkirchn@mozilla.com",
+  "dkirchner@mozilla.com",
   "jmoss@mozilla.com",
 ]
 
@@ -180,9 +177,9 @@ ms_store_finance_group = [
   "mhirose@mozilla.com",
   "nflorez@mozilla.com",
   "ndelatorre@mozilla.com",
-  "nafurlan@mozilla.com",
-  "rbaffour@mozilla.com",
+  "nfurlan@mozilla.com",
+  "rbaffourawuah@mozilla.com",
   "rtestard@mozilla.com",
   "rvandermeulen@mozilla.com",
-  "syhong@mozilla.com",
+  "shong@mozilla.com",
 ]
