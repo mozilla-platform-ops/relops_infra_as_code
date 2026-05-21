@@ -46,6 +46,24 @@ resource "azapi_resource" "sp3_perf_experiment_host" {
   }
 }
 
+resource "azapi_resource" "sp3_perf_experiment_host_02" {
+  type      = "Microsoft.Compute/hostGroups/hosts@2023-09-01"
+  name      = "dh-${local.sp3_perf_dedicated_host_slug}-${local.provisioner}-sp3-perf-02"
+  parent_id = azapi_resource.sp3_perf_experiment_host_group.id
+  location  = azurerm_resource_group.nongw[local.sp3_perf_dedicated_host_location].location
+  tags      = local.sp3_perf_dedicated_host_tags
+
+  body = {
+    sku = {
+      name = "NVadsA10v5_Type1"
+    }
+    properties = {
+      platformFaultDomain  = 0
+      autoReplaceOnFailure = true
+    }
+  }
+}
+
 output "sp3_perf_dedicated_host_group_id" {
   description = "Dedicated Host Group ID for the RELOPS-2375 Speedometer 3 GPU perf experiment."
   value       = azapi_resource.sp3_perf_experiment_host_group.id
@@ -54,6 +72,19 @@ output "sp3_perf_dedicated_host_group_id" {
 output "sp3_perf_dedicated_host_id" {
   description = "Dedicated Host ID for the RELOPS-2375 Speedometer 3 GPU perf experiment."
   value       = azapi_resource.sp3_perf_experiment_host.id
+}
+
+output "sp3_perf_dedicated_host_02_id" {
+  description = "Second Dedicated Host ID for the RELOPS-2375 Speedometer 3 GPU perf experiment."
+  value       = azapi_resource.sp3_perf_experiment_host_02.id
+}
+
+output "sp3_perf_dedicated_host_ids" {
+  description = "Dedicated Host IDs for the RELOPS-2375 Speedometer 3 GPU perf experiment."
+  value = [
+    azapi_resource.sp3_perf_experiment_host.id,
+    azapi_resource.sp3_perf_experiment_host_02.id,
+  ]
 }
 
 output "sp3_perf_dedicated_host_resource_group_name" {
