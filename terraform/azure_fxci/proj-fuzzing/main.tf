@@ -1,8 +1,10 @@
 locals {
   location_map = {
-    "Central US" = "central-us"
-    "East US"    = "east-us"
-    "West US 2"  = "west-us-2"
+    "Central US"       = "central-us"
+    "East US"          = "east-us"
+    "East US 2"        = "east-us-2"
+    "South Central US" = "south-central-us"
+    "West US 2"        = "west-us-2"
   }
 
   config = yamldecode(file("../config.yaml"))
@@ -10,7 +12,8 @@ locals {
     terraform       = "true"
     source_repo_url = "https://github.com/mozilla-platform-ops/relops_infra_as_code"
   }
-  provisioner = "proj-fuzzing"
+  provisioner            = "proj-fuzzing"
+  storage_account_suffix = "projfuzzing"
 
   # Mirrors the TCeng RDP_Only NSGs used by current Windows image resources.
   rdp_source_address_prefixes = [
@@ -49,7 +52,7 @@ module "proj_fuzzing_nogw" {
   azurerm_subnet_name                 = "sn-${each.value}-${local.provisioner}"
   resource_group_name                 = azurerm_resource_group.nongw[each.key].name
   azurerm_network_security_group_name = "nsg-${each.value}-${local.provisioner}"
-  azurerm_storage_account_name        = "sa${each.value}-${local.provisioner}"
+  azurerm_storage_account_name        = "sa${replace(each.value, "south-central-us", "scus")}-${local.storage_account_suffix}"
   vnet_address_space                  = local.config.defaults.vnet_address_space
   vnet_dns_servers                    = local.config.defaults.vnet_dns_servers
   subnet_address_prefixes             = local.config.defaults.subnet_address_prefixes
