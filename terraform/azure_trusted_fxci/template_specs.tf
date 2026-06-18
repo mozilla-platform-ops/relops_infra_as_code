@@ -58,23 +58,3 @@ resource "azapi_resource" "template_spec_version_taskcluster_arm_template_relops
 
   depends_on = [azapi_resource.template_spec_taskcluster_arm_template_relops]
 }
-
-import {
-  to = azapi_resource.template_spec_taskcluster_arm_template
-  id = "/subscriptions/a30e97ab-734a-4f3b-a0e4-c51c0bff0701/resourceGroups/template-spec/providers/Microsoft.Resources/templateSpecs/taskcluster-arm-template"
-}
-
-import {
-  to = azapi_resource.template_spec_taskcluster_arm_template_relops
-  id = "/subscriptions/a30e97ab-734a-4f3b-a0e4-c51c0bff0701/resourceGroups/template-spec/providers/Microsoft.Resources/templateSpecs/taskcluster-arm-template-relops"
-}
-
-import {
-  to = azapi_resource.template_spec_version_taskcluster_arm_template_1_0
-  id = "/subscriptions/a30e97ab-734a-4f3b-a0e4-c51c0bff0701/resourceGroups/template-spec/providers/Microsoft.Resources/templateSpecs/taskcluster-arm-template/versions/1.0"
-}
-
-import {
-  to = azapi_resource.template_spec_version_taskcluster_arm_template_relops_1_0
-  id = "/subscriptions/a30e97ab-734a-4f3b-a0e4-c51c0bff0701/resourceGroups/template-spec/providers/Microsoft.Resources/templateSpecs/taskcluster-arm-template-relops/versions/1.0"
-}
