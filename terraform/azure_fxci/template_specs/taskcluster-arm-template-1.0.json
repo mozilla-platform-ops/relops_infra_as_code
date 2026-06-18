@@ -1,0 +1,248 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "outputs": {
+    "resourceIds": {
+      "type": "object",
+      "value": {
+        "nic": "[variables('nicId')]",
+        "osDisk": "[resourceId('Microsoft.Compute/disks', variables('osDiskName'))]",
+        "privateIp": "[reference(resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))).ipConfigurations[0].properties.privateIPAddress]",
+        "publicIp": "[if(parameters('createPublicIp'), variables('publicIpId'), '')]",
+        "vm": "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+      }
+    }
+  },
+  "parameters": {
+    "adminPassword": {
+      "metadata": {
+        "description": "Admin password (provided by worker-manager)"
+      },
+      "type": "securestring"
+    },
+    "adminUsername": {
+      "metadata": {
+        "description": "Admin username (provided by worker-manager)"
+      },
+      "type": "string"
+    },
+    "computerName": {
+      "metadata": {
+        "description": "Name of the computer name (osProfile, provided by worker-manager)"
+      },
+      "type": "string"
+    },
+    "createPublicIp": {
+      "defaultValue": false,
+      "metadata": {
+        "description": "Create a public IP for the VM"
+      },
+      "type": "bool"
+    },
+    "customData": {
+      "metadata": {
+        "description": "Custom data attached to osProfile (provided by worker-manager)"
+      },
+      "type": "string"
+    },
+    "diffDiskOption": {
+      "allowedValues": [
+        "Local"
+      ],
+      "defaultValue": "Local",
+      "metadata": {
+        "description": "Ephemeral OS disk option"
+      },
+      "type": "string"
+    },
+    "evictionPolicy": {
+      "allowedValues": [
+        "Deallocate",
+        "Delete"
+      ],
+      "defaultValue": "Delete",
+      "metadata": {
+        "description": "Eviction policy for Spot VMs"
+      },
+      "type": "string"
+    },
+    "imageId": {
+      "metadata": {
+        "description": "Full resource ID of the VM image"
+      },
+      "type": "string"
+    },
+    "location": {
+      "defaultValue": "eastus",
+      "metadata": {
+        "description": "Azure region for the VM"
+      },
+      "type": "string"
+    },
+    "osDiskCaching": {
+      "allowedValues": [
+        "None",
+        "ReadOnly",
+        "ReadWrite"
+      ],
+      "defaultValue": "ReadOnly",
+      "metadata": {
+        "description": "OS disk caching mode"
+      },
+      "type": "string"
+    },
+    "priority": {
+      "allowedValues": [
+        "Regular",
+        "Spot"
+      ],
+      "defaultValue": "Spot",
+      "metadata": {
+        "description": "VM priority (Spot or Regular)"
+      },
+      "type": "string"
+    },
+    "subnetId": {
+      "metadata": {
+        "description": "Full resource ID of the subnet"
+      },
+      "type": "string"
+    },
+    "tags": {
+      "defaultValue": {},
+      "metadata": {
+        "description": "Tags to apply to all resources"
+      },
+      "type": "object"
+    },
+    "vmName": {
+      "metadata": {
+        "description": "Name of the virtual machine (provided by worker-manager)"
+      },
+      "type": "string"
+    },
+    "vmSize": {
+      "defaultValue": "Standard_F16s_v2",
+      "metadata": {
+        "description": "VM size"
+      },
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2023-05-01",
+      "condition": "[parameters('createPublicIp')]",
+      "location": "[parameters('location')]",
+      "name": "[variables('publicIpName')]",
+      "properties": {
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static"
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "tags": "[parameters('tags')]",
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "apiVersion": "2023-05-01",
+      "dependsOn": [
+        "[variables('publicIpId')]"
+      ],
+      "location": "[parameters('location')]",
+      "name": "[variables('nicName')]",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": "[if(parameters('createPublicIp'), variables('publicIPConfig'), json('null'))]",
+              "subnet": {
+                "id": "[parameters('subnetId')]"
+              }
+            }
+          }
+        ]
+      },
+      "tags": "[parameters('tags')]",
+      "type": "Microsoft.Network/networkInterfaces"
+    },
+    {
+      "apiVersion": "2023-07-01",
+      "dependsOn": [
+        "[variables('nicId')]"
+      ],
+      "location": "[parameters('location')]",
+      "name": "[parameters('vmName')]",
+      "properties": {
+        "billingProfile": {
+          "maxPrice": -1
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": false
+          }
+        },
+        "evictionPolicy": "Delete",
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[variables('nicId')]",
+              "properties": {
+                "deleteOption": "Delete"
+              }
+            }
+          ]
+        },
+        "osProfile": {
+          "adminPassword": "[parameters('adminPassword')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "computerName": "[parameters('computerName')]",
+          "windowsConfiguration": {
+            "enableAutomaticUpdates": false,
+            "timeZone": "UTC"
+          }
+        },
+        "priority": "Spot",
+        "storageProfile": {
+          "imageReference": {
+            "id": "[parameters('imageId')]"
+          },
+          "osDisk": {
+            "caching": "ReadOnly",
+            "createOption": "FromImage",
+            "deleteOption": "Delete",
+            "diffDiskSettings": {
+              "option": "Local"
+            },
+            "managedDisk": {
+              "storageAccountType": "Standard_LRS"
+            },
+            "name": "[variables('osDiskName')]",
+            "osType": "Windows"
+          }
+        }
+      },
+      "tags": "[parameters('tags')]",
+      "type": "Microsoft.Compute/virtualMachines"
+    }
+  ],
+  "variables": {
+    "nicId": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]",
+    "nicName": "[concat(parameters('vmName'), '-nic')]",
+    "osDiskName": "[concat(parameters('vmName'), '-osdisk')]",
+    "publicIPConfig": {
+      "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpName'))]",
+      "properties": {
+        "deleteOption": "Delete"
+      }
+    },
+    "publicIpId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpName'))]",
+    "publicIpName": "[concat(parameters('vmName'), '-ip')]"
+  }
+}
