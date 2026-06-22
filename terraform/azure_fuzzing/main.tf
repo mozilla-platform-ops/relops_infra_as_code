@@ -19,6 +19,12 @@ locals {
     owner_email      = "relops@mozilla.com"
     source_repo_url  = "https://github.com/mozilla-platform-ops/relops_infra_as_code"
   }
+
+  resource_provider_registrations = toset([
+    "Microsoft.Batch",
+    "Microsoft.Compute",
+    "Microsoft.Quota",
+  ])
 }
 
 data "azuread_service_principal" "fuzzing_azure_devtest" {
@@ -56,8 +62,9 @@ resource "azurerm_role_assignment" "relops_owner" {
   principal_type       = "Group"
 }
 
-resource "azurerm_resource_provider_registration" "batch" {
-  name = "Microsoft.Batch"
+resource "azurerm_resource_provider_registration" "this" {
+  for_each = local.resource_provider_registrations
+  name     = each.value
 
   depends_on = [azurerm_subscription.fuzzing]
 }
