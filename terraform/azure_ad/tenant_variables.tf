@@ -29,6 +29,12 @@ variable "zero_din_subscription_id" {
   type        = string
 }
 
+# Workload identity federation
+variable "clauditor_run_gcp_sa_subject" {
+  description = "GCP service account numeric Unique ID used as the federated-credential subject for sp-clauditor-run (issuer https://accounts.google.com)."
+  type        = string
+}
+
 # Group membership variables
 variable "zero_din_group" {
   description = "List of UPNs for the 0DIN group membership."
