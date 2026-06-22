@@ -1,10 +1,7 @@
 locals {
   tenant_id = "c0dc8bb0-b616-427e-8217-9513964a145b"
 
-  # The providers need an existing subscription for ARM authentication before
-  # this stack creates the fuzzing subscription. Resources below use explicit
-  # billing/subscription scopes rather than this default subscription.
-  provider_auth_subscription_id = "108d46d5-fe9b-4850-9a7d-8c914aa6c1f0"
+  fuzzing_subscription_id = "d6e6a496-6005-4e31-b2f5-209440c2cf52"
 
   subscription_alias = "fuzzing-azure-devtest-subscription"
   subscription_name  = "Fuzzing Azure DevTest Subscription"
@@ -57,4 +54,10 @@ resource "azurerm_role_assignment" "relops_owner" {
   role_definition_name = "Owner"
   principal_id         = data.azuread_group.relops.object_id
   principal_type       = "Group"
+}
+
+resource "azurerm_resource_provider_registration" "batch" {
+  name = "Microsoft.Batch"
+
+  depends_on = [azurerm_subscription.fuzzing]
 }
