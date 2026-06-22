@@ -28,6 +28,10 @@ data "azuread_service_principal" "fuzzing_azure_devtest" {
   display_name = "sp-fuzzing-azure-devtest"
 }
 
+data "azuread_group" "relops" {
+  display_name = "Relops"
+}
+
 resource "azurerm_subscription" "fuzzing" {
   alias             = local.subscription_alias
   subscription_name = local.subscription_name
@@ -46,4 +50,11 @@ resource "azurerm_role_assignment" "fuzzing_service_principal_contributor" {
   principal_id                     = data.azuread_service_principal.fuzzing_azure_devtest.object_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+}
+
+resource "azurerm_role_assignment" "relops_owner" {
+  scope                = "/subscriptions/${azurerm_subscription.fuzzing.subscription_id}"
+  role_definition_name = "Owner"
+  principal_id         = data.azuread_group.relops.object_id
+  principal_type       = "Group"
 }
