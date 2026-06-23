@@ -55,6 +55,14 @@ resource "azurerm_role_assignment" "fuzzing_service_principal_contributor" {
   skip_service_principal_aad_check = true
 }
 
+resource "azurerm_role_assignment" "fuzzing_service_principal_rbac_admin" {
+  scope                            = "/subscriptions/${azurerm_subscription.fuzzing.subscription_id}"
+  role_definition_name             = "Role Based Access Control Administrator"
+  principal_id                     = data.azuread_service_principal.fuzzing_azure_devtest.object_id
+  principal_type                   = "ServicePrincipal"
+  skip_service_principal_aad_check = true
+}
+
 resource "azurerm_role_assignment" "relops_owner" {
   scope                = "/subscriptions/${azurerm_subscription.fuzzing.subscription_id}"
   role_definition_name = "Owner"
