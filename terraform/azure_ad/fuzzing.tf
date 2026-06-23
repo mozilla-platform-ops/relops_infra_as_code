@@ -14,15 +14,15 @@ locals {
     run      = { name = "sp-clauditor-run", notes = "Run identity for clauditor-run on GCP (GCP service account OIDC). RELOPS-2440." }
   }
 
-  # Federated credentials keyed by app. build trusts GitHub Actions on master + PRs;
+  # Federated credentials keyed by app. build trusts GitHub Actions on main + PRs;
   # run trusts the clauditor-run GCP service account. audience has none.
   clauditor_federated_credentials = {
-    build_master = {
+    build_main = {
       app          = "build"
-      display_name = "github-actions-master"
-      description  = "GitHub Actions OIDC for master branch workflows in MozillaSecurity/clauditor"
+      display_name = "github-actions-main"
+      description  = "GitHub Actions OIDC for main branch workflows in MozillaSecurity/clauditor"
       issuer       = "https://token.actions.githubusercontent.com"
-      subject      = "repo:MozillaSecurity/clauditor:ref:refs/heads/master"
+      subject      = "repo:MozillaSecurity/clauditor:ref:refs/heads/main"
     }
     build_pr = {
       app          = "build"
