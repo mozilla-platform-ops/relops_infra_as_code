@@ -33,10 +33,10 @@ locals {
     }
     run_gcp = {
       app          = "run"
-      display_name = "gcp-clauditor-run"
-      description  = "GCP service account OIDC for the clauditor-run workload"
+      display_name = "clauditor-gcp-operator"
+      description  = "GCP service account OIDC for clauditor-azure-operator@aifuzzing.iam.gserviceaccount.com"
       issuer       = "https://accounts.google.com"
-      subject      = var.clauditor_run_gcp_sa_subject
+      subject      = "101378839363789365944"
     }
   }
 }
