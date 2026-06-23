@@ -64,10 +64,11 @@ resource "azuread_service_principal" "fuzzing_azure_devtest" {
 }
 
 resource "azuread_application" "clauditor" {
-  for_each     = local.clauditor_apps
-  display_name = each.value.name
-  owners       = data.azuread_group.relops.members
-  notes        = each.value.notes
+  for_each        = local.clauditor_apps
+  display_name    = each.value.name
+  identifier_uris = each.key == "audience" ? ["api://2925ef06-ce42-4a1b-bf35-70358136a900"] : []
+  owners          = data.azuread_group.relops.members
+  notes           = each.value.notes
 }
 
 resource "azuread_service_principal" "clauditor" {
