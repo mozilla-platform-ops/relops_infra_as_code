@@ -23,6 +23,8 @@ locals {
   resource_provider_registrations = toset([
     "Microsoft.Batch",
     "Microsoft.Compute",
+    "Microsoft.KeyVault",
+    "Microsoft.Network",
     "Microsoft.Quota",
   ])
 }
