@@ -19,17 +19,10 @@ locals {
   clauditor_federated_credentials = {
     build_main = {
       app          = "build"
-      display_name = "github-actions-main"
-      description  = "GitHub Actions OIDC for main branch workflows in MozillaSecurity/clauditor"
+      display_name = "github-actions-azure"
+      description  = "GitHub Actions OIDC for environment=azure workflows in MozillaSecurity/clauditor"
       issuer       = "https://token.actions.githubusercontent.com"
-      subject      = "repo:MozillaSecurity/clauditor:ref:refs/heads/main"
-    }
-    build_pr = {
-      app          = "build"
-      display_name = "github-actions-pr"
-      description  = "GitHub Actions OIDC for pull_request workflows in MozillaSecurity/clauditor"
-      issuer       = "https://token.actions.githubusercontent.com"
-      subject      = "repo:MozillaSecurity/clauditor:pull_request"
+      subject      = "repo:MozillaSecurity/clauditor:environment:azure"
     }
     run_gcp = {
       app          = "run"
