@@ -17,14 +17,15 @@
 
 variable "mdc1_egress_cidrs" {
   type        = list(string)
-  description = "Public egress IP/CIDR(s) of the on-site MDC1 server(s) that download the captured WIM. Confirm with netops; 63.245.208.251 is the MDC1 gateway IP already used by the AWS S2S VPN (vpns/usw2.tf)."
-  default     = ["63.245.208.251/32"]
+  description = "Public egress IP/CIDR(s) of the on-site MDC1 server(s) that download the captured WIM. Confirmed with netops 2026-07-23: 63.245.208.129 is the MDC1 egress used by the downloader host. NOTE: Azure storage firewall rejects /31 and /32 — specify a single host as a bare IP (no mask), or use a CIDR with prefix 0-30."
+  default     = ["63.245.208.129"]
 }
 
 variable "nuc_wim_downloader_object_id" {
   type        = string
   description = "Entra object ID of the SP/managed identity the MDC1 server uses to download (from azure_ad/sp_nuc_wim_downloader.tf output, applied first). Empty = skip the RBAC grant (use SAS instead)."
-  default     = ""
+  # sp-relops-nuc-wim-downloader (azure_ad/sp_nuc_wim_downloader.tf), applied 2026-07-23.
+  default = "ae54832f-8931-46d8-8faa-133637e72798"
 }
 
 resource "azurerm_resource_group" "nuc-wim" {
@@ -79,13 +80,13 @@ resource "azurerm_storage_account" "nuc-wim" {
 
 resource "azurerm_storage_container" "base" {
   name                  = "base"
-  storage_account_name  = azurerm_storage_account.nuc-wim.name
+  storage_account_id    = azurerm_storage_account.nuc-wim.id
   container_access_type = "private"
 }
 
 resource "azurerm_storage_container" "captured" {
   name                  = "captured"
-  storage_account_name  = azurerm_storage_account.nuc-wim.name
+  storage_account_id    = azurerm_storage_account.nuc-wim.id
   container_access_type = "private"
 }
 
@@ -102,7 +103,7 @@ resource "azurerm_role_assignment" "packer_wim_rw" {
 # Scoped to the 'captured' container only. Skipped when object id is empty (SAS path).
 resource "azurerm_role_assignment" "mdc1_wim_ro" {
   count                = var.nuc_wim_downloader_object_id == "" ? 0 : 1
-  scope                = azurerm_storage_container.captured.resource_manager_id
+  scope                = azurerm_storage_container.captured.id
   role_definition_name = "Storage Blob Data Reader"
   principal_id         = var.nuc_wim_downloader_object_id
 }
