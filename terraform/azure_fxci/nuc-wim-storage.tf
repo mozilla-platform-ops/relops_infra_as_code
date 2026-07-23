@@ -1,12 +1,18 @@
 # =============================================================================
-# Private (locked-down) Blob storage for NUC Windows install.wim files.
+# Blob storage for NUC Windows install.wim files. ENTRA-ONLY access model.
 #
-# Tier 1 privacy: the account keeps a public endpoint but network_rules default
-# to Deny, so ONLY the allow-listed networks can reach it, and all access still
-# requires auth (Entra RBAC or SAS). No anonymous/public blob access.
-#   - Packer build VM  -> reaches it via the Microsoft.Storage service endpoint
-#                          on the dedicated Packer subnet (below).
-#   - On-site MDC1 srv  -> reaches it from its allow-listed egress IP(s).
+# The account has a public endpoint open to all networks (NO IP firewall), but:
+#   - no anonymous/public blob access, and
+#   - shared account keys are DISABLED — every caller must present an Entra
+#     identity holding a Storage Blob Data RBAC role (grants below).
+# This replaced the earlier IP-allow-list ("Tier 1") posture: split-tunnel VPN
+# made per-workstation IP allow-listing unworkable, and Entra RBAC gates access
+# regardless of source network.
+#
+# Callers (all via Entra / azcopy --auth-mode login):
+#   - Packer build (worker_images SP)        -> Blob Data Contributor
+#   - MDC1 downloader SP                      -> Blob Data Reader (captured only)
+#   - Relops group (operators)               -> Blob Data Owner + Contributor
 #
 # Containers:
 #   base     - bring-your-own starting install.wim (uploaded once)
@@ -15,10 +21,16 @@
 # Region Central US to co-locate with Packer / the image galleries.
 # =============================================================================
 
-variable "mdc1_egress_cidrs" {
-  type        = list(string)
-  description = "Public egress IP/CIDR(s) of the on-site MDC1 server(s) that download the captured WIM. Confirmed with netops 2026-07-23: 63.245.208.129 is the MDC1 egress used by the downloader host. NOTE: Azure storage firewall rejects /31 and /32 — specify a single host as a bare IP (no mask), or use a CIDR with prefix 0-30."
-  default     = ["63.245.208.129"]
+# Aliased provider that manages the Blob data plane via Entra (AAD) rather than
+# the account key — required because shared_access_key_enabled = false below.
+# Scoped to this file's container resources so the rest of azure_fxci (which
+# still manages other storage via keys) is unaffected.
+provider "azurerm" {
+  alias               = "nuc_wim_aad"
+  storage_use_azuread = true
+  features {}
+  subscription_id = "108d46d5-fe9b-4850-9a7d-8c914aa6c1f0"
+  tenant_id       = "c0dc8bb0-b616-427e-8217-9513964a145b"
 }
 
 variable "relops_group_object_id" {
@@ -59,6 +71,7 @@ resource "azurerm_subnet" "nuc-wim-packer" {
 }
 
 resource "azurerm_storage_account" "nuc-wim" {
+  provider                 = azurerm.nuc_wim_aad # keys disabled -> read service props via AAD
   name                     = "nucwimfxci"
   resource_group_name      = azurerm_resource_group.nuc-wim.name
   location                 = azurerm_resource_group.nuc-wim.location
@@ -66,31 +79,34 @@ resource "azurerm_storage_account" "nuc-wim" {
   account_replication_type = "LRS"
   account_kind             = "StorageV2"
 
-  # Tier-1 privacy posture: public endpoint stays, but no anonymous access and
-  # deny-by-default firewall. Auth is always required.
+  # Entra-only posture: public endpoint open to all networks, but no anonymous
+  # access and NO shared account keys — access is gated purely by Entra RBAC.
   https_traffic_only_enabled      = true
   min_tls_version                 = "TLS1_2"
   allow_nested_items_to_be_public = false
   public_network_access_enabled   = true
-  shared_access_key_enabled       = true # keep true so a read-only SAS is possible for MDC1
+  shared_access_key_enabled       = false # Entra-only: no account key / SAS
 
+  # No IP firewall — access is controlled by the Storage Blob Data RBAC grants
+  # below, which work from any network. (Removed the IP allow-list: split-tunnel
+  # VPN made per-workstation IPs unworkable.)
   network_rules {
-    default_action             = "Deny"
-    bypass                     = ["AzureServices"]
-    ip_rules                   = var.mdc1_egress_cidrs
-    virtual_network_subnet_ids = [azurerm_subnet.nuc-wim-packer.id]
+    default_action = "Allow"
+    bypass         = ["AzureServices"]
   }
 
   tags = merge(local.common_tags, tomap({ "Name" = "nucwimfxci" }))
 }
 
 resource "azurerm_storage_container" "base" {
+  provider              = azurerm.nuc_wim_aad # manage via AAD (keys disabled)
   name                  = "base"
   storage_account_id    = azurerm_storage_account.nuc-wim.id
   container_access_type = "private"
 }
 
 resource "azurerm_storage_container" "captured" {
+  provider              = azurerm.nuc_wim_aad # manage via AAD (keys disabled)
   name                  = "captured"
   storage_account_id    = azurerm_storage_account.nuc-wim.id
   container_access_type = "private"
@@ -115,9 +131,8 @@ resource "azurerm_role_assignment" "mdc1_wim_ro" {
 }
 
 # Relops group: full data-plane access so operators can manage the store (upload
-# the base WIM, inspect captured output) with their own Entra identity.
-# Owner supersets Contributor; both granted per request. NOTE: the storage
-# firewall still applies — members must reach it from an allow-listed network.
+# the base WIM, inspect captured output) with their own Entra identity, from any
+# network. Owner supersets Contributor; both granted per request.
 resource "azurerm_role_assignment" "relops_wim_data_owner" {
   scope                = azurerm_storage_account.nuc-wim.id
   role_definition_name = "Storage Blob Data Owner"
@@ -127,6 +142,22 @@ resource "azurerm_role_assignment" "relops_wim_data_owner" {
 resource "azurerm_role_assignment" "relops_wim_data_contributor" {
   scope                = azurerm_storage_account.nuc-wim.id
   role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = var.relops_group_object_id
+}
+
+# The account only uses blob, but with shared keys disabled the azurerm provider
+# reads queue + file *service properties* via AAD when refreshing the account
+# resource. These grants let whoever runs Terraform (operators in Relops) perform
+# those reads; they are not needed for the WIM workflow itself.
+resource "azurerm_role_assignment" "relops_wim_queue_tf" {
+  scope                = azurerm_storage_account.nuc-wim.id
+  role_definition_name = "Storage Queue Data Contributor"
+  principal_id         = var.relops_group_object_id
+}
+
+resource "azurerm_role_assignment" "relops_wim_file_tf" {
+  scope                = azurerm_storage_account.nuc-wim.id
+  role_definition_name = "Storage File Data Privileged Contributor"
   principal_id         = var.relops_group_object_id
 }
 
