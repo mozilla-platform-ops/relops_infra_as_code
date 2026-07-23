@@ -21,6 +21,18 @@ variable "mdc1_egress_cidrs" {
   default     = ["63.245.208.129"]
 }
 
+variable "admin_egress_cidrs" {
+  type        = list(string)
+  description = "Operator/admin egress IPs allowed to manage the WIM store (e.g. upload the base WIM) from outside MDC1. Defaults to the Mozilla corporate VPN netblocks (see terraform/base/outputs.tf mozilla_vpn_netblocks and https://mana.mozilla.org/wiki/display/IT/Mozilla+VPN#MozillaVPN-RelevantIPs). NOTE: listed as /32 upstream, but Azure storage firewall rejects /32 — use bare IPs here."
+  default = [
+    "63.245.208.132",
+    "63.245.208.133",
+    "63.245.210.132",
+    "63.245.210.133",
+    "185.155.182.210",
+  ]
+}
+
 variable "nuc_wim_downloader_object_id" {
   type        = string
   description = "Entra object ID of the SP/managed identity the MDC1 server uses to download (from azure_ad/sp_nuc_wim_downloader.tf output, applied first). Empty = skip the RBAC grant (use SAS instead)."
@@ -71,7 +83,7 @@ resource "azurerm_storage_account" "nuc-wim" {
   network_rules {
     default_action             = "Deny"
     bypass                     = ["AzureServices"]
-    ip_rules                   = var.mdc1_egress_cidrs
+    ip_rules                   = concat(var.mdc1_egress_cidrs, var.admin_egress_cidrs)
     virtual_network_subnet_ids = [azurerm_subnet.nuc-wim-packer.id]
   }
 
