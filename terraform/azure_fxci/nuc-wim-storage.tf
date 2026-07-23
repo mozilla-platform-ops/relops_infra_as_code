@@ -21,16 +21,10 @@ variable "mdc1_egress_cidrs" {
   default     = ["63.245.208.129"]
 }
 
-variable "admin_egress_cidrs" {
-  type        = list(string)
-  description = "Operator/admin egress IPs allowed to manage the WIM store (e.g. upload the base WIM) from outside MDC1. Defaults to the Mozilla corporate VPN netblocks (see terraform/base/outputs.tf mozilla_vpn_netblocks and https://mana.mozilla.org/wiki/display/IT/Mozilla+VPN#MozillaVPN-RelevantIPs). NOTE: listed as /32 upstream, but Azure storage firewall rejects /32 — use bare IPs here."
-  default = [
-    "63.245.208.132",
-    "63.245.208.133",
-    "63.245.210.132",
-    "63.245.210.133",
-    "185.155.182.210",
-  ]
+variable "relops_group_object_id" {
+  type        = string
+  description = "Entra object ID of the Relops group. Members get data-plane Blob roles on the WIM store so operators can manage it (e.g. upload the base WIM) with their own Entra identity."
+  default     = "cb79b99f-fdaa-4e0d-a2c8-c5841890fa74" # Relops
 }
 
 variable "nuc_wim_downloader_object_id" {
@@ -83,7 +77,7 @@ resource "azurerm_storage_account" "nuc-wim" {
   network_rules {
     default_action             = "Deny"
     bypass                     = ["AzureServices"]
-    ip_rules                   = concat(var.mdc1_egress_cidrs, var.admin_egress_cidrs)
+    ip_rules                   = var.mdc1_egress_cidrs
     virtual_network_subnet_ids = [azurerm_subnet.nuc-wim-packer.id]
   }
 
@@ -118,6 +112,22 @@ resource "azurerm_role_assignment" "mdc1_wim_ro" {
   scope                = azurerm_storage_container.captured.id
   role_definition_name = "Storage Blob Data Reader"
   principal_id         = var.nuc_wim_downloader_object_id
+}
+
+# Relops group: full data-plane access so operators can manage the store (upload
+# the base WIM, inspect captured output) with their own Entra identity.
+# Owner supersets Contributor; both granted per request. NOTE: the storage
+# firewall still applies — members must reach it from an allow-listed network.
+resource "azurerm_role_assignment" "relops_wim_data_owner" {
+  scope                = azurerm_storage_account.nuc-wim.id
+  role_definition_name = "Storage Blob Data Owner"
+  principal_id         = var.relops_group_object_id
+}
+
+resource "azurerm_role_assignment" "relops_wim_data_contributor" {
+  scope                = azurerm_storage_account.nuc-wim.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = var.relops_group_object_id
 }
 
 output "nuc_wim_storage_account" {
