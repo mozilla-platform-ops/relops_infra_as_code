@@ -161,6 +161,45 @@ resource "azurerm_role_assignment" "relops_wim_file_tf" {
   principal_id         = var.relops_group_object_id
 }
 
+# --- Ephemeral build VM identity + workflow SP rights --------------------------
+# The GHA workflow (worker_images_fxci SP) spins an ephemeral nested-virt VM up/down
+# per build. Rather than granting each fresh VM's identity a blob role at runtime
+# (which would need the SP to have role-assignment rights), a user-assigned managed
+# identity is created once and pre-granted blob access; the workflow just attaches it.
+resource "azurerm_user_assigned_identity" "wim_builder" {
+  name                = "id-${local.locationshort}-wim-builder"
+  resource_group_name = azurerm_resource_group.nuc-wim.name
+  location            = azurerm_resource_group.nuc-wim.location
+  tags                = local.common_tags
+}
+
+# The attached UAMI is what actually reads base / writes captured during the bake.
+resource "azurerm_role_assignment" "wim_builder_blob" {
+  scope                = azurerm_storage_account.nuc-wim.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_user_assigned_identity.wim_builder.principal_id
+}
+
+# Workflow SP modest rights: create/delete the ephemeral VM + run-command (Contributor
+# scoped to this dedicated RG only — notably NOT role-assignment rights) ...
+resource "azurerm_role_assignment" "wim_workflow_vm" {
+  scope                = azurerm_resource_group.nuc-wim.id
+  role_definition_name = "Contributor"
+  principal_id         = local.worker_images_object_id
+}
+
+# ... and permission to attach the pre-provisioned UAMI to the VM it creates.
+resource "azurerm_role_assignment" "wim_workflow_mi_operator" {
+  scope                = azurerm_user_assigned_identity.wim_builder.id
+  role_definition_name = "Managed Identity Operator"
+  principal_id         = local.worker_images_object_id
+}
+
+output "nuc_wim_builder_identity_id" {
+  description = "Resource ID of the user-assigned identity to attach to build VMs."
+  value       = azurerm_user_assigned_identity.wim_builder.id
+}
+
 output "nuc_wim_storage_account" {
   value = azurerm_storage_account.nuc-wim.name
 }
