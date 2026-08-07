@@ -6,7 +6,7 @@
 # The MDC1 server authenticates with the SP client_id + secret (stored in
 # kv-central-us-key) using azcopy/az, e.g.:
 #   az login --service-principal -u <client_id> -p <secret> --tenant <tenant>
-#   azcopy copy "https://nucwimfxci.blob.core.windows.net/captured/<wim>" . --auth-mode login
+#   azcopy copy "https://hardwareimaging.blob.core.windows.net/captured/<wim>" . --auth-mode login
 #
 # If the MDC1 server cannot do Entra auth, skip this SP and instead issue a
 # read-only, time-boxed SAS on the 'captured' container and store it in Key Vault.

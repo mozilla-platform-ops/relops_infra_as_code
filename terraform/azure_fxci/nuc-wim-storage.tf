@@ -14,9 +14,11 @@
 #   - MDC1 downloader SP                      -> Blob Data Reader (captured only)
 #   - Relops group (operators)               -> Blob Data Owner + Contributor
 #
-# Containers:
-#   base     - bring-your-own starting install.wim (uploaded once)
-#   captured - baked golden install.wim output by the wim-packer pipeline
+# Containers (folders are blob prefixes, materialized as TF-managed .keep markers):
+#   resources     - SOURCES: WIMs/ (BYO base WIMs), ISOs/ (source Win11 ISOs),
+#                   drivers/ (offline driver packs), tools/ (adksetup + cached oscdimg)
+#   captured      - OUTPUTS: WIMs/ (golden WIMs), ISOs/ (nocheck ISOs)
+#   legacy-images - old, previously-built images (archive; empty at creation)
 #
 # Region Central US to co-locate with Packer / the image galleries.
 # =============================================================================
@@ -72,7 +74,7 @@ resource "azurerm_subnet" "nuc-wim-packer" {
 
 resource "azurerm_storage_account" "nuc-wim" {
   provider                 = azurerm.nuc_wim_aad # keys disabled -> read service props via AAD
-  name                     = "nucwimfxci"
+  name                     = "hardwareimaging"
   resource_group_name      = azurerm_resource_group.nuc-wim.name
   location                 = azurerm_resource_group.nuc-wim.location
   account_tier             = "Standard"
@@ -95,21 +97,53 @@ resource "azurerm_storage_account" "nuc-wim" {
     bypass         = ["AzureServices"]
   }
 
-  tags = merge(local.common_tags, tomap({ "Name" = "nucwimfxci" }))
+  tags = merge(local.common_tags, tomap({ "Name" = "hardwareimaging" }))
 }
 
-resource "azurerm_storage_container" "base" {
+resource "azurerm_storage_container" "resources" {
   provider              = azurerm.nuc_wim_aad # manage via AAD (keys disabled)
-  name                  = "base"
+  name                  = "resources"         # SOURCES (was 'base'): WIMs/ ISOs/ drivers/ tools/
   storage_account_id    = azurerm_storage_account.nuc-wim.id
   container_access_type = "private"
 }
 
 resource "azurerm_storage_container" "captured" {
   provider              = azurerm.nuc_wim_aad # manage via AAD (keys disabled)
-  name                  = "captured"
+  name                  = "captured"          # OUTPUTS: WIMs/ (golden WIMs) + ISOs/ (nocheck ISOs)
   storage_account_id    = azurerm_storage_account.nuc-wim.id
   container_access_type = "private"
+}
+
+# Archive for old images built before / outside this pipeline. Empty at creation.
+resource "azurerm_storage_container" "legacy_images" {
+  provider              = azurerm.nuc_wim_aad # manage via AAD (keys disabled)
+  name                  = "legacy-images"
+  storage_account_id    = azurerm_storage_account.nuc-wim.id
+  container_access_type = "private"
+}
+
+# Folder markers: blob storage has no real folders, so a zero-ish .keep blob per prefix
+# makes the intended structure exist and be TF-managed (create-iso/New-WinHwWim write real
+# blobs under these prefixes). Managed via the AAD provider (account keys are disabled).
+locals {
+  wim_blob_folders = {
+    "resources-wims"    = { container = azurerm_storage_container.resources.name, path = "WIMs/.keep" }
+    "resources-isos"    = { container = azurerm_storage_container.resources.name, path = "ISOs/.keep" }
+    "resources-drivers" = { container = azurerm_storage_container.resources.name, path = "drivers/.keep" }
+    "resources-tools"   = { container = azurerm_storage_container.resources.name, path = "tools/.keep" }
+    "captured-wims"     = { container = azurerm_storage_container.captured.name, path = "WIMs/.keep" }
+    "captured-isos"     = { container = azurerm_storage_container.captured.name, path = "ISOs/.keep" }
+  }
+}
+
+resource "azurerm_storage_blob" "wim_folder_markers" {
+  provider               = azurerm.nuc_wim_aad
+  for_each               = local.wim_blob_folders
+  name                   = each.value.path
+  storage_account_name   = azurerm_storage_account.nuc-wim.name
+  storage_container_name = each.value.container
+  type                   = "Block"
+  source_content         = "Terraform-managed folder marker. Safe to ignore.\n"
 }
 
 # --- Data-plane RBAC (Entra auth; preferred over keys/SAS) ---------------------
