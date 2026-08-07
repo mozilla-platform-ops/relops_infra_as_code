@@ -68,6 +68,21 @@ resource "azapi_resource" "template_spec_version_taskcluster_arm_template_1_0" {
   depends_on = [azapi_resource.template_spec_taskcluster_arm_template]
 }
 
+resource "azapi_resource" "template_spec_version_taskcluster_arm_template_2_0" {
+  type      = "Microsoft.Resources/templateSpecs/versions@2022-02-01"
+  name      = "2.0"
+  parent_id = local.fxci_template_spec_ids.taskcluster_arm_template
+  location  = "eastus"
+
+  body = {
+    properties = {
+      mainTemplate = jsondecode(file("${path.module}/template_specs/taskcluster-arm-template-2.0.json"))
+    }
+  }
+
+  depends_on = [azapi_resource.template_spec_taskcluster_arm_template]
+}
+
 resource "azapi_resource" "template_spec_version_taskcluster_arm_template_dedicated_host_1_0" {
   type      = "Microsoft.Resources/templateSpecs/versions@2022-02-01"
   name      = "1.0"
