@@ -14,11 +14,9 @@
 #   - MDC1 downloader SP                      -> Blob Data Reader (captured only)
 #   - Relops group (operators)               -> Blob Data Owner + Contributor
 #
-# Containers (folders are blob prefixes, materialized as TF-managed .keep markers):
-#   resources     - SOURCES: WIMs/ (BYO base WIMs), ISOs/ (source Win11 ISOs),
-#                   drivers/ (offline driver packs), tools/ (adksetup + cached oscdimg)
-#   captured      - OUTPUTS: WIMs/ (golden WIMs), ISOs/ (nocheck ISOs)
-#   legacy-images - old, previously-built images (archive; empty at creation)
+# Containers:
+#   base     - bring-your-own starting install.wim (uploaded once)
+#   captured - baked golden install.wim output by the wim-packer pipeline
 #
 # Region Central US to co-locate with Packer / the image galleries.
 # =============================================================================
@@ -44,39 +42,39 @@ variable "relops_group_object_id" {
 variable "nuc_wim_downloader_object_id" {
   type        = string
   description = "Entra object ID of the SP/managed identity the MDC1 server uses to download (from azure_ad/sp_nuc_wim_downloader.tf output, applied first). Empty = skip the RBAC grant (use SAS instead)."
-  # sp-relops-hardware-imaging-downloader (azure_ad/sp_nuc_wim_downloader.tf), applied 2026-07-23.
+  # sp-relops-nuc-wim-downloader (azure_ad/sp_nuc_wim_downloader.tf), applied 2026-07-23.
   default = "ae54832f-8931-46d8-8faa-133637e72798"
 }
 
-resource "azurerm_resource_group" "hardware-imaging" {
-  name     = "rg-${local.locationshort}-hardware-imaging"
+resource "azurerm_resource_group" "nuc-wim" {
+  name     = "rg-${local.locationshort}-nuc-wim"
   location = local.location
-  tags     = merge(local.common_tags, tomap({ "Name" = "rg-${local.locationshort}-hardware-imaging" }))
+  tags     = merge(local.common_tags, tomap({ "Name" = "rg-${local.locationshort}-nuc-wim" }))
 }
 
 # Dedicated VNet + subnet for Packer builds, with the Storage service endpoint so
 # the build VM's traffic is allowed by the storage firewall (no private endpoint).
-resource "azurerm_virtual_network" "hardware-imaging" {
-  name                = "vn-${local.locationshort}-hardware-imaging"
-  location            = azurerm_resource_group.hardware-imaging.location
-  resource_group_name = azurerm_resource_group.hardware-imaging.name
+resource "azurerm_virtual_network" "nuc-wim" {
+  name                = "vn-${local.locationshort}-nuc-wim"
+  location            = azurerm_resource_group.nuc-wim.location
+  resource_group_name = azurerm_resource_group.nuc-wim.name
   address_space       = ["10.20.0.0/24"]
   tags                = local.common_tags
 }
 
-resource "azurerm_subnet" "hardware-imaging-packer" {
-  name                 = "sn-${local.locationshort}-hardware-imaging-packer"
-  resource_group_name  = azurerm_resource_group.hardware-imaging.name
-  virtual_network_name = azurerm_virtual_network.hardware-imaging.name
+resource "azurerm_subnet" "nuc-wim-packer" {
+  name                 = "sn-${local.locationshort}-nuc-wim-packer"
+  resource_group_name  = azurerm_resource_group.nuc-wim.name
+  virtual_network_name = azurerm_virtual_network.nuc-wim.name
   address_prefixes     = ["10.20.0.0/26"]
   service_endpoints    = ["Microsoft.Storage"]
 }
 
-resource "azurerm_storage_account" "hardware-imaging" {
+resource "azurerm_storage_account" "nuc-wim" {
   provider                 = azurerm.nuc_wim_aad # keys disabled -> read service props via AAD
-  name                     = "hardwareimaging"
-  resource_group_name      = azurerm_resource_group.hardware-imaging.name
-  location                 = azurerm_resource_group.hardware-imaging.location
+  name                     = "nucwimfxci"
+  resource_group_name      = azurerm_resource_group.nuc-wim.name
+  location                 = azurerm_resource_group.nuc-wim.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
   account_kind             = "StorageV2"
@@ -97,60 +95,28 @@ resource "azurerm_storage_account" "hardware-imaging" {
     bypass         = ["AzureServices"]
   }
 
-  tags = merge(local.common_tags, tomap({ "Name" = "hardwareimaging" }))
+  tags = merge(local.common_tags, tomap({ "Name" = "nucwimfxci" }))
 }
 
-resource "azurerm_storage_container" "resources" {
+resource "azurerm_storage_container" "base" {
   provider              = azurerm.nuc_wim_aad # manage via AAD (keys disabled)
-  name                  = "resources"         # SOURCES (was 'base'): WIMs/ ISOs/ drivers/ tools/
-  storage_account_id    = azurerm_storage_account.hardware-imaging.id
+  name                  = "base"
+  storage_account_id    = azurerm_storage_account.nuc-wim.id
   container_access_type = "private"
 }
 
 resource "azurerm_storage_container" "captured" {
   provider              = azurerm.nuc_wim_aad # manage via AAD (keys disabled)
-  name                  = "captured"          # OUTPUTS: WIMs/ (golden WIMs) + ISOs/ (nocheck ISOs)
-  storage_account_id    = azurerm_storage_account.hardware-imaging.id
+  name                  = "captured"
+  storage_account_id    = azurerm_storage_account.nuc-wim.id
   container_access_type = "private"
-}
-
-# Archive for old images built before / outside this pipeline. Empty at creation.
-resource "azurerm_storage_container" "legacy_images" {
-  provider              = azurerm.nuc_wim_aad # manage via AAD (keys disabled)
-  name                  = "legacy-images"
-  storage_account_id    = azurerm_storage_account.hardware-imaging.id
-  container_access_type = "private"
-}
-
-# Folder markers: blob storage has no real folders, so a zero-ish .keep blob per prefix
-# makes the intended structure exist and be TF-managed (create-iso/New-WinHwWim write real
-# blobs under these prefixes). Managed via the AAD provider (account keys are disabled).
-locals {
-  wim_blob_folders = {
-    "resources-wims"    = { container = azurerm_storage_container.resources.name, path = "WIMs/.keep" }
-    "resources-isos"    = { container = azurerm_storage_container.resources.name, path = "ISOs/.keep" }
-    "resources-drivers" = { container = azurerm_storage_container.resources.name, path = "drivers/.keep" }
-    "resources-tools"   = { container = azurerm_storage_container.resources.name, path = "tools/.keep" }
-    "captured-wims"     = { container = azurerm_storage_container.captured.name, path = "WIMs/.keep" }
-    "captured-isos"     = { container = azurerm_storage_container.captured.name, path = "ISOs/.keep" }
-  }
-}
-
-resource "azurerm_storage_blob" "wim_folder_markers" {
-  provider               = azurerm.nuc_wim_aad
-  for_each               = local.wim_blob_folders
-  name                   = each.value.path
-  storage_account_name   = azurerm_storage_account.hardware-imaging.name
-  storage_container_name = each.value.container
-  type                   = "Block"
-  source_content         = "Terraform-managed folder marker. Safe to ignore.\n"
 }
 
 # --- Data-plane RBAC (Entra auth; preferred over keys/SAS) ---------------------
 # Packer (worker_images SP, object id from keyvault.tf locals) reads base + writes
 # captured -> Storage Blob Data Contributor.
 resource "azurerm_role_assignment" "packer_wim_rw" {
-  scope                = azurerm_storage_account.hardware-imaging.id
+  scope                = azurerm_storage_account.nuc-wim.id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = local.worker_images_object_id
 }
@@ -168,13 +134,13 @@ resource "azurerm_role_assignment" "mdc1_wim_ro" {
 # the base WIM, inspect captured output) with their own Entra identity, from any
 # network. Owner supersets Contributor; both granted per request.
 resource "azurerm_role_assignment" "relops_wim_data_owner" {
-  scope                = azurerm_storage_account.hardware-imaging.id
+  scope                = azurerm_storage_account.nuc-wim.id
   role_definition_name = "Storage Blob Data Owner"
   principal_id         = var.relops_group_object_id
 }
 
 resource "azurerm_role_assignment" "relops_wim_data_contributor" {
-  scope                = azurerm_storage_account.hardware-imaging.id
+  scope                = azurerm_storage_account.nuc-wim.id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = var.relops_group_object_id
 }
@@ -184,13 +150,13 @@ resource "azurerm_role_assignment" "relops_wim_data_contributor" {
 # resource. These grants let whoever runs Terraform (operators in Relops) perform
 # those reads; they are not needed for the WIM workflow itself.
 resource "azurerm_role_assignment" "relops_wim_queue_tf" {
-  scope                = azurerm_storage_account.hardware-imaging.id
+  scope                = azurerm_storage_account.nuc-wim.id
   role_definition_name = "Storage Queue Data Contributor"
   principal_id         = var.relops_group_object_id
 }
 
 resource "azurerm_role_assignment" "relops_wim_file_tf" {
-  scope                = azurerm_storage_account.hardware-imaging.id
+  scope                = azurerm_storage_account.nuc-wim.id
   role_definition_name = "Storage File Data Privileged Contributor"
   principal_id         = var.relops_group_object_id
 }
@@ -200,43 +166,43 @@ resource "azurerm_role_assignment" "relops_wim_file_tf" {
 # per build. Rather than granting each fresh VM's identity a blob role at runtime
 # (which would need the SP to have role-assignment rights), a user-assigned managed
 # identity is created once and pre-granted blob access; the workflow just attaches it.
-resource "azurerm_user_assigned_identity" "hardware_imaging_builder" {
-  name                = "id-${local.locationshort}-hardware-imaging-builder"
-  resource_group_name = azurerm_resource_group.hardware-imaging.name
-  location            = azurerm_resource_group.hardware-imaging.location
+resource "azurerm_user_assigned_identity" "wim_builder" {
+  name                = "id-${local.locationshort}-wim-builder"
+  resource_group_name = azurerm_resource_group.nuc-wim.name
+  location            = azurerm_resource_group.nuc-wim.location
   tags                = local.common_tags
 }
 
 # The attached UAMI is what actually reads base / writes captured during the bake.
 resource "azurerm_role_assignment" "wim_builder_blob" {
-  scope                = azurerm_storage_account.hardware-imaging.id
+  scope                = azurerm_storage_account.nuc-wim.id
   role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = azurerm_user_assigned_identity.hardware_imaging_builder.principal_id
+  principal_id         = azurerm_user_assigned_identity.wim_builder.principal_id
 }
 
 # Workflow SP modest rights: create/delete the ephemeral VM + run-command (Contributor
 # scoped to this dedicated RG only — notably NOT role-assignment rights) ...
 resource "azurerm_role_assignment" "wim_workflow_vm" {
-  scope                = azurerm_resource_group.hardware-imaging.id
+  scope                = azurerm_resource_group.nuc-wim.id
   role_definition_name = "Contributor"
   principal_id         = local.worker_images_object_id
 }
 
 # ... and permission to attach the pre-provisioned UAMI to the VM it creates.
 resource "azurerm_role_assignment" "wim_workflow_mi_operator" {
-  scope                = azurerm_user_assigned_identity.hardware_imaging_builder.id
+  scope                = azurerm_user_assigned_identity.wim_builder.id
   role_definition_name = "Managed Identity Operator"
   principal_id         = local.worker_images_object_id
 }
 
 output "nuc_wim_builder_identity_id" {
   description = "Resource ID of the user-assigned identity to attach to build VMs."
-  value       = azurerm_user_assigned_identity.hardware_imaging_builder.id
+  value       = azurerm_user_assigned_identity.wim_builder.id
 }
 
 output "nuc_wim_storage_account" {
-  value = azurerm_storage_account.hardware-imaging.name
+  value = azurerm_storage_account.nuc-wim.name
 }
 output "nuc_wim_packer_subnet_id" {
-  value = azurerm_subnet.hardware-imaging-packer.id
+  value = azurerm_subnet.nuc-wim-packer.id
 }
