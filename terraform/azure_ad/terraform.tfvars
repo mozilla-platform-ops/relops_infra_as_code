@@ -138,7 +138,8 @@ seio_group = [
 
 # Amir Habibi, Ben Hearsum, Chris DuPuis, David Rubino, Dianna Smith, Jonathan Moss,
 # Julia Gibbs, Julien Cristau, Mark Cornmesser, Markco Test (test account), Marlene Hirose,
-# nalexander, Noel De La Torre, Pascal Chevrel, rkelimutu, Romain Testard, Ryan VanderMeulen
+# nalexander, Noel De La Torre, Paresh Jha, Pascal Chevrel, rkelimutu, Romain Testard,
+# Ryan VanderMeulen
 ms_store_publishers_group = [
   "ahabibi@mozilla.com",
   "bhearsum@mozilla.com",
@@ -152,6 +153,8 @@ ms_store_publishers_group = [
   "markco_test@mozilla.com",
   "nalexander@mozilla.com",
   "ndelatorre@mozilla.com",
+  # RELOPS-2502 — vouched by Amir Habibi; Partner Center asset updates
+  "pjha@mozilla.com",
   "pchevrel@mozilla.com",
   "rkelimutu@mozilla.com",
   "rtestard@mozilla.com",
@@ -160,8 +163,8 @@ ms_store_publishers_group = [
 
 # Alex Davis, Amir Habibi, Ben Hearsum, David Rubino, Julia Gibbs, Julien Cristau,
 # Lauren Niolet, Mark Cornmesser, Mark Toubman, Markco Test (test account), Marlene Hirose,
-# Nadia Florez, Noel De La Torre, Norberto Andres Furlan, Richard Baffour-Awuah,
-# Romain Testard, Ryan VanderMeulen, Su-Young Hong
+# Nadia Florez, Noel De La Torre, Norberto Andres Furlan, Paresh Jha,
+# Richard Baffour-Awuah, Romain Testard, Ryan VanderMeulen, Su-Young Hong
 ms_store_finance_group = [
   "adavis@mozilla.com",
   "ahabibi@mozilla.com",
@@ -176,6 +179,8 @@ ms_store_finance_group = [
   "nflorez@mozilla.com",
   "ndelatorre@mozilla.com",
   "nfurlan@mozilla.com",
+  # RELOPS-2502 — vouched by Amir Habibi; parity with ahabibi@ per request
+  "pjha@mozilla.com",
   "rbaffourawuah@mozilla.com",
   "rtestard@mozilla.com",
   "rvandermeulen@mozilla.com",
