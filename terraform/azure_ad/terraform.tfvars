@@ -136,13 +136,12 @@ seio_group = [
   "cbrentano@mozilla.com",
 ]
 
-# Amir Habibi, Ben Hearsum, Chris DuPuis, David Rubino, Dianna Smith, Jonathan Moss,
+# Amir Habibi, Chris DuPuis, David Rubino, Dianna Smith, Jonathan Moss,
 # Julia Gibbs, Julien Cristau, Mark Cornmesser, Markco Test (test account), Marlene Hirose,
 # nalexander, Noel De La Torre, Paresh Jha, Pascal Chevrel, rkelimutu, Romain Testard,
 # Ryan VanderMeulen
 ms_store_publishers_group = [
   "ahabibi@mozilla.com",
-  "bhearsum@mozilla.com",
   "cdupuis@mozilla.com",
   "drubino@mozilla.com",
   "dsmith@mozilla.com",
