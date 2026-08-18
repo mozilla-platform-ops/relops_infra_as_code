@@ -136,13 +136,12 @@ seio_group = [
   "cbrentano@mozilla.com",
 ]
 
-# Amir Habibi, Ben Hearsum, Chris DuPuis, David Rubino, Dianna Smith, Jonathan Moss,
+# Amir Habibi, Chris DuPuis, David Rubino, Dianna Smith, Jonathan Moss,
 # Julia Gibbs, Julien Cristau, Mark Cornmesser, Markco Test (test account), Marlene Hirose,
 # nalexander, Noel De La Torre, Paresh Jha, Pascal Chevrel, rkelimutu, Romain Testard,
 # Ryan VanderMeulen
 ms_store_publishers_group = [
   "ahabibi@mozilla.com",
-  "bhearsum@mozilla.com",
   "cdupuis@mozilla.com",
   "drubino@mozilla.com",
   "dsmith@mozilla.com",
@@ -161,14 +160,13 @@ ms_store_publishers_group = [
   "rvandermeulen@mozilla.com",
 ]
 
-# Alex Davis, Amir Habibi, Ben Hearsum, David Rubino, Julia Gibbs, Julien Cristau,
+# Alex Davis, Amir Habibi, David Rubino, Julia Gibbs, Julien Cristau,
 # Lauren Niolet, Mark Cornmesser, Mark Toubman, Markco Test (test account), Marlene Hirose,
 # Nadia Florez, Noel De La Torre, Norberto Andres Furlan, Paresh Jha,
 # Richard Baffour-Awuah, Romain Testard, Ryan VanderMeulen, Su-Young Hong
 ms_store_finance_group = [
   "adavis@mozilla.com",
   "ahabibi@mozilla.com",
-  "bhearsum@mozilla.com",
   "drubino@mozilla.com",
   "jgibbs@mozilla.com",
   "jcristau@mozilla.com",
