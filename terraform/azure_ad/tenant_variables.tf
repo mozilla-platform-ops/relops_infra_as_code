@@ -143,3 +143,9 @@ variable "ms_store_finance_group" {
   type        = list(string)
   default     = []
 }
+
+variable "desktop_integrations_vms_group" {
+  description = "List of UPNs for the Desktop Integrations VMs group membership."
+  type        = list(string)
+  default     = []
+}
