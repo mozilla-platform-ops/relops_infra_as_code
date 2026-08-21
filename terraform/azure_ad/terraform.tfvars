@@ -160,6 +160,29 @@ ms_store_publishers_group = [
   "rvandermeulen@mozilla.com",
 ]
 
+# RELOPS-2520 — on-demand test VMs for Desktop Integrations, confined to
+# rg-west-us-desktop-integrations in FF Non-CI. Requested by Harshit Sohaney;
+# manager Amir Habibi.
+#
+# Amir Habibi (manager), Antonio Borondo, Chris DuPuis, Iain Holmes,
+# Markco Test (test account)
+#
+# Per RELOPS-2520 the three DI members are the only people who should hold this
+# access, plus Amir Habibi as their manager. markco_test@ is included to
+# validate the role end-to-end without using a real account.
+#
+# iholmes@ and aborondo@ had no Entra account when this ticket was picked up;
+# both were created cloud-only on 2026-08-21 to match the existing tenant
+# pattern (no directory sync, no licences). Verify membership with:
+#   az ad group member list --group "Desktop Integrations VMs" --query "[].userPrincipalName" -o tsv
+desktop_integrations_vms_group = [
+  "aborondo@mozilla.com",
+  "ahabibi@mozilla.com",
+  "cdupuis@mozilla.com",
+  "iholmes@mozilla.com",
+  "markco_test@mozilla.com",
+]
+
 # Alex Davis, Amir Habibi, David Rubino, Julia Gibbs, Julien Cristau,
 # Lauren Niolet, Mark Cornmesser, Mark Toubman, Markco Test (test account), Marlene Hirose,
 # Nadia Florez, Noel De La Torre, Norberto Andres Furlan, Paresh Jha,

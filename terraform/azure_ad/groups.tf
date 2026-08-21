@@ -327,6 +327,26 @@ resource "azuread_group_member" "policy_testing_membership" {
   member_object_id = each.value.object_id
 }
 
+# RELOPS-2520 — on-demand test VMs, confined to rg-west-us-desktop-integrations
+# in FF Non-CI. Deliberately *not* Contributor; see rbac_desktop_integrations.tf.
+resource "azuread_group" "desktop_integrations_vms" {
+  display_name     = "Desktop Integrations VMs"
+  security_enabled = true
+  mail_enabled     = false
+  description      = "Managed by RelOps — on-demand test VM access in rg-west-us-desktop-integrations (FF Non-CI)"
+}
+
+data "azuread_user" "desktop_integrations_vms_members" {
+  for_each            = toset(var.desktop_integrations_vms_group)
+  user_principal_name = each.value
+}
+
+resource "azuread_group_member" "desktop_integrations_vms_membership" {
+  for_each         = data.azuread_user.desktop_integrations_vms_members
+  group_object_id  = azuread_group.desktop_integrations_vms.object_id
+  member_object_id = each.value.object_id
+}
+
 # No Azure RBAC — membership grants access via MS Store Partner Center portal
 resource "azuread_group" "ms_store_finance" {
   display_name     = "Microsoft Store Finance"
