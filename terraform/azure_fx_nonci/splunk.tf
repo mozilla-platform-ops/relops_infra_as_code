@@ -73,104 +73,23 @@ resource "azurerm_monitor_aad_diagnostic_setting" "splunk" {
   eventhub_name                  = azurerm_eventhub.entralogs.name
   eventhub_authorization_rule_id = "${data.azurerm_subscription.currentSubscription.id}/resourceGroups/${azurerm_resource_group.splunkeventhub.name}/providers/Microsoft.EventHub/namespaces/${azurerm_eventhub_namespace.splunk.name}/authorizationRules/RootManageSharedAccessKey"
 
-  enabled_log {
-    category = "SignInLogs"
-    retention_policy {
-      enabled = false
-    }
-  }
-  enabled_log {
-    category = "AuditLogs"
-    retention_policy {
-      enabled = false
-    }
-  }
-  enabled_log {
-    category = "NonInteractiveUserSignInLogs"
-    retention_policy {
-      enabled = false
-    }
-  }
-  enabled_log {
-    category = "ServicePrincipalSignInLogs"
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  enabled_log {
-    category = "ManagedIdentitySignInLogs"
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  enabled_log {
-    category = "ProvisioningLogs"
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  enabled_log {
-    category = "ADFSSignInLogs"
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  enabled_log {
-    category = "RiskyUsers"
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  enabled_log {
-    category = "UserRiskEvents"
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  enabled_log {
-    category = "NetworkAccessTrafficLogs"
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  enabled_log {
-    category = "ServicePrincipalRiskEvents"
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  enabled_log {
-    category = "EnrichedOffice365AuditLogs"
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  enabled_log {
-    category = "MicrosoftGraphActivityLogs"
-    retention_policy {
-      enabled = false
-    }
-  }
-  enabled_log {
-    category = "RemoteNetworkHealthLogs"
-    retention_policy {
-      enabled = false
-    }
-  }
-
-  enabled_log {
-    category = "RiskyServicePrincipals"
-    retention_policy {
-      enabled = false
-    }
-  }
+  # retention_policy is deliberately absent. Azure does not support retention on
+  # Entra ID diagnostic settings, so the provider cannot persist the field and
+  # produced a permanent "1 to change" diff on every plan of this workspace.
+  # Matches azure_infrasec/crowdstrike.tf, which has never carried the blocks.
+  enabled_log { category = "SignInLogs" }
+  enabled_log { category = "AuditLogs" }
+  enabled_log { category = "NonInteractiveUserSignInLogs" }
+  enabled_log { category = "ServicePrincipalSignInLogs" }
+  enabled_log { category = "ManagedIdentitySignInLogs" }
+  enabled_log { category = "ProvisioningLogs" }
+  enabled_log { category = "ADFSSignInLogs" }
+  enabled_log { category = "RiskyUsers" }
+  enabled_log { category = "UserRiskEvents" }
+  enabled_log { category = "NetworkAccessTrafficLogs" }
+  enabled_log { category = "ServicePrincipalRiskEvents" }
+  enabled_log { category = "EnrichedOffice365AuditLogs" }
+  enabled_log { category = "MicrosoftGraphActivityLogs" }
+  enabled_log { category = "RemoteNetworkHealthLogs" }
+  enabled_log { category = "RiskyServicePrincipals" }
 }
