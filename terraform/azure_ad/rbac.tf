@@ -61,13 +61,6 @@ resource "azurerm_role_assignment" "releng_tenant_root_mg_reader" {
   principal_id         = azuread_group.releng.object_id
 }
 
-resource "azurerm_role_assignment" "splunkeventhub" {
-  for_each             = toset(var.azure_subscriptions)
-  scope                = each.value
-  role_definition_name = "Azure Event Hubs Data Receiver"
-  principal_id         = azuread_service_principal.splunkeventhub.object_id
-}
-
 # Scoped to the CrowdStrike Event Hub Namespace only (least-privilege per the
 # Falcon NGSIEM connector guide). The namespace is managed in the
 # azure_infrasec workspace; this references it by constructed resource ID.
