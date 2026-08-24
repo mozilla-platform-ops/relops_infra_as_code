@@ -1,17 +1,47 @@
 # =============================================================================
-# PHASE 1 of the nuc-wim -> hardware-imaging migration: CREATE the new
-# 'hardwareimaging' account ALONGSIDE the existing 'nucwimfxci' (nuc-wim-storage.tf
-# still holds the old stack). No destroys — the old account + its blobs stay put so
-# data can be azcopy-migrated into the new account first.
+# The 'hardwareimaging' store: sources (resources/), build outputs (captured/) and
+# legacy-images/, plus the build VNet/subnet and the Packer build identity.
 #
-# After migration + worker-images cutover, the old stack is retired and these
-# resources fold back into nuc-wim-storage.tf (the end-state config = PR #316):
-#   - `terraform state mv azurerm_storage_container.captured_hwimg
-#      azurerm_storage_container.captured`  (preserve migrated data on relabel)
-#   - the relops_hwimg_* role assignments carry NO data, so they simply recreate.
-# Shares the aliased provider (azurerm.nuc_wim_aad), variables, and module locals
-# defined in nuc-wim-storage.tf.
+# PHASE 2 of the nuc-wim -> hardware-imaging migration, completing the phase-1
+# create-alongside (#317). The old 'nucwimfxci' stack and its file
+# (nuc-wim-storage.tf) are REMOVED: every blob it held now has a counterpart here
+# (resources/WIMs/, resources/ISOs/, resources/drivers/, resources/tools/,
+# captured/WIMs/, captured/ISOs/) and worker-images has been building against this
+# account since 2026-08-11.
+#
+# The phase-1 header proposed also renaming the resource addresses back
+# (`state mv captured_hwimg -> captured`, dropping the _hwimg suffixes). That is
+# deliberately NOT done: it is cosmetic, needs hand-run `terraform state mv` for
+# every address, and would add risk to a change that already destroys a storage
+# account. The _hwimg names stay.
+#
+# This file now owns the aliased AAD provider and the two object-id variables that
+# used to live in nuc-wim-storage.tf.
 # =============================================================================
+
+# Storage data-plane calls go through Entra, not account keys — the account has
+# shared_access_key_enabled = false. Aliased so the rest of azure_fxci (which still
+# manages other storage via keys) is unaffected.
+provider "azurerm" {
+  alias               = "nuc_wim_aad"
+  storage_use_azuread = true
+  features {}
+  subscription_id = "108d46d5-fe9b-4850-9a7d-8c914aa6c1f0"
+  tenant_id       = "c0dc8bb0-b616-427e-8217-9513964a145b"
+}
+
+variable "relops_group_object_id" {
+  type        = string
+  description = "Entra object ID of the Relops group. Members get data-plane Blob roles on the imaging store so operators can manage it (e.g. upload a base WIM) with their own Entra identity."
+  default     = "cb79b99f-fdaa-4e0d-a2c8-c5841890fa74" # Relops
+}
+
+variable "nuc_wim_downloader_object_id" {
+  type        = string
+  description = "Entra object ID of the SP/managed identity the MDC1 server uses to download captured images (from azure_ad/sp_nuc_wim_downloader.tf output, applied first). Empty = skip the RBAC grant (use SAS instead)."
+  # sp-relops-nuc-wim-downloader (azure_ad/sp_nuc_wim_downloader.tf), applied 2026-07-23.
+  default = "ae54832f-8931-46d8-8faa-133637e72798"
+}
 
 resource "azurerm_resource_group" "hardware-imaging" {
   name     = "rg-${local.locationshort}-hardware-imaging"
@@ -127,6 +157,18 @@ resource "azurerm_role_assignment" "packer_hwimg_rw" {
   scope                = azurerm_storage_account.hardware-imaging.id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = local.worker_images_object_id
+}
+
+# MDC1 downloader SP reads build outputs -> Storage Blob Data Reader, scoped to the
+# 'captured' container only. This grant previously existed ONLY on the retired
+# nucwimfxci account, so between the phase-1 cutover and this change the SP had no
+# access to the account the images actually live in. Skipped when the object id is
+# empty (SAS path).
+resource "azurerm_role_assignment" "mdc1_hwimg_ro" {
+  count                = var.nuc_wim_downloader_object_id == "" ? 0 : 1
+  scope                = azurerm_storage_container.captured_hwimg.id
+  role_definition_name = "Storage Blob Data Reader"
+  principal_id         = var.nuc_wim_downloader_object_id
 }
 
 # Workflow SP: create/delete VM in the new RG + attach the new UAMI.
