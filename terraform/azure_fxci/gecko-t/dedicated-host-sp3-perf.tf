@@ -3,11 +3,11 @@ locals {
   sp3_perf_dedicated_host_slug     = local.location_map[local.sp3_perf_dedicated_host_location]
   sp3_perf_dedicated_host_tags = merge(local.tags, {
     bugzilla       = "2039391"
-    jira           = "RELOPS-2375"
-    lifecycle      = "temporary-test"
+    jira           = "RELOPS-2548"
+    lifecycle      = "long-running"
     owner_email    = "jmoss@mozilla.com"
-    purpose        = "speedometer3-dedicated-host-placement-test"
-    ttl            = "destroy-after-experiment"
+    purpose        = "foofrix-windows-agent"
+    ttl            = "none"
     worker_pool_id = "gecko-t/win11-64-25h2-gpu-perf-experiment"
   })
 }
@@ -47,23 +47,23 @@ resource "azapi_resource" "sp3_perf_experiment_host" {
 }
 
 output "sp3_perf_dedicated_host_group_id" {
-  description = "Dedicated Host Group ID for the RELOPS-2375 Speedometer 3 GPU perf experiment."
+  description = "Dedicated Host Group ID for the RELOPS-2548 FooFrix Windows worker."
   value       = azapi_resource.sp3_perf_experiment_host_group.id
 }
 
 output "sp3_perf_dedicated_host_id" {
-  description = "Dedicated Host ID for the RELOPS-2375 Speedometer 3 GPU perf experiment."
+  description = "Dedicated Host ID for the RELOPS-2548 FooFrix Windows worker."
   value       = azapi_resource.sp3_perf_experiment_host.id
 }
 
 output "sp3_perf_dedicated_host_ids" {
-  description = "Dedicated Host IDs for the RELOPS-2375 Speedometer 3 GPU perf experiment."
+  description = "Dedicated Host IDs for the RELOPS-2548 FooFrix Windows worker."
   value = [
     azapi_resource.sp3_perf_experiment_host.id,
   ]
 }
 
 output "sp3_perf_dedicated_host_resource_group_name" {
-  description = "Resource group containing the RELOPS-2375 Speedometer 3 dedicated host resources."
+  description = "Resource group containing the RELOPS-2548 FooFrix dedicated host resources."
   value       = azurerm_resource_group.nongw[local.sp3_perf_dedicated_host_location].name
 }
