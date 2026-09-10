@@ -1,6 +1,8 @@
+# Placeholder for the report-only policies created manually for RELOPS-2513.
+# Terraform ignores .tf.example files. Import both resources before renaming to .tf.
 resource "azuread_authentication_strength_policy" "authenticator_app" {
   display_name = "Authenticator app or stronger"
-  description  = "Microsoft Authenticator push or a TOTP app; also accepts Authenticator passwordless, Windows Hello for Business, and FIDO2. Excludes SMS, voice, and email."
+  description  = "Authenticator push, TOTP, passwordless, Windows Hello and FIDO2; excludes SMS, voice and email."
 
   allowed_combinations = [
     "password,microsoftAuthenticatorPush",
