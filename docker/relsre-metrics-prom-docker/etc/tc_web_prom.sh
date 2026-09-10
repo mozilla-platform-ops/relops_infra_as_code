@@ -20,10 +20,28 @@ ensure_jq
 PATH="$PATH:$(dirname "${BASH_SOURCE[0]}")"
 
 queue='https://firefox-ci-tc.services.mozilla.com/api/queue/v1'
-url='https://firefox-ci-tc.services.mozilla.com/graphql'
+worker_manager='https://firefox-ci-tc.services.mozilla.com/api/worker-manager/v1'
 
 batch_limit=1000
+task_status_workers=20
 prov_filter=("$@") # Accept provisioner filters as command-line arguments
+
+fetch_task_state() {
+  local task_id="$1"
+  local run_id="$2"
+  local status
+
+  if ! status=$(curl --fail --silent --show-error "${queue}/task/${task_id}/status"); then
+    echo "Warning: Could not fetch task status for ${task_id}/${run_id}" >&2
+    return 0
+  fi
+
+  jq -r --argjson run_id "${run_id}" \
+    '.status.runs[]? | select(.runId == $run_id) | .state' <<< "${status}"
+}
+
+export -f fetch_task_state
+export queue
 
 # Function to fetch worker type details
 fetch_worker_data() {
@@ -44,77 +62,69 @@ fetch_worker_data() {
 
   total=0
   running=0
-  idle=0
   quarantined=0
+  task_runs=()
+  continuation_token=""
+  current_timestamp=$($date_cmd -u +%s)
 
-  continuation='"limit":'"${batch_limit}"
   while true; do
-    # Fetch data from the API
-    data=$(curl -s -X POST "${url}" \
-      -H 'content-type: application/json' \
-      --data '{"operationName":"ViewWorkers","variables":{"provisionerId":"'"${provisioner}"'","workerType":"'"${workerType}"'","workersConnection":{'$continuation'}},"query":"query ViewWorkers($provisionerId: String!, $workerType: String!, $workersConnection: PageConnection, $quarantined: Boolean) {\n  workers(provisionerId: $provisionerId, workerType: $workerType, connection: $workersConnection, isQuarantined: $quarantined) {\n    pageInfo {\n      hasNextPage\n      hasPreviousPage\n      cursor\n      previousCursor\n      nextCursor\n      __typename\n    }\n    edges {\n      node {\n        latestTask {\n          run {\n            workerGroup\n            workerId\n            taskId\n            runId\n            started\n            resolved\n            state\n            __typename\n          }\n          __typename\n        }\n        workerGroup\n  workerId\n        quarantineUntil\n        }\n      }\n    }\n  }\n"}'
+    request_args=(
+      --fail
+      --silent
+      --show-error
+      --get
+      "${worker_manager}/provisioners/${provisioner}/worker-types/${workerType}/workers"
+      --data-urlencode "limit=${batch_limit}"
     )
-
-    # Log the raw API response for debugging
-    # echo "API Response for provisioner=${provisioner}, workerType=${workerType}: $data" >&2
-
-    # Check for valid data
-    if [[ -z "$data" || "$data" == "null" ]]; then
-      echo "Error: No data returned for provisioner=${provisioner}, workerType=${workerType}" >&2
-      break
+    if [[ -n "${continuation_token}" ]]; then
+      request_args+=(--data-urlencode "continuationToken=${continuation_token}")
     fi
 
-    workers=$(echo "$data" | jq -c '.data.workers.edges[]?.node' 2>/dev/null)
-    if [[ -z "$workers" ]]; then
-      echo "No workers found for provisioner=${provisioner}, workerType=${workerType}" >&2
-      break
+    if ! data=$(curl "${request_args[@]}"); then
+      echo "Error: Could not list workers for ${provisioner}/${workerType}" >&2
+      return 1
+    fi
+    if ! jq -e '.workers | type == "array"' >/dev/null <<< "${data}"; then
+      echo "Error: Invalid worker response for ${provisioner}/${workerType}" >&2
+      return 1
     fi
 
-    # Process each worker
-    for worker in $workers; do
-      quarantineUntil=$(echo "$worker" | jq -r '.quarantineUntil')
-      workerId=$(echo "$worker" | jq -r '.workerId')
-      workerGroup=$(echo "$worker" | jq -r '.workerGroup')
-      # parsing state is not working yet, not selecting the correct element.
-      # state=$(echo "$worker" | jq -r '.latestTask.state // "IDLE"')
-
-      # Debugging: Log quarantineUntil value
-      # echo "quarantineUntil: $quarantineUntil, state: $state" >&2
-
-      # Check if quarantineUntil is in the future
+    while IFS=$'\t' read -r quarantine_until task_id run_id; do
+      total=$((total + 1))
       isQuarantined=false
-      if [[ "$quarantineUntil" != "null" ]]; then
-        # Strip fractional seconds and remove 'Z'
-        sanitizedQuarantineUntil=$(echo "$quarantineUntil" | sed -E 's/\.[0-9]+//; s/Z//')
-        quarantineTimestamp=$($date_cmd -u -d "$sanitizedQuarantineUntil" +%s 2>/dev/null)
-        currentTimestamp=$($date_cmd -u +%s)
-
-        if [[ $quarantineTimestamp -gt $currentTimestamp ]]; then
+      if [[ "${quarantine_until}" != "-" ]]; then
+        if quarantine_timestamp=$($date_cmd -u -d "${quarantine_until}" +%s 2>/dev/null) && \
+          [[ ${quarantine_timestamp} -gt ${current_timestamp} ]]; then
           isQuarantined=true
         fi
       fi
 
-      # Calculate running, idle, and quarantined workers
       if [[ "$isQuarantined" == true ]]; then
-        ((quarantined++))
-      elif [[ "$worker" == *"RUNNING"* ]]; then
-        ((running++))
-      else
-        ((idle++))
+        quarantined=$((quarantined + 1))
+      elif [[ "${task_id}" != "-" && "${run_id}" =~ ^[0-9]+$ ]]; then
+        task_runs+=("${task_id} ${run_id}")
       fi
-      ((total++))
-    done
+    done < <(
+      jq -r \
+        '.workers[] | [(.quarantineUntil // "-"), (.latestTask.taskId // "-"), (.latestTask.runId // "-")] | @tsv' \
+        <<< "${data}"
+    )
 
-    # Check if there are more pages of data
-    hasNextPage=$(echo "$data" | jq -r '.data.workers.pageInfo.hasNextPage' 2>/dev/null)
-    if [[ "$hasNextPage" != "true" ]]; then
+    continuation_token=$(jq -r '.continuationToken // empty' <<< "${data}")
+    if [[ -z "${continuation_token}" ]]; then
       break
     fi
-
-    # Update continuation token
-    continuation='"cursor":"'"$(echo "$data" | jq -r '.data.workers.pageInfo.cursor' 2>/dev/null)"'","limit":'"${batch_limit}"
   done
 
+  if [[ ${#task_runs[@]} -gt 0 ]]; then
+    states=$(
+      printf '%s\n' "${task_runs[@]}" |
+        xargs -n 2 -P "${task_status_workers}" bash -c 'fetch_task_state "$1" "$2"' _
+    )
+    running=$(grep -c '^running$' <<< "${states}" || true)
+  fi
+
+  idle=$((total - running - quarantined))
   echo "$total" "$running" "$idle" "$quarantined"
 }
 
