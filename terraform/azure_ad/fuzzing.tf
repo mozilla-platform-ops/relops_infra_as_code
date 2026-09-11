@@ -4,14 +4,18 @@
 # (the Azure resources), which looks these service principals up by display name.
 #
 # clauditor identities back a token-exchange chain:
-#   * sp-clauditor-build    CI builds in GitHub Actions -> Azure (GitHub OIDC)
-#   * sp-clauditor-audience audience-only app for Azure -> GCP/Anthropic token exchange
-#   * sp-clauditor-run      clauditor-run on GCP -> Azure (GCP service account OIDC)
+#   * sp-clauditor-build         CI builds in GitHub Actions -> Azure (GitHub OIDC)
+#   * sp-clauditor-audience      audience-only app for Azure -> GCP token exchange
+#   * sp-clauditor-run           clauditor-run on GCP -> Azure (GCP service account OIDC)
+#   * sp-clauditor-anthropic-aud audience-only app for Azure -> Anthropic token exchange
+#   * sp-clauditor-openai-aud    audience-only app for Azure -> OpenAI token exchange
 locals {
   clauditor_apps = {
-    build    = { name = "sp-clauditor-build", notes = "CI build identity for MozillaSecurity/clauditor (GitHub Actions OIDC). RELOPS-2440." }
-    audience = { name = "sp-clauditor-audience", notes = "Audience-only app for Azure -> GCP/Anthropic token exchange. RELOPS-2440." }
-    run      = { name = "sp-clauditor-run", notes = "Run identity for clauditor-run on GCP (GCP service account OIDC). RELOPS-2440." }
+    build         = { name = "sp-clauditor-build", notes = "CI build identity for MozillaSecurity/clauditor (GitHub Actions OIDC). RELOPS-2440." }
+    gcp-aud       = { name = "sp-clauditor-gcp-aud", notes = "Audience-only app for Azure -> GCP token exchange. RELOPS-2440." }
+    run           = { name = "sp-clauditor-run", notes = "Run identity for clauditor-run on GCP (GCP service account OIDC). RELOPS-2440." }
+    anthropic-aud = { name = "sp-clauditor-anthropic-aud", notes = "Audience-only app for Azure -> Anthropic token exchange. RELOPS-2440." }
+    openai-aud    = { name = "sp-clauditor-openai-aud", notes = "Audience-only app for Azure -> OpenAI token exchange. RELOPS-2440." }
   }
 
   # Federated credentials keyed by app. build trusts GitHub Actions on main + PRs;
@@ -59,7 +63,7 @@ resource "azuread_service_principal" "fuzzing_azure_devtest" {
 resource "azuread_application" "clauditor" {
   for_each        = local.clauditor_apps
   display_name    = each.value.name
-  identifier_uris = each.key == "audience" ? ["api://2925ef06-ce42-4a1b-bf35-70358136a900"] : []
+  identifier_uris = each.key == "gcp-aud" ? ["api://2925ef06-ce42-4a1b-bf35-70358136a900"] : []
   owners          = data.azuread_group.relops.members
   notes           = each.value.notes
 }

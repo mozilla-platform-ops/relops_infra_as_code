@@ -6,9 +6,11 @@
 locals {
   clauditor_role = "Contributor"
   clauditor_sps = {
-    build    = "sp-clauditor-build"
-    audience = "sp-clauditor-audience"
-    run      = "sp-clauditor-run"
+    build         = "sp-clauditor-build"
+    gcp-aud       = "sp-clauditor-gcp-aud"
+    run           = "sp-clauditor-run"
+    anthropic-aud = "sp-clauditor-anthropic-aud"
+    openai-aud    = "sp-clauditor-openai-aud"
   }
 }
 
