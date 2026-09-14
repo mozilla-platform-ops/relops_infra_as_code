@@ -65,10 +65,8 @@ resource "azurerm_storage_account" "hardware-imaging" {
   public_network_access_enabled   = true
   shared_access_key_enabled       = false
 
-  network_rules {
-    default_action = "Allow"
-    bypass         = ["AzureServices"]
-  }
+  # Use the Azure defaults: Allow, with the AzureServices bypass.
+  # AzureRM omits these defaults from state, so an explicit block causes drift.
 
   tags = merge(local.common_tags, tomap({ "Name" = "hardwareimaging" }))
 }
