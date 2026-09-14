@@ -1,114 +1,30 @@
 # FooFrix Azure subscription
 
-This stack implements the subscription plan in the
-[September 11 meeting notes](https://mozilla-hub.atlassian.net/browse/RELOPS-2548?focusedCommentId=1727342).
-It follows `azure_fuzzing`: `azure_ad` owns the application and service principal;
-this stack owns the subscription and Azure resources.
+FooFrix runs agents that profile Firefox, test performance changes, build
+Firefox, and produce patches. This dedicated Azure DevTest subscription lets
+the team create and manage Windows VMs for runs that can last more than 24 hours.
+It gives the team control over VM sizes and lifetimes, with separate costs and
+access for FooFrix.
 
-FooFrix uses the same billing profile (`GRUW-TLBL-BG7-PGB`) and invoice section
-(`VVEC-AWWS-PJA-PGB`) as fuzzing. The existing daily Actual Cost, Amortized Cost,
-and FOCUS exports in `azure_billing/finops.tf` cover these scopes without
-subscription filters. They write to `safinopsdata/cost-management`. No separate
-export is needed. After deployment and billing data arrival, filter by the
-FooFrix subscription ID to report its costs.
-
-The draft uses Central US. The team will use the service principal to create
-and remove VMs. No new team group or individual access grant is needed.
+This Terraform stack manages the subscription, a resource group in Central US,
+a Key Vault for AI keys and other secrets, and a managed identity for the VMs.
+The team manages the VMs through `sp-foofrix-azure-devtest`. The application and
+service principal are managed in `../azure_ad/foofrix.tf`.
 
 | Identity | Access |
 | --- | --- |
-| Relops group | Subscription Owner; Key Vault Administrator |
+| Existing Relops group | Subscription Owner; Key Vault Administrator |
 | `sp-foofrix-azure-devtest` | Subscription Contributor; Key Vault Secrets Officer |
 | `id-foofrix-worker` | Read secrets in the FooFrix vault |
 
-Attach `id-foofrix-worker` to each FooFrix VM. Use its client ID to select it
-when the agent reads Key Vault. The provisioner can add AI keys to the vault.
-Keep secret values out of Terraform, VM images, and startup scripts. Contributor
-access lets the provisioner attach this identity without permission to create
-role assignments. It therefore also permits indirect access to these secrets
-through a VM that it controls.
+The provisioning service uses a tenant ID, client ID, and client secret to
+access Azure. The client secret is managed outside Terraform and stored in
+1Password. VMs use `id-foofrix-worker` to read secrets from Key Vault.
 
-## Initial deployment
+FooFrix uses the same Mozilla billing profile and invoice section as fuzzing.
+The daily Actual Cost, Amortized Cost, and FOCUS exports in
+`../azure_billing/finops.tf` include its costs in
+`safinopsdata/cost-management`. Filter by the FooFrix subscription ID to report
+its costs.
 
-The subscription must exist before the default Azure provider can use it.
-Use two stages for the first deployment. The `billing` provider uses the existing
-FXCI subscription only to call the subscription creation API.
-
-1. In `azure_ad`, review and apply the FooFrix application and service
-   principal. Create its client secret outside Terraform and store it in the
-   RelOps 1Password vault, as for fuzzing. Record its expiry and renewal owner.
-   Give the team the tenant ID, client ID, subscription ID, and secret through
-   the approved secret-sharing process.
-2. In this directory, initialize the backend and review the subscription plan:
-
-   ```sh
-   export AWS_PROFILE=AdministratorAccess-961225894672
-   terraform init
-   terraform plan -target=azurerm_subscription.foofrix -out=subscription.tfplan
-   ```
-
-3. Apply the reviewed subscription plan. Then review a full plan:
-
-   ```sh
-   terraform apply subscription.tfplan
-   terraform plan -out=foofrix.tfplan
-   ```
-
-4. Apply the reviewed full plan. Use full plans for later changes.
-   Give Perf the subscription ID, provisioner client ID, worker identity ID,
-   worker identity client ID, and vault URI from `terraform output`.
-
-## GCP authentication
-
-The GCP provisioner can authenticate with the FooFrix tenant ID, application
-client ID, and client secret. Store the secret in its secret store. No GCP
-service account ID is required for this Azure login. GCP federation can be
-added later if needed.
-
-For Azure to GCS, use the worker managed identity with Google Workload Identity
-Federation. This still needs the GCP project, results bucket, and required object
-operations. Configure the Entra audience application, Google trust provider,
-identity restriction, and bucket access after those values are known. These
-resources are not part of this draft. See the
-[Google Azure federation guide](https://docs.cloud.google.com/iam/docs/workload-identity-federation-with-other-clouds).
-
-## Windows VM and image work
-
-Start with one regular VM. Do not configure Spot eviction or a one-hour shutdown.
-The first run must last at least 24 hours and complete a Firefox build and a
-FooFrix test. Perf can then increase the count to two or three.
-
-For a GPU proof of concept, evaluate `Standard_NV18ads_A10_v5` (18 vCPUs,
-220 GiB RAM, half an A10 GPU). If the test needs a full GPU, evaluate
-`Standard_NV36ads_A10_v5` (36 vCPUs, 440 GiB RAM, one A10). Confirm regional
-availability and quota in the new subscription. These are candidates, pending
-the harness requirements. See the [Azure size table](https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/gpu-accelerated/nvadsa10v5-series).
-Start with a 1 TiB persistent build disk and measure peak use. Temporary storage
-must not hold the only copy of source changes or results.
-
-Provisioning needs Azure CLI or an Azure SDK, a VNet and subnet, a restricted
-remote access rule, a Windows image version, persistent disks, and the worker
-identity. Select the exact image and access method after repository inspection.
-
-`worker-images` has the Packer and Azure Compute Gallery build path. Its Windows
-configs select Puppet roles and Pester tests. Its GitHub workflows also check
-`.github/relsre.json`; repository access alone does not permit a build.
-
-Before adding a FooFrix image, inspect the harness to determine whether it needs
-a prebuilt Chromium release or a Chromium source build with release options.
-Confirm the version, build flags, toolchain, GPU driver, expected paths, and
-update process. Add a separate image config and checks for Firefox builds,
-Chromium startup, GPU use, and long VM lifetime. Confirm that Taskcluster startup
-and shutdown services cannot terminate the standalone VM. Arrange gallery read
-access from the FooFrix subscription and build access for the named Perf users.
-
-Any later use in a production Firefox CI pool must pass all tier 1 tasks from
-the latest autoland decision task. A new tier 1 regression blocks deployment.
-
-## Checks
-
-```sh
-terraform init -backend=false
-terraform fmt -check
-terraform validate
-```
+Related issue: [RELOPS-2548](https://mozilla-hub.atlassian.net/browse/RELOPS-2548).
