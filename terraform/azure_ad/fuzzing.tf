@@ -12,10 +12,10 @@
 locals {
   clauditor_apps = {
     build         = { name = "sp-clauditor-build", notes = "CI build identity for MozillaSecurity/clauditor (GitHub Actions OIDC). RELOPS-2440." }
-    gcp-aud       = { name = "sp-clauditor-gcp-aud", notes = "Audience-only app for Azure -> GCP token exchange. RELOPS-2440." }
+    gcp-aud       = { name = "sp-clauditor-gcp-aud", notes = "Audience-only app for Azure -> GCP token exchange. RELOPS-2440.", identifier_uris = ["api://2925ef06-ce42-4a1b-bf35-70358136a900"] }
     run           = { name = "sp-clauditor-run", notes = "Run identity for clauditor-run on GCP (GCP service account OIDC). RELOPS-2440." }
-    anthropic-aud = { name = "sp-clauditor-anthropic-aud", notes = "Audience-only app for Azure -> Anthropic token exchange. RELOPS-2440." }
-    openai-aud    = { name = "sp-clauditor-openai-aud", notes = "Audience-only app for Azure -> OpenAI token exchange. RELOPS-2440." }
+    anthropic-aud = { name = "sp-clauditor-anthropic-aud", notes = "Audience-only app for Azure -> Anthropic token exchange. RELOPS-2440.", identifier_uris = ["api://8b2208f1-a79a-46fd-a2b9-2649bd5e0489"] }
+    openai-aud    = { name = "sp-clauditor-openai-aud", notes = "Audience-only app for Azure -> OpenAI token exchange. RELOPS-2440.", identifier_uris = ["api://a4a54c61-0913-4b45-a552-f769bd323cb2"] }
   }
 
   # Federated credentials keyed by app. build trusts GitHub Actions on main + PRs;
@@ -72,15 +72,11 @@ moved {
 }
 
 resource "azuread_application" "clauditor" {
-  for_each     = local.clauditor_apps
-  display_name = each.value.name
-  identifier_uris = lookup({
-    gcp-aud       = ["api://2925ef06-ce42-4a1b-bf35-70358136a900"]
-    anthropic-aud = ["api://8b2208f1-a79a-46fd-a2b9-2649bd5e0489"]
-    openai-aud    = ["api://a4a54c61-0913-4b45-a552-f769bd323cb2"]
-  }, each.key, [])
-  owners = data.azuread_group.relops.members
-  notes  = each.value.notes
+  for_each        = local.clauditor_apps
+  display_name    = each.value.name
+  identifier_uris = try(each.value.identifier_uris, [])
+  owners          = data.azuread_group.relops.members
+  notes           = each.value.notes
 }
 
 resource "azuread_service_principal" "clauditor" {
