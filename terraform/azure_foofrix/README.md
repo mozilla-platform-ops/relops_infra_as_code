@@ -1,6 +1,7 @@
 # FooFrix Azure subscription
 
-FooFrix runs agents that profile Firefox, test performance changes, build
+[FooFrix](https://foofrix.uc.r.appspot.com/?component=JS&suite=speedometer3)
+runs agents that profile Firefox, test performance changes, build
 Firefox, and produce patches. This dedicated Azure DevTest subscription lets
 the team create and manage Windows VMs for runs that can last more than 24 hours.
 It gives the team control over VM sizes and lifetimes, with separate costs and
