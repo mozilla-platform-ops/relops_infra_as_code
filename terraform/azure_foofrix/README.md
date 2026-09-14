@@ -7,6 +7,9 @@ the team create and manage Windows VMs for runs that can last more than 24 hours
 It gives the team control over VM sizes and lifetimes, with separate costs and
 access for FooFrix.
 
+The harness source and image provisioning scripts are in
+[dpalmeiro/foofrix](https://github.com/dpalmeiro/foofrix).
+
 This Terraform stack manages the subscription, a resource group in Central US,
 a Key Vault for AI keys and other secrets, and a managed identity for the VMs.
 The `foofrix` Compute Gallery stores VM image versions. A private `artifacts`
