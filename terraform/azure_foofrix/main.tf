@@ -69,3 +69,15 @@ resource "azurerm_resource_group" "foofrix" {
   location = local.location
   tags     = local.common_tags
 }
+
+data "azuread_group" "platform_performance" {
+  display_name     = "Platform Performance"
+  security_enabled = true
+}
+
+resource "azurerm_role_assignment" "platform_performance_contributor" {
+  scope                = "/subscriptions/${azurerm_subscription.foofrix.subscription_id}"
+  role_definition_name = "Contributor"
+  principal_id         = data.azuread_group.platform_performance.object_id
+  principal_type       = "Group"
+}

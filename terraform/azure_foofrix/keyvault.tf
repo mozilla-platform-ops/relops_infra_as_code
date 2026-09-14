@@ -42,3 +42,10 @@ resource "azurerm_role_assignment" "worker_secrets_user" {
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
 }
+
+resource "azurerm_role_assignment" "platform_performance_secrets_officer" {
+  scope                = azurerm_key_vault.foofrix.id
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id         = data.azuread_group.platform_performance.object_id
+  principal_type       = "Group"
+}
