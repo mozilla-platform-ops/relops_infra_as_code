@@ -104,5 +104,4 @@ the latest autoland decision task. A new tier 1 regression blocks deployment.
 terraform init -backend=false
 terraform fmt -check
 terraform validate
-terraform test
 ```
