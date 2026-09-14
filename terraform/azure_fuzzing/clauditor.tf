@@ -19,6 +19,11 @@ data "azuread_service_principal" "clauditor" {
   display_name = each.value
 }
 
+moved {
+  from = azurerm_role_assignment.clauditor_contributor["audience"]
+  to   = azurerm_role_assignment.clauditor_contributor["gcp-aud"]
+}
+
 resource "azurerm_role_assignment" "clauditor_contributor" {
   for_each                         = data.azuread_service_principal.clauditor
   scope                            = "/subscriptions/${azurerm_subscription.fuzzing.subscription_id}"
