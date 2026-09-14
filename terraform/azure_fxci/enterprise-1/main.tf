@@ -7,6 +7,7 @@ locals {
     "East US 2"        = "east-us-2"
     "North Central US" = "north-central-us"
     "North Europe"     = "north-europe"
+    "South Central US" = "south-central-us"
     "South India"      = "south-india"
     "UK South"         = "uk-south"
     "West US"          = "west-us"
