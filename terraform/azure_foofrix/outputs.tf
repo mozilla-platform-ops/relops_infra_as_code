@@ -17,3 +17,11 @@ output "worker_identity_client_id" {
 output "key_vault_uri" {
   value = azurerm_key_vault.foofrix.vault_uri
 }
+
+output "image_gallery_id" {
+  value = azurerm_shared_image_gallery.foofrix.id
+}
+
+output "artifacts_container_url" {
+  value = "${azurerm_storage_account.foofrix.primary_blob_endpoint}${azurerm_storage_container.artifacts.name}"
+}

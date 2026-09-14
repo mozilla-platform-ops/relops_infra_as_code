@@ -9,18 +9,23 @@ access for FooFrix.
 
 This Terraform stack manages the subscription, a resource group in Central US,
 a Key Vault for AI keys and other secrets, and a managed identity for the VMs.
+The `foofrix` Compute Gallery stores VM image versions. A private `artifacts`
+Blob Storage container holds build files and test results in Standard LRS storage.
 The team manages the VMs through `sp-foofrix-azure-devtest`. The application and
 service principal are managed in `../azure_ad/foofrix.tf`.
 
 | Identity | Access |
 | --- | --- |
-| Existing Relops group | Subscription Owner; Key Vault Administrator |
-| `sp-foofrix-azure-devtest` | Subscription Contributor; Key Vault Secrets Officer |
-| `id-foofrix-worker` | Read secrets in the FooFrix vault |
+| Existing Relops group | Subscription Owner; Key Vault Administrator; blob read/write |
+| `sp-foofrix-azure-devtest` | Subscription Contributor; Key Vault Secrets Officer; blob read/write |
+| `id-foofrix-worker` | Read vault secrets; blob read/write |
 
 The provisioning service uses a tenant ID, client ID, and client secret to
 access Azure. The client secret is managed outside Terraform and stored in
 1Password. VMs use `id-foofrix-worker` to read secrets from Key Vault.
+Blob access uses these identities through the Storage Blob Data Contributor
+role on the `artifacts` container. The provisioning service can manage gallery
+images through its subscription Contributor role.
 
 FooFrix uses the same Mozilla billing profile and invoice section as fuzzing.
 The daily Actual Cost, Amortized Cost, and FOCUS exports in
