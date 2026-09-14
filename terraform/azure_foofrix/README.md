@@ -5,6 +5,13 @@ This stack implements the subscription plan in the
 It follows `azure_fuzzing`: `azure_ad` owns the application and service principal;
 this stack owns the subscription and Azure resources.
 
+FooFrix uses the same billing profile (`GRUW-TLBL-BG7-PGB`) and invoice section
+(`VVEC-AWWS-PJA-PGB`) as fuzzing. The existing daily Actual Cost, Amortized Cost,
+and FOCUS exports in `azure_billing/finops.tf` cover these scopes without
+subscription filters. They write to `safinopsdata/cost-management`. No separate
+export is needed. After deployment and billing data arrival, filter by the
+FooFrix subscription ID to report its costs.
+
 The draft uses Central US and gives Denis Palmeiro access. Confirm the region
 and full Perf access list before deployment. Perf will create and remove its
 VMs. This stack does not create a Taskcluster pool.
