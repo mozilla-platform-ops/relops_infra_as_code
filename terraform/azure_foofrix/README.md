@@ -12,19 +12,17 @@ subscription filters. They write to `safinopsdata/cost-management`. No separate
 export is needed. After deployment and billing data arrival, filter by the
 FooFrix subscription ID to report its costs.
 
-The draft uses Central US and gives Denis Palmeiro access. Confirm the region
-and full Perf access list before deployment. Perf will create and remove its
-VMs. This stack does not create a Taskcluster pool.
+The draft uses Central US. The team will use the service principal to create
+and remove VMs. No new team group or individual access grant is needed.
 
 | Identity | Access |
 | --- | --- |
 | Relops group | Subscription Owner; Key Vault Administrator |
-| Perf members in `main.tf` | Subscription Contributor; Key Vault Secrets Officer |
-| `sp-foofrix-azure-devtest` | Contributor on the FooFrix subscription |
+| `sp-foofrix-azure-devtest` | Subscription Contributor; Key Vault Secrets Officer |
 | `id-foofrix-worker` | Read secrets in the FooFrix vault |
 
 Attach `id-foofrix-worker` to each FooFrix VM. Use its client ID to select it
-when the agent reads Key Vault. Perf members can add AI keys through Key Vault.
+when the agent reads Key Vault. The provisioner can add AI keys to the vault.
 Keep secret values out of Terraform, VM images, and startup scripts. Contributor
 access lets the provisioner attach this identity without permission to create
 role assignments. It therefore also permits indirect access to these secrets
@@ -37,8 +35,10 @@ Use two stages for the first deployment. The `billing` provider uses the existin
 FXCI subscription only to call the subscription creation API.
 
 1. In `azure_ad`, review and apply the FooFrix application and service
-   principal. It has no credential yet. Add GCP federation after the service
-   account unique ID is known.
+   principal. Create its client secret outside Terraform and store it in the
+   RelOps 1Password vault, as for fuzzing. Record its expiry and renewal owner.
+   Give the team the tenant ID, client ID, subscription ID, and secret through
+   the approved secret-sharing process.
 2. In this directory, initialize the backend and review the subscription plan:
 
    ```sh
@@ -60,10 +60,10 @@ FXCI subscription only to call the subscription creation API.
 
 ## GCP authentication
 
-For GCP to Azure, add a federated credential to the FooFrix application once
-Perf supplies the GCP service account's numeric unique ID. Use issuer
-`https://accounts.google.com` and audience `api://AzureADTokenExchange`.
-See the [Microsoft GCP federation guide](https://learn.microsoft.com/entra/workload-id/workload-identity-federation-google-cloud).
+The GCP provisioner can authenticate with the FooFrix tenant ID, application
+client ID, and client secret. Store the secret in its secret store. No GCP
+service account ID is required for this Azure login. GCP federation can be
+added later if needed.
 
 For Azure to GCS, use the worker managed identity with Google Workload Identity
 Federation. This still needs the GCP project, results bucket, and required object

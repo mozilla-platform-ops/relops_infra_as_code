@@ -1,5 +1,5 @@
 # FooFrix identities. Subscription roles are in azure_foofrix. RELOPS-2548.
-# Add GCP federation when the service account unique ID is known.
+# Create the client secret outside Terraform and store it in 1Password.
 resource "azuread_application" "foofrix" {
   display_name = "sp-foofrix-azure-devtest"
   owners       = data.azuread_group.relops.members

@@ -7,9 +7,6 @@ locals {
   mozilla_invoice_section_id = "VVEC-AWWS-PJA-PGB"
   billing_scope_id           = "/providers/Microsoft.Billing/billingAccounts/${local.billing_account_id}/billingProfiles/${local.mozilla_billing_profile_id}/invoiceSections/${local.mozilla_invoice_section_id}"
 
-  # Confirm the complete Perf access list before deployment.
-  perf_members = toset(["dpalmeiro@mozilla.com"])
-
   common_tags = {
     terraform        = "true"
     project_name     = "azure_foofrix"
@@ -40,11 +37,6 @@ data "azuread_service_principal" "foofrix" {
   display_name = "sp-foofrix-azure-devtest"
 }
 
-data "azuread_user" "perf" {
-  for_each            = local.perf_members
-  user_principal_name = each.value
-}
-
 resource "azurerm_role_assignment" "relops_owner" {
   scope                = "/subscriptions/${azurerm_subscription.foofrix.subscription_id}"
   role_definition_name = "Owner"
@@ -58,14 +50,6 @@ resource "azurerm_role_assignment" "foofrix_contributor" {
   principal_id                     = data.azuread_service_principal.foofrix.object_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
-}
-
-resource "azurerm_role_assignment" "perf_contributor" {
-  for_each             = data.azuread_user.perf
-  scope                = "/subscriptions/${azurerm_subscription.foofrix.subscription_id}"
-  role_definition_name = "Contributor"
-  principal_id         = each.value.object_id
-  principal_type       = "User"
 }
 
 resource "azurerm_resource_provider_registration" "this" {

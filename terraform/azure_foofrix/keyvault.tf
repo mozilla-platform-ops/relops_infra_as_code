@@ -27,12 +27,12 @@ resource "azurerm_role_assignment" "relops_key_vault_administrator" {
   principal_type       = "Group"
 }
 
-resource "azurerm_role_assignment" "perf_secrets_officer" {
-  for_each             = data.azuread_user.perf
-  scope                = azurerm_key_vault.foofrix.id
-  role_definition_name = "Key Vault Secrets Officer"
-  principal_id         = each.value.object_id
-  principal_type       = "User"
+resource "azurerm_role_assignment" "foofrix_secrets_officer" {
+  scope                            = azurerm_key_vault.foofrix.id
+  role_definition_name             = "Key Vault Secrets Officer"
+  principal_id                     = data.azuread_service_principal.foofrix.object_id
+  principal_type                   = "ServicePrincipal"
+  skip_service_principal_aad_check = true
 }
 
 resource "azurerm_role_assignment" "worker_secrets_user" {
