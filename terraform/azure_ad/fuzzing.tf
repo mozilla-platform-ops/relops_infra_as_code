@@ -5,7 +5,7 @@
 #
 # clauditor identities back a token-exchange chain:
 #   * sp-clauditor-build         CI builds in GitHub Actions -> Azure (GitHub OIDC)
-#   * sp-clauditor-audience      audience-only app for Azure -> GCP token exchange
+#   * sp-clauditor-gcp-aud       audience-only app for Azure -> GCP token exchange
 #   * sp-clauditor-run           clauditor-run on GCP -> Azure (GCP service account OIDC)
 #   * sp-clauditor-anthropic-aud audience-only app for Azure -> Anthropic token exchange
 #   * sp-clauditor-openai-aud    audience-only app for Azure -> OpenAI token exchange
@@ -58,6 +58,17 @@ resource "azuread_service_principal" "fuzzing_azure_devtest" {
   app_role_assignment_required = false
   owners                       = data.azuread_group.relops.members
   tags                         = concat(["name:sp-fuzzing-azure-devtest"], local.sp_tags)
+}
+
+# Preserve the original GCP client ID and audience URI when the key changes.
+moved {
+  from = azuread_application.clauditor["audience"]
+  to   = azuread_application.clauditor["gcp-aud"]
+}
+
+moved {
+  from = azuread_service_principal.clauditor["audience"]
+  to   = azuread_service_principal.clauditor["gcp-aud"]
 }
 
 resource "azuread_application" "clauditor" {
