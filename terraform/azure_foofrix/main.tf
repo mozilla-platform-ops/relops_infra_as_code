@@ -19,7 +19,7 @@ locals {
 resource "azurerm_subscription" "foofrix" {
   provider          = azurerm.billing
   alias             = "foofrix-azure-devtest-subscription"
-  subscription_name = "FooFrix Azure DevTest Subscription"
+  subscription_name = "Performance"
   billing_scope_id  = local.billing_scope_id
   workload          = "DevTest"
   tags              = local.common_tags
