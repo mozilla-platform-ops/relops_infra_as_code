@@ -83,6 +83,13 @@ resource "azurerm_resource_group" "image_build" {
   tags     = local.common_tags
 }
 
+# Packer uses the build resource group's location for its temporary VM.
+resource "azurerm_resource_group" "image_build_westus3" {
+  name     = "rg-foofrix-image-build-westus3"
+  location = "westus3"
+  tags     = local.common_tags
+}
+
 resource "azurerm_user_assigned_identity" "image_build" {
   name                = "id-foofrix-image-build"
   resource_group_name = azurerm_resource_group.foofrix.name
@@ -94,8 +101,9 @@ resource "azurerm_user_assigned_identity" "image_build" {
 
 resource "azurerm_role_assignment" "image_build_contributor" {
   for_each = {
-    build   = azurerm_resource_group.image_build.id
-    gallery = azurerm_shared_image_gallery.foofrix.id
+    build         = azurerm_resource_group.image_build.id
+    build_westus3 = azurerm_resource_group.image_build_westus3.id
+    gallery       = azurerm_shared_image_gallery.foofrix.id
   }
   scope                            = each.value
   role_definition_name             = "Contributor"

@@ -43,7 +43,7 @@ output "image_build_client_id" {
 }
 
 output "image_build_resource_group" {
-  value = azurerm_resource_group.image_build.name
+  value = azurerm_resource_group.image_build_westus3.name
 }
 
 output "image_build_identity_id" {
