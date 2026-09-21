@@ -19,7 +19,7 @@ output "key_vault_uri" {
 }
 
 output "image_gallery_id" {
-  value = azurerm_shared_image_gallery.foofrix.id
+  value = azurerm_shared_image_gallery.this["win11_64_24h2"].id
 }
 
 output "artifacts_container_url" {
@@ -27,7 +27,7 @@ output "artifacts_container_url" {
 }
 
 output "image_gallery_name" {
-  value = azurerm_shared_image_gallery.foofrix.name
+  value = azurerm_shared_image_gallery.this["win11_64_24h2"].name
 }
 
 output "image_gallery_resource_group" {
@@ -35,19 +35,19 @@ output "image_gallery_resource_group" {
 }
 
 output "windows_image_definition_id" {
-  value = azurerm_shared_image.windows.id
+  value = azurerm_shared_image.this["win11_64_24h2"].id
 }
 
 output "windows_25h2_image_definition_id" {
-  value = azurerm_shared_image.windows_25h2.id
+  value = azurerm_shared_image.this["win11_64_25h2"].id
 }
 
 output "windows_25h2_image_gallery_id" {
-  value = azurerm_shared_image_gallery.windows_25h2.id
+  value = azurerm_shared_image_gallery.this["win11_64_25h2"].id
 }
 
 output "windows_25h2_image_gallery_name" {
-  value = azurerm_shared_image_gallery.windows_25h2.name
+  value = azurerm_shared_image_gallery.this["win11_64_25h2"].name
 }
 
 output "image_build_client_id" {
