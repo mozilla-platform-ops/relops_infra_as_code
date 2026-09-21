@@ -1,5 +1,13 @@
 locals {
   shared_images = {
+    "win10_64_2009_alpha" = {
+      publisher          = "MicrosoftWindowsDesktop"
+      offer              = "Windows-10"
+      sku                = "win10-22h2-avd-g2"
+      architecture       = "x64"
+      os_type            = "Windows"
+      hyper_v_generation = "V2"
+    },
     "win10642009alpha" = {
       publisher          = "MicrosoftWindowsDesktop"
       offer              = "Windows-10"
@@ -213,35 +221,14 @@ resource "azurerm_resource_group" "rg-packer-worker-images" {
     })
   )
 }
-## win10-64-2009-alpha
-resource "azurerm_shared_image_gallery" "win10_64_2009_alpha" {
-  name                = "win10_64_2009_alpha"
-  resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
-  location            = azurerm_resource_group.rg-packer-worker-images.location
-  description         = "win10_64_2009_alpha"
-
-  tags = merge(local.common_tags,
-    tomap({
-      "Name" = "rg-packer-worker-images"
-    })
-  )
+moved {
+  from = azurerm_shared_image_gallery.win10_64_2009_alpha
+  to   = azurerm_shared_image_gallery.this["win10_64_2009_alpha"]
 }
 
-resource "azurerm_shared_image" "win10_64_2009_alpha" {
-  name                              = "win10_64_2009_alpha"
-  gallery_name                      = azurerm_shared_image_gallery.win10_64_2009_alpha.name
-  resource_group_name               = azurerm_resource_group.rg-packer-worker-images.name
-  location                          = azurerm_resource_group.rg-packer-worker-images.location
-  os_type                           = "Windows"
-  release_note_uri                  = "https://github.com/mozilla-platform-ops/worker-images/releases"
-  hyper_v_generation                = "V2"
-  disk_controller_type_nvme_enabled = true
-
-  identifier {
-    publisher = "MicrosoftWindowsDesktop"
-    offer     = "Windows-10"
-    sku       = "win10-22h2-avd-g2"
-  }
+moved {
+  from = azurerm_shared_image.win10_64_2009_alpha
+  to   = azurerm_shared_image.this["win10_64_2009_alpha"]
 }
 
 ## win10-64-2009
