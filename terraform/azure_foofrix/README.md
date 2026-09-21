@@ -62,8 +62,7 @@ The workflow needs `id-token: write` and audience `api://AzureADTokenExchange`.
 No image-build client secret is needed.
 
 Configure Packer to use the existing `image_build_resource_group` output for
-temporary resources in West US 3. The original Central US build group is retained;
-the gallery, storage, and identities remain in Central US. Publish to `image_gallery_name` in
+temporary resources. Publish to `image_gallery_name` in
 `image_gallery_resource_group`, using `windows_image_definition_id` for 24H2 or
 `windows_25h2_image_definition_id` for 25H2. The workflow logs in with
 `image_build_client_id`.
