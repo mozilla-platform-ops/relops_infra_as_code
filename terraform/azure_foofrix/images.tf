@@ -1,28 +1,18 @@
-locals {
-  shared_images = {
-    win11_64_24h2 = {
-      gallery_name        = "foofrix"
-      gallery_description = "Windows images for FooFrix performance agents."
-      sku                 = "win11-24h2-avd"
-      nvme_enabled        = false
-      release_note_uri    = null
-    }
-    win11_64_25h2 = {
-      gallery_name        = "win11_64_25h2"
-      gallery_description = "Shared Image Gallery for win11-25h2-avd"
-      sku                 = "win11-25h2-avd"
-      nvme_enabled        = true
-      release_note_uri    = "https://github.com/mozilla-platform-ops/worker-images/releases"
-    }
-  }
-}
-
-resource "azurerm_shared_image_gallery" "this" {
-  for_each            = local.shared_images
-  name                = each.value.gallery_name
+resource "azurerm_shared_image_gallery" "foofrix" {
+  name                = "foofrix"
   resource_group_name = azurerm_resource_group.foofrix.name
   location            = local.location
-  description         = each.value.gallery_description
+  description         = "Windows images for FooFrix performance agents."
+  tags                = local.common_tags
+
+  depends_on = [azurerm_resource_provider_registration.this["Microsoft.Compute"]]
+}
+
+resource "azurerm_shared_image_gallery" "windows_25h2" {
+  name                = "win11_64_25h2"
+  resource_group_name = azurerm_resource_group.foofrix.name
+  location            = local.location
+  description         = "Shared Image Gallery for win11-25h2-avd"
   tags                = local.common_tags
 
   depends_on = [azurerm_resource_provider_registration.this["Microsoft.Compute"]]
@@ -75,24 +65,40 @@ resource "azurerm_role_assignment" "blob_contributor" {
   skip_service_principal_aad_check = each.value.type == "ServicePrincipal"
 }
 
-resource "azurerm_shared_image" "this" {
-  for_each                          = local.shared_images
-  name                              = each.key
-  gallery_name                      = azurerm_shared_image_gallery.this[each.key].name
+resource "azurerm_shared_image" "windows" {
+  name                = "win11_64_24h2"
+  gallery_name        = azurerm_shared_image_gallery.foofrix.name
+  resource_group_name = azurerm_resource_group.foofrix.name
+  location            = local.location
+  os_type             = "Windows"
+  architecture        = "x64"
+  hyper_v_generation  = "V2"
+  specialized         = false
+  tags                = local.common_tags
+
+  identifier {
+    publisher = "MicrosoftWindowsDesktop"
+    offer     = "Windows-11"
+    sku       = "win11-24h2-avd"
+  }
+}
+
+resource "azurerm_shared_image" "windows_25h2" {
+  name                              = "win11_64_25h2"
+  gallery_name                      = azurerm_shared_image_gallery.windows_25h2.name
   resource_group_name               = azurerm_resource_group.foofrix.name
   location                          = local.location
   os_type                           = "Windows"
-  release_note_uri                  = each.value.release_note_uri
+  release_note_uri                  = "https://github.com/mozilla-platform-ops/worker-images/releases"
   hyper_v_generation                = "V2"
   architecture                      = "x64"
-  specialized                       = false
-  disk_controller_type_nvme_enabled = each.value.nvme_enabled
+  disk_controller_type_nvme_enabled = true
   tags                              = local.common_tags
 
   identifier {
     publisher = "MicrosoftWindowsDesktop"
     offer     = "Windows-11"
-    sku       = each.value.sku
+    sku       = "win11-25h2-avd"
   }
 }
 
@@ -118,8 +124,8 @@ resource "azurerm_user_assigned_identity" "image_build" {
 resource "azurerm_role_assignment" "image_build_contributor" {
   for_each = {
     build        = azurerm_resource_group.image_build.id
-    gallery      = azurerm_shared_image_gallery.this["win11_64_24h2"].id
-    gallery_25h2 = azurerm_shared_image_gallery.this["win11_64_25h2"].id
+    gallery      = azurerm_shared_image_gallery.foofrix.id
+    gallery_25h2 = azurerm_shared_image_gallery.windows_25h2.id
   }
   scope                            = each.value
   role_definition_name             = "Contributor"

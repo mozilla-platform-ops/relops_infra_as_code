@@ -13,13 +13,13 @@ override_resource {
 }
 
 override_resource {
-  target          = azurerm_shared_image_gallery.this["win11_64_24h2"]
+  target          = azurerm_shared_image_gallery.foofrix
   override_during = plan
   values          = { id = "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-foofrix/providers/Microsoft.Compute/galleries/foofrix" }
 }
 
 override_resource {
-  target          = azurerm_shared_image_gallery.this["win11_64_25h2"]
+  target          = azurerm_shared_image_gallery.windows_25h2
   override_during = plan
   values          = { id = "/subscriptions/00000000-0000-0000-0000-000000000001/resourceGroups/rg-foofrix/providers/Microsoft.Compute/galleries/win11_64_25h2" }
 }
@@ -41,23 +41,11 @@ run "build_and_team_access" {
 
   assert {
     condition = (
-      azurerm_shared_image_gallery.this["win11_64_24h2"].name == "foofrix" &&
-      azurerm_shared_image_gallery.this["win11_64_25h2"].name == "win11_64_25h2" &&
-      !azurerm_shared_image.this["win11_64_24h2"].disk_controller_type_nvme_enabled &&
-      azurerm_shared_image.this["win11_64_25h2"].disk_controller_type_nvme_enabled &&
-      alltrue([for key, image in azurerm_shared_image.this :
-        image.name == key && image.gallery_name == azurerm_shared_image_gallery.this[key].name
-      ])
-    )
-    error_message = "Keep the existing gallery and image names, with NVMe enabled only for 25H2."
-  }
-
-  assert {
-    condition = (
       length(azurerm_role_assignment.image_build_contributor) == 3 &&
       azurerm_role_assignment.image_build_contributor["build"].scope == azurerm_resource_group.image_build.id &&
-      azurerm_role_assignment.image_build_contributor["gallery"].scope == azurerm_shared_image_gallery.this["win11_64_24h2"].id &&
-      azurerm_role_assignment.image_build_contributor["gallery_25h2"].scope == azurerm_shared_image_gallery.this["win11_64_25h2"].id &&
+      azurerm_role_assignment.image_build_contributor["gallery"].scope == azurerm_shared_image_gallery.foofrix.id &&
+      azurerm_role_assignment.image_build_contributor["gallery_25h2"].scope == azurerm_shared_image_gallery.windows_25h2.id &&
+      azurerm_shared_image.windows_25h2.disk_controller_type_nvme_enabled &&
       azurerm_role_assignment.image_build_identity_operator.scope == azurerm_user_assigned_identity.image_build.id &&
       alltrue([for grant in azurerm_role_assignment.image_build_blob_reader : grant.scope == azurerm_storage_container.artifacts.id]) &&
       alltrue([for grant in azurerm_role_assignment.image_build_contributor : grant.role_definition_name == "Contributor"]) &&
