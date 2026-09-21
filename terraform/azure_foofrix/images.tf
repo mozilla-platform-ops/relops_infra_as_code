@@ -8,6 +8,16 @@ resource "azurerm_shared_image_gallery" "foofrix" {
   depends_on = [azurerm_resource_provider_registration.this["Microsoft.Compute"]]
 }
 
+resource "azurerm_shared_image_gallery" "windows_25h2" {
+  name                = "win11_64_25h2"
+  resource_group_name = azurerm_resource_group.foofrix.name
+  location            = local.location
+  description         = "Shared Image Gallery for win11-25h2-avd"
+  tags                = local.common_tags
+
+  depends_on = [azurerm_resource_provider_registration.this["Microsoft.Compute"]]
+}
+
 resource "azurerm_storage_account" "foofrix" {
   name                            = "safoofrix${substr(azurerm_subscription.foofrix.subscription_id, 0, 8)}"
   resource_group_name             = azurerm_resource_group.foofrix.name
@@ -74,15 +84,16 @@ resource "azurerm_shared_image" "windows" {
 }
 
 resource "azurerm_shared_image" "windows_25h2" {
-  name                = "win11_64_25h2"
-  gallery_name        = azurerm_shared_image_gallery.foofrix.name
-  resource_group_name = azurerm_resource_group.foofrix.name
-  location            = local.location
-  os_type             = "Windows"
-  architecture        = "x64"
-  hyper_v_generation  = "V2"
-  specialized         = false
-  tags                = local.common_tags
+  name                              = "win11_64_25h2"
+  gallery_name                      = azurerm_shared_image_gallery.windows_25h2.name
+  resource_group_name               = azurerm_resource_group.foofrix.name
+  location                          = local.location
+  os_type                           = "Windows"
+  release_note_uri                  = "https://github.com/mozilla-platform-ops/worker-images/releases"
+  hyper_v_generation                = "V2"
+  architecture                      = "x64"
+  disk_controller_type_nvme_enabled = true
+  tags                              = local.common_tags
 
   identifier {
     publisher = "MicrosoftWindowsDesktop"
@@ -112,8 +123,9 @@ resource "azurerm_user_assigned_identity" "image_build" {
 
 resource "azurerm_role_assignment" "image_build_contributor" {
   for_each = {
-    build   = azurerm_resource_group.image_build.id
-    gallery = azurerm_shared_image_gallery.foofrix.id
+    build        = azurerm_resource_group.image_build.id
+    gallery      = azurerm_shared_image_gallery.foofrix.id
+    gallery_25h2 = azurerm_shared_image_gallery.windows_25h2.id
   }
   scope                            = each.value
   role_definition_name             = "Contributor"
