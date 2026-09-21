@@ -73,6 +73,24 @@ resource "azurerm_shared_image" "windows" {
   }
 }
 
+resource "azurerm_shared_image" "windows_25h2" {
+  name                = "win11_64_25h2"
+  gallery_name        = azurerm_shared_image_gallery.foofrix.name
+  resource_group_name = azurerm_resource_group.foofrix.name
+  location            = local.location
+  os_type             = "Windows"
+  architecture        = "x64"
+  hyper_v_generation  = "V2"
+  specialized         = false
+  tags                = local.common_tags
+
+  identifier {
+    publisher = "MicrosoftWindowsDesktop"
+    offer     = "Windows-11"
+    sku       = "win11-25h2-avd"
+  }
+}
+
 data "azuread_service_principal" "foofrix_image_build" {
   display_name = "sp-foofrix-image-build"
 }

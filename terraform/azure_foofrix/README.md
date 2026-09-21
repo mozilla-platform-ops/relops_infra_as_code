@@ -14,9 +14,9 @@ The harness source and image provisioning scripts are in
 
 This Terraform stack manages the subscription, a resource group in Central US,
 a Key Vault available for Windows worker secrets, and a managed identity for the VMs.
-Terraform manages the `foofrix` Compute Gallery and its `win11_64_24h2` image
-definition. It uses the existing FXCI Windows 11 24H2 properties: Windows, x64,
-Hyper-V V2, generalized, and `MicrosoftWindowsDesktop/Windows-11/win11-24h2-avd`.
+Terraform manages the `foofrix` Compute Gallery and its `win11_64_24h2` and
+`win11_64_25h2` image definitions. They use the existing FXCI properties:
+Windows, x64, Hyper-V V2, generalized, and the matching 24H2 or 25H2 AVD SKU.
 The worker-images workflow publishes image versions. A private `artifacts`
 Blob Storage container holds Azure build and image files in Standard LRS storage.
 The GCP launcher manages the VMs through `sp-foofrix-azure-devtest`. The application and
@@ -64,8 +64,9 @@ No image-build client secret is needed.
 Configure Packer to use the existing `image_build_resource_group` output for
 temporary resources in West US 3. The original Central US build group is retained;
 the gallery, storage, and identities remain in Central US. Publish to `image_gallery_name` in
-`image_gallery_resource_group`, using the definition from
-`windows_image_definition_id`. The workflow logs in with `image_build_client_id`.
+`image_gallery_resource_group`, using `windows_image_definition_id` for 24H2 or
+`windows_25h2_image_definition_id` for 25H2. The workflow logs in with
+`image_build_client_id`.
 Attach `image_build_identity_id` to the temporary VM. The guest bootstrap must
 use that managed identity to authenticate artifact downloads, with
 `image_build_identity_client_id` to select it. The GitHub login does not provide

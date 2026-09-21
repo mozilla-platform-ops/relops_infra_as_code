@@ -38,6 +38,10 @@ output "windows_image_definition_id" {
   value = azurerm_shared_image.windows.id
 }
 
+output "windows_25h2_image_definition_id" {
+  value = azurerm_shared_image.windows_25h2.id
+}
+
 output "image_build_client_id" {
   value = data.azuread_service_principal.foofrix_image_build.client_id
 }
