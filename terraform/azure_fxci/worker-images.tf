@@ -237,10 +237,6 @@ resource "azurerm_shared_image" "win10_64_2009_alpha" {
   hyper_v_generation                = "V2"
   disk_controller_type_nvme_enabled = true
 
-  lifecycle {
-    prevent_destroy = true
-  }
-
   identifier {
     publisher = "MicrosoftWindowsDesktop"
     offer     = "Windows-10"
