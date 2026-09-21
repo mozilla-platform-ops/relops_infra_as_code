@@ -142,3 +142,27 @@ resource "azapi_resource" "template_spec_version_taskcluster_arm_template_v6_nvm
 
   depends_on = [azapi_resource.template_spec_taskcluster_arm_template_v6_nvme]
 }
+
+resource "azapi_resource" "template_spec_taskcluster_arm_template_alpha" {
+  type      = "Microsoft.Resources/templateSpecs@2022-02-01"
+  name      = "taskcluster-arm-template-alpha"
+  parent_id = local.fxci_template_spec_resource_group_id
+  location  = "eastus"
+
+  body = {
+    properties = {}
+  }
+}
+
+resource "azapi_resource" "template_spec_version_taskcluster_arm_template_alpha_1_0" {
+  type      = "Microsoft.Resources/templateSpecs/versions@2022-02-01"
+  name      = "1.0"
+  parent_id = azapi_resource.template_spec_taskcluster_arm_template_alpha.id
+  location  = "eastus"
+
+  body = {
+    properties = {
+      mainTemplate = jsondecode(file("${path.module}/template_specs/taskcluster-arm-template-alpha-1.0.json"))
+    }
+  }
+}
