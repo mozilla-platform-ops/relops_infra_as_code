@@ -228,13 +228,18 @@ resource "azurerm_shared_image_gallery" "win10_64_2009_alpha" {
 }
 
 resource "azurerm_shared_image" "win10_64_2009_alpha" {
-  name                = "win10_64_2009_alpha"
-  gallery_name        = azurerm_shared_image_gallery.win10_64_2009_alpha.name
-  resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
-  location            = azurerm_resource_group.rg-packer-worker-images.location
-  os_type             = "Windows"
-  release_note_uri    = "https://github.com/mozilla-platform-ops/worker-images/releases"
-  hyper_v_generation  = "V2"
+  name                              = "win10_64_2009_alpha"
+  gallery_name                      = azurerm_shared_image_gallery.win10_64_2009_alpha.name
+  resource_group_name               = azurerm_resource_group.rg-packer-worker-images.name
+  location                          = azurerm_resource_group.rg-packer-worker-images.location
+  os_type                           = "Windows"
+  release_note_uri                  = "https://github.com/mozilla-platform-ops/worker-images/releases"
+  hyper_v_generation                = "V2"
+  disk_controller_type_nvme_enabled = true
+
+  lifecycle {
+    prevent_destroy = true
+  }
 
   identifier {
     publisher = "MicrosoftWindowsDesktop"
