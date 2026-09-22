@@ -259,13 +259,14 @@ resource "azurerm_shared_image_gallery" "win10_64_2009" {
 }
 
 resource "azurerm_shared_image" "win10_64_2009" {
-  name                = "win10_64_2009"
-  gallery_name        = azurerm_shared_image_gallery.win10_64_2009.name
-  resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
-  location            = azurerm_resource_group.rg-packer-worker-images.location
-  os_type             = "Windows"
-  release_note_uri    = "https://github.com/mozilla-platform-ops/worker-images/releases"
-  hyper_v_generation  = "V2"
+  name                              = "win10_64_2009"
+  gallery_name                      = azurerm_shared_image_gallery.win10_64_2009.name
+  resource_group_name               = azurerm_resource_group.rg-packer-worker-images.name
+  location                          = azurerm_resource_group.rg-packer-worker-images.location
+  os_type                           = "Windows"
+  release_note_uri                  = "https://github.com/mozilla-platform-ops/worker-images/releases"
+  hyper_v_generation                = "V2"
+  disk_controller_type_nvme_enabled = true
 
   identifier {
     publisher = "MicrosoftWindowsDesktop"
@@ -478,6 +479,8 @@ resource "azurerm_shared_image" "win11_64_24h2" {
   release_note_uri    = "https://github.com/mozilla-platform-ops/worker-images/releases"
   hyper_v_generation  = "V2"
 
+  disk_controller_type_nvme_enabled = true
+
   identifier {
     publisher = "MicrosoftWindowsDesktop"
     offer     = "Windows-11"
@@ -506,6 +509,8 @@ resource "azurerm_shared_image" "win11_64_24h2_alpha" {
   os_type             = "Windows"
   release_note_uri    = "https://github.com/mozilla-platform-ops/worker-images/releases"
   hyper_v_generation  = "V2"
+
+  disk_controller_type_nvme_enabled = true
 
   identifier {
     publisher = "MicrosoftWindowsDesktop"
@@ -536,6 +541,8 @@ resource "azurerm_shared_image" "win2022_64_2009_alpha" {
   release_note_uri    = "https://github.com/mozilla-platform-ops/worker-images/releases"
   hyper_v_generation  = "V2"
 
+  disk_controller_type_nvme_enabled = true
+
   identifier {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
@@ -564,6 +571,8 @@ resource "azurerm_shared_image" "win2022_64_2009" {
   os_type             = "Windows"
   release_note_uri    = "https://github.com/mozilla-platform-ops/worker-images/releases"
   hyper_v_generation  = "V2"
+
+  disk_controller_type_nvme_enabled = true
 
   identifier {
     publisher = "MicrosoftWindowsServer"
