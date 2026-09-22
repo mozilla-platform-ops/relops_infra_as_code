@@ -57,7 +57,7 @@ locals {
       gallery_description               = "trusted-win2022-64-2009"
       gallery_tags                      = local.legacy_gallery_tags
       image_tags                        = {}
-      disk_controller_type_nvme_enabled = false
+      disk_controller_type_nvme_enabled = true
     },
     "trusted_win2025_64_24h2" = {
       publisher                         = "MicrosoftWindowsServer"
