@@ -1,16 +1,27 @@
 locals {
-  trusted_fxci_template_spec_resource_group_id = "/subscriptions/a30e97ab-734a-4f3b-a0e4-c51c0bff0701/resourceGroups/template-spec"
+  template_spec_resource_group_id = "/subscriptions/a30e97ab-734a-4f3b-a0e4-c51c0bff0701/resourceGroups/template-spec"
 
-  trusted_fxci_template_spec_ids = {
-    taskcluster_arm_template        = "${local.trusted_fxci_template_spec_resource_group_id}/providers/Microsoft.Resources/templateSpecs/taskcluster-arm-template"
-    taskcluster_arm_template_relops = "${local.trusted_fxci_template_spec_resource_group_id}/providers/Microsoft.Resources/templateSpecs/taskcluster-arm-template-relops"
+  template_specs = {
+    "taskcluster-arm-template"        = ["1.0", "2.0", "2.1"]
+    "taskcluster-arm-template-relops" = ["1.0"]
   }
+
+  template_spec_versions = merge([
+    for name, versions in local.template_specs : {
+      for version in versions : "${name}-${version}" => {
+        name    = name
+        version = version
+      }
+    }
+  ]...)
 }
 
-resource "azapi_resource" "template_spec_taskcluster_arm_template" {
+resource "azapi_resource" "template_spec" {
+  for_each = local.template_specs
+
   type      = "Microsoft.Resources/templateSpecs@2022-02-01"
-  name      = "taskcluster-arm-template"
-  parent_id = local.trusted_fxci_template_spec_resource_group_id
+  name      = each.key
+  parent_id = local.template_spec_resource_group_id
   location  = "eastus"
 
   body = {
@@ -18,73 +29,17 @@ resource "azapi_resource" "template_spec_taskcluster_arm_template" {
   }
 }
 
-resource "azapi_resource" "template_spec_taskcluster_arm_template_relops" {
-  type      = "Microsoft.Resources/templateSpecs@2022-02-01"
-  name      = "taskcluster-arm-template-relops"
-  parent_id = local.trusted_fxci_template_spec_resource_group_id
-  location  = "eastus"
+resource "azapi_resource" "template_spec_version" {
+  for_each = local.template_spec_versions
 
-  body = {
-    properties = {}
-  }
-}
-
-resource "azapi_resource" "template_spec_version_taskcluster_arm_template_1_0" {
   type      = "Microsoft.Resources/templateSpecs/versions@2022-02-01"
-  name      = "1.0"
-  parent_id = local.trusted_fxci_template_spec_ids.taskcluster_arm_template
+  name      = each.value.version
+  parent_id = azapi_resource.template_spec[each.value.name].id
   location  = "eastus"
 
   body = {
     properties = {
-      mainTemplate = jsondecode(file("${path.module}/template_specs/taskcluster-arm-template-1.0.json"))
+      mainTemplate = jsondecode(file("${path.module}/template_specs/${each.key}.json"))
     }
   }
-
-  depends_on = [azapi_resource.template_spec_taskcluster_arm_template]
-}
-
-resource "azapi_resource" "template_spec_version_taskcluster_arm_template_2_0" {
-  type      = "Microsoft.Resources/templateSpecs/versions@2022-02-01"
-  name      = "2.0"
-  parent_id = local.trusted_fxci_template_spec_ids.taskcluster_arm_template
-  location  = "eastus"
-
-  body = {
-    properties = {
-      mainTemplate = jsondecode(file("${path.module}/template_specs/taskcluster-arm-template-2.0.json"))
-    }
-  }
-
-  depends_on = [azapi_resource.template_spec_taskcluster_arm_template]
-}
-
-resource "azapi_resource" "template_spec_version_taskcluster_arm_template_3_0" {
-  type      = "Microsoft.Resources/templateSpecs/versions@2022-02-01"
-  name      = "3.0"
-  parent_id = local.trusted_fxci_template_spec_ids.taskcluster_arm_template
-  location  = "eastus"
-
-  body = {
-    properties = {
-      mainTemplate = jsondecode(file("${path.module}/template_specs/taskcluster-arm-template-3.0.json"))
-    }
-  }
-
-  depends_on = [azapi_resource.template_spec_taskcluster_arm_template]
-}
-
-resource "azapi_resource" "template_spec_version_taskcluster_arm_template_relops_1_0" {
-  type      = "Microsoft.Resources/templateSpecs/versions@2022-02-01"
-  name      = "1.0"
-  parent_id = local.trusted_fxci_template_spec_ids.taskcluster_arm_template_relops
-  location  = "eastus"
-
-  body = {
-    properties = {
-      mainTemplate = jsondecode(file("${path.module}/template_specs/taskcluster-arm-template-relops-1.0.json"))
-    }
-  }
-
-  depends_on = [azapi_resource.template_spec_taskcluster_arm_template_relops]
 }
