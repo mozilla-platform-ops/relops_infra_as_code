@@ -1,17 +1,18 @@
 locals {
   location_map = {
     #"Canada Central"   = "canada-central"
-    "Central India"    = "central-india"
-    "Central US"       = "central-us"
+    "Central India" = "central-india"
+    "Central US"    = "central-us"
     #"East US"          = "east-us"
     "East US 2"        = "east-us-2"
     "North Central US" = "north-central-us"
     #"North Europe"     = "north-europe"
+    "South Central US" = "south-central-us"
     #"South India"      = "south-india"
     #"UK South"         = "uk-south"
     #"West US"          = "west-us"
-    "West US 2"        = "west-us-2"
-    "West US 3"        = "west-us-3"
+    "West US 2" = "west-us-2"
+    "West US 3" = "west-us-3"
   }
 
   config = yamldecode(file("../config.yaml"))
