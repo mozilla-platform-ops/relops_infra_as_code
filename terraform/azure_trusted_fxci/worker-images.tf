@@ -70,6 +70,18 @@ locals {
       gallery_tags                      = local.worker_image_tags
       image_tags                        = local.worker_image_tags
       disk_controller_type_nvme_enabled = true
+    },
+    "trusted_win2025_64_24h2_core" = {
+      publisher                         = "MicrosoftWindowsServer"
+      offer                             = "WindowsServer"
+      sku                               = "2025-datacenter-azure-edition-core"
+      architecture                      = "x64"
+      os_type                           = "Windows"
+      hyper_v_generation                = "V2"
+      gallery_description               = "Shared Image Gallery for Windows Server 2025 Core"
+      gallery_tags                      = local.worker_image_tags
+      image_tags                        = local.worker_image_tags
+      disk_controller_type_nvme_enabled = true
     }
   }
 }
