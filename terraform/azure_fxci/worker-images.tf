@@ -159,6 +159,22 @@ locals {
       architecture       = "x64"
       os_type            = "Windows"
       hyper_v_generation = "V2"
+    },
+    "win2025_64_24h2_core_alpha" = {
+      publisher          = "MicrosoftWindowsServer"
+      offer              = "WindowsServer"
+      sku                = "2025-datacenter-azure-edition-core"
+      architecture       = "x64"
+      os_type            = "Windows"
+      hyper_v_generation = "V2"
+    },
+    "win2025_64_24h2_core" = {
+      publisher          = "MicrosoftWindowsServer"
+      offer              = "WindowsServer"
+      sku                = "2025-datacenter-azure-edition-core"
+      architecture       = "x64"
+      os_type            = "Windows"
+      hyper_v_generation = "V2"
     }
   }
 
