@@ -11,6 +11,7 @@
 #   * sp-clauditor-openai-aud    audience-only app for Azure -> OpenAI token exchange
 locals {
   clauditor_apps = {
+    janitor       = { name = "sp-fuzzing-azure-janitor", notes = "" }
     build         = { name = "sp-clauditor-build", notes = "CI build identity for MozillaSecurity/clauditor (GitHub Actions OIDC). RELOPS-2440." }
     gcp-aud       = { name = "sp-clauditor-gcp-aud", notes = "Audience-only app for Azure -> GCP token exchange. RELOPS-2440.", identifier_uris = ["api://2925ef06-ce42-4a1b-bf35-70358136a900"] }
     run           = { name = "sp-clauditor-run", notes = "Run identity for clauditor-run on GCP (GCP service account OIDC). RELOPS-2440." }
@@ -21,6 +22,13 @@ locals {
   # Federated credentials keyed by app. build trusts GitHub Actions on main + PRs;
   # run trusts the clauditor-run GCP service account. audience has none.
   clauditor_federated_credentials = {
+    janitor_github = {
+      app          = "janitor"
+      display_name = "github-actions-azure"
+      description  = ""
+      issuer       = "https://token.actions.githubusercontent.com"
+      subject      = "repo:MozillaSecurity/clauditor:environment:azure"
+    }
     build_main = {
       app          = "build"
       display_name = "github-actions-azure"

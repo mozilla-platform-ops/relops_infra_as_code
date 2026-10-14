@@ -11,3 +11,10 @@ output "domains" {
   value = data.azuread_domains.aad_domains.domains
 }
 
+output "azure_janitor" {
+  description = "Azure cleanup workflow client ID and RBAC principal ID."
+  value = {
+    client_id    = azuread_application.clauditor["janitor"].client_id
+    principal_id = azuread_service_principal.clauditor["janitor"].object_id
+  }
+}
