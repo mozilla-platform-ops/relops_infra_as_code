@@ -27,7 +27,7 @@ locals {
       display_name = "github-actions-azure"
       description  = ""
       issuer       = "https://token.actions.githubusercontent.com"
-      subject      = "repo:MozillaSecurity/clauditor:environment:azure"
+      subject      = "repo:MozillaSecurity/clauditor:environment:azure-cleanup"
     }
     build_main = {
       app          = "build"
