@@ -96,22 +96,6 @@ locals {
       os_type            = "Windows"
       hyper_v_generation = "V2"
     },
-    "win116424h2" = {
-      publisher          = "MicrosoftWindowsDesktop"
-      offer              = "Windows-11"
-      sku                = "win11-24h2-avd"
-      architecture       = "x64"
-      os_type            = "Windows"
-      hyper_v_generation = "V2"
-    },
-    "win116424h2alpha" = {
-      publisher          = "MicrosoftWindowsDesktop"
-      offer              = "Windows-11"
-      sku                = "win11-24h2-avd"
-      architecture       = "x64"
-      os_type            = "Windows"
-      hyper_v_generation = "V2"
-    },
     "win11_64_25h2" = {
       publisher          = "MicrosoftWindowsDesktop"
       offer              = "Windows-11"
@@ -470,66 +454,6 @@ resource "azurerm_shared_image" "win11_a64_24h2_tester" {
     publisher = "windows11preview-arm64"
     offer     = "Windows-11"
     sku       = "win11-24h2-ent"
-  }
-}
-
-resource "azurerm_shared_image_gallery" "win11_64_24h2" {
-  name                = "win11_64_24h2"
-  resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
-  location            = azurerm_resource_group.rg-packer-worker-images.location
-  description         = "win11-64-24h2"
-
-  tags = merge(local.common_tags,
-    tomap({
-      "Name" = "rg-packer-worker-images"
-    })
-  )
-}
-
-resource "azurerm_shared_image" "win11_64_24h2" {
-  name                              = "win11_64_24h2"
-  gallery_name                      = azurerm_shared_image_gallery.win11_64_24h2.name
-  resource_group_name               = azurerm_resource_group.rg-packer-worker-images.name
-  location                          = azurerm_resource_group.rg-packer-worker-images.location
-  os_type                           = "Windows"
-  release_note_uri                  = "https://github.com/mozilla-platform-ops/worker-images/releases"
-  hyper_v_generation                = "V2"
-  disk_controller_type_nvme_enabled = true
-
-  identifier {
-    publisher = "MicrosoftWindowsDesktop"
-    offer     = "Windows-11"
-    sku       = "win11-24h2-avd"
-  }
-}
-
-resource "azurerm_shared_image_gallery" "win11_64_24h2_alpha" {
-  name                = "win11_64_24h2_alpha"
-  resource_group_name = azurerm_resource_group.rg-packer-worker-images.name
-  location            = azurerm_resource_group.rg-packer-worker-images.location
-  description         = "win11-64-24h2-alpha"
-
-  tags = merge(local.common_tags,
-    tomap({
-      "Name" = "rg-packer-worker-images"
-    })
-  )
-}
-
-resource "azurerm_shared_image" "win11_64_24h2_alpha" {
-  name                              = "win11_64_24h2_alpha"
-  gallery_name                      = azurerm_shared_image_gallery.win11_64_24h2_alpha.name
-  resource_group_name               = azurerm_resource_group.rg-packer-worker-images.name
-  location                          = azurerm_resource_group.rg-packer-worker-images.location
-  os_type                           = "Windows"
-  release_note_uri                  = "https://github.com/mozilla-platform-ops/worker-images/releases"
-  hyper_v_generation                = "V2"
-  disk_controller_type_nvme_enabled = true
-
-  identifier {
-    publisher = "MicrosoftWindowsDesktop"
-    offer     = "Windows-11"
-    sku       = "win11-24h2-avd"
   }
 }
 
