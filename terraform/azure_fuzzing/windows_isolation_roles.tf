@@ -60,6 +60,7 @@ locals {
       data_actions = [
         "Microsoft.Batch/batchAccounts/jobs/read",
         "Microsoft.Batch/batchAccounts/jobs/write",
+        "Microsoft.Batch/batchAccounts/jobs/delete",
       ]
     }
     subnet_join = {
