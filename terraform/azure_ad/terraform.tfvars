@@ -24,7 +24,6 @@ azure_subscriptions = [
 zero_din_group = [
   "mfigueroa@mozilla.com",
   "pamini@mozilla.com",
-  "reddings@mozilla.com",
   "aminali@mozilla.com",
   "jmcbride@mozilla.com",
   "operevertailo@mozilla.com",
@@ -142,7 +141,7 @@ seio_group = [
 # Amir Habibi, Chris DuPuis, David Rubino, Dianna Smith, Jonathan Moss,
 # Julia Gibbs, Julien Cristau, Mark Cornmesser, Markco Test (test account), Marlene Hirose,
 # nalexander, Noel De La Torre, Paresh Jha, Pascal Chevrel, rkelimutu, Romain Testard,
-# Ryan VanderMeulen
+# Ryan VanderMeulen, Yannis Juglaret
 ms_store_publishers_group = [
   "ahabibi@mozilla.com",
   "cdupuis@mozilla.com",
@@ -161,6 +160,7 @@ ms_store_publishers_group = [
   "rkelimutu@mozilla.com",
   "rtestard@mozilla.com",
   "rvandermeulen@mozilla.com",
+  "yjuglaret@mozilla.com",
 ]
 
 # RELOPS-2520 — Antonio Borondo, Amir Habibi (manager), Chris DuPuis,
@@ -179,7 +179,7 @@ desktop_integrations_vms_group = [
 # Alex Davis, Amir Habibi, David Rubino, Julia Gibbs, Julien Cristau,
 # Lauren Niolet, Mark Cornmesser, Mark Toubman, Markco Test (test account), Marlene Hirose,
 # Nadia Florez, Noel De La Torre, Norberto Andres Furlan, Paresh Jha,
-# Richard Baffour-Awuah, Romain Testard, Ryan VanderMeulen, Su-Young Hong
+# Richard Baffour-Awuah, Romain Testard, Ryan VanderMeulen, Su-Young Hong, Yannis Juglaret
 ms_store_finance_group = [
   "adavis@mozilla.com",
   "ahabibi@mozilla.com",
@@ -198,4 +198,5 @@ ms_store_finance_group = [
   "rbaffourawuah@mozilla.com",
   "rtestard@mozilla.com",
   "rvandermeulen@mozilla.com",
+  "yjuglaret@mozilla.com",
 ]
