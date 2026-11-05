@@ -12,9 +12,9 @@ resource "azuread_service_principal" "l1_push_cost_inspector" {
   tags      = concat(["name:l1-push-cost-inspector"], local.sp_tags)
 }
 
-resource "azuread_application_federated_identity_credential" "l1_push_cost_inspector_gcp" {
+resource "azuread_application_federated_identity_credential" "l1_push_cost_inspector_azure" {
   application_id = azuread_application.l1_push_cost_inspector.id
-  display_name   = "l1-push-cost-inspector-gcp"
+  display_name   = "l1-push-cost-inspector-azure"
   description    = "l1-push-cost-inspector@fxci-production-level1-workers.iam.gserviceaccount.com"
   audiences      = ["api://AzureADTokenExchange"]
   issuer         = "https://accounts.google.com"
