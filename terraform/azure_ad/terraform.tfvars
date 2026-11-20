@@ -31,6 +31,9 @@ zero_din_group = [
   # RELOPS-2531: Stephen Golub. Account created 2026-08-24 as a cloud-only member
   # (did not exist in the tenant); see ticket for the shadow-identity caveat.
   "sgolub@mozilla.com",
+  # RELOPS-2611: Andrew Thal. Account created 2026-11-20 as a cloud-only member
+  # (f283a0f4-4a1f-4e5c-9da2-596bd0c983da); did not exist in the tenant.
+  "athal@mozilla.com",
 ]
 
 # UPNs below are derived from display names in RELOPS-2345. Verify all with:
