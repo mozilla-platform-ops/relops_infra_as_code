@@ -74,11 +74,11 @@ resource "azurerm_user_assigned_identity" "inspector_reference_data" {
 }
 
 resource "azurerm_federated_identity_credential" "inspector_reference_data" {
-  name                      = "github-try-cost-inspector-main"
+  name                      = "github-relops-ci-inspector-main"
   user_assigned_identity_id = azurerm_user_assigned_identity.inspector_reference_data.id
   audience                  = ["api://AzureADTokenExchange"]
   issuer                    = "https://token.actions.githubusercontent.com"
-  subject                   = "repo:mozilla-platform-ops@19784987/try-cost-inspector@1447621420:ref:refs/heads/main"
+  subject                   = "repo:mozilla-platform-ops@19784987/relops-ci-inspector@1447621420:ref:refs/heads/main"
 }
 
 resource "azurerm_role_assignment" "inspector_reference_data" {
@@ -90,7 +90,7 @@ resource "azurerm_role_assignment" "inspector_reference_data" {
 }
 
 output "inspector_reference_data" {
-  description = "Azure OIDC and storage settings for the try-cost-inspector reference data publishers."
+  description = "Azure OIDC and storage settings for the relops-ci-inspector reference data publishers."
   value = {
     client_id         = azurerm_user_assigned_identity.inspector_reference_data.client_id
     storage_account   = azurerm_storage_account.inspector_reference_data.name
