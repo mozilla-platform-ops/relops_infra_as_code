@@ -78,7 +78,7 @@ resource "azurerm_federated_identity_credential" "inspector_reference_data" {
   user_assigned_identity_id = azurerm_user_assigned_identity.inspector_reference_data.id
   audience                  = ["api://AzureADTokenExchange"]
   issuer                    = "https://token.actions.githubusercontent.com"
-  subject                   = "repo:mozilla-platform-ops/try-cost-inspector:ref:refs/heads/main"
+  subject                   = "repo:mozilla-platform-ops@19784987/try-cost-inspector@1447621420:ref:refs/heads/main"
 }
 
 resource "azurerm_role_assignment" "inspector_reference_data" {
